@@ -1,4 +1,4 @@
-# Ryker Vale — sprites v0.3 (ART) · PROVISÓRIOS
+# Ryker Vale — sprites v0.4 (ART) · PROVISÓRIOS, visual de campeão
 
 > **D-039:** a versão final do Ryker vai ser gerada por IA (pacotes em `ART/prompts/`) e tratada pela ART com `ferramentas/arte/tratar_ia.py`. Estes sprites são a **versão provisória** (D-043: ficam na `main` até as finais chegarem). **A especificação abaixo (quadros, origem, deslocamentos, nomes) vale também para a versão final**, então o código feito para estes arquivos continua servindo.
 
@@ -58,6 +58,12 @@ Na folha `bramido_baixo`, a boca passa um pouco do quadro, mas essa direção s�
 |---|---|---|
 | `ryker_dash.png` | 4, 20 qps | Rastro de luz âmbar atrás (a âncora). Desenhado com a Mordida; serve para as duas armas. |
 | `ryker_morte.png` | 8, 12 qps | O corpo vira poeira âmbar subindo: a âncora puxando para a Eco. O último quadro fica quase vazio. |
+
+## v0.4: visual de campeão (decisão do dono)
+O tronco foi redesenhado por código seguindo a referência aprovada: cabelo raspado dos lados, colete laranja aberto mostrando o peito, **ombreira de osso** no ombro da frente, **faixas de luta** nos antebraços e cinto com fivela de osso. **Nomes, quadros, origens e deslocamentos não mudaram**: o código que liga estas folhas continua igual.
+
+## Poses-chave (IA + tratamento, D-039) — referência
+`ryker_poses_chave.png`: 8 quadros 48×48, origem nos pés: 0 parado atirando · 1 correndo · 2 pulando · 3 agachado · 4 mirando para cima · 5 esquiva · 6 lançando a corrente · 7 atingido. **São referência para a ART, não sprites de jogo**: reduzidos a 28 px, os detalhes da IA viram ruído. Por isso a ART redesenha os sprites por código seguindo essas poses (e vai usar a 6 e a 7 para o Grilhão e o dano, que ainda não existem).
 
 ## Folha de referência aprovada (IA + tratamento, D-039)
 `ryker_referencia.png`: 2 quadros 48×48 (frente, perfil), origem nos pés. É o **Ryker campeão** do pacote 01 v2 (pedido do dono): ombreira de osso no ombro direito, faixas de luta, cinto de campeão, colar de dente, marca de ferro no ombro esquerdo. **Não é animação:** é a referência que os sprites provisórios vão seguir na próxima entrega da ART, e a base dos próximos prompts.
