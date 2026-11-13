@@ -147,9 +147,17 @@ def componentes(mask, passo=4, minimo=0.02):
     if not caixas: return []
     maior = max(c[0] for c in caixas)
     caixas = [c[1:] for c in caixas if c[0] >= maior * minimo]
-    alt = np.median([c[3] - c[1] for c in caixas])
-    # por faixa (pelo centro vertical, para poses de alturas diferentes ficarem na mesma linha), depois da esquerda p/ direita
-    return sorted(caixas, key=lambda c: (round((c[1] + c[3]) / 2 / alt), c[0]))
+    # Linhas = figuras que se sobrepõem na vertical (poses de alturas diferentes ficam na mesma linha);
+    # dentro de cada linha, da esquerda para a direita.
+    linhas = []
+    for c in sorted(caixas, key=lambda c: (c[1] + c[3]) / 2):
+        if linhas:
+            y0, y1 = linhas[-1]['span']
+            sobrepoe = min(y1, c[3]) - max(y0, c[1])
+            if sobrepoe >= 0.5 * min(c[3] - c[1], y1 - y0):
+                linhas[-1]['caixas'].append(c); linhas[-1]['span'] = (min(y0, c[1]), max(y1, c[3])); continue
+        linhas.append({'span': (c[1], c[3]), 'caixas': [c]})
+    return [c for l in linhas for c in sorted(l['caixas'], key=lambda c: c[0])]
 
 
 def recortar(mask, caixa=None):
@@ -283,7 +291,7 @@ def tratar(entrada, modo='sprite', altura=None, quadro=None, separar=False, fund
         escala = maior_h / max(1, altura - margem)
     elif quadro:  # cabe no quadro (retratos: a altura do quadro)
         maior_w = max(r[2] - r[0] for r in recortes)
-        escala = max(maior_h / (quadro[1] - margem), maior_w / (quadro[0] - margem))
+        escala = max(maior_h / (quadro[1] - 2), maior_w / (quadro[0] - 2))  # 2 px de folga: a busca de grade pode somar 1
     else:
         raise SystemExit('informe --altura ou --quadro')
     figuras = []

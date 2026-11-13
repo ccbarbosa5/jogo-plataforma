@@ -54,7 +54,7 @@ def main():
     falsa = estragar(originais)
     with tempfile.TemporaryDirectory() as d:
         ent = os.path.join(d, 'falsa.png'); falsa.save(ent)
-        figs, rel = tratar_ia.tratar(ent, 'sprite', altura=max(alturas), quadro=(32, 32), separar=True,
+        figs, rel = tratar_ia.tratar(ent, 'sprite', altura=max(alturas), quadro=(48, 48), separar=True,
                                      chaves='kKoOhsScbBmMxXat')
         falsa.save(os.path.join(AQUI, '_teste_entrada.png')) if '--salvar' in sys.argv else None
         if '--salvar' in sys.argv:
