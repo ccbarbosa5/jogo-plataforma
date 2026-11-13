@@ -10,6 +10,7 @@ var direcao: Vector2i = Vector2i.ZERO
 var pular_segurado: bool = false
 var pular_pressionado: bool = false
 var atirar_segurado: bool = false
+var atirar_pressionado: bool = false
 var dash_pressionado: bool = false
 var travar_mira_segurado: bool = false
 var granada_pressionada: bool = false
@@ -27,6 +28,7 @@ func atualizar() -> void:
 ## Chamado pelo Jogador no fim de cada frame: "pressionado" vale só por um frame.
 func fim_do_frame() -> void:
 	pular_pressionado = false
+	atirar_pressionado = false
 	dash_pressionado = false
 	granada_pressionada = false
 	chamado_pressionado = false

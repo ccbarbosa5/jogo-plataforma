@@ -2,6 +2,8 @@ class_name DadosProgresso
 extends Node
 ## Progresso permanente: flags e contadores que sobrevivem à morte e ao fechar o jogo
 ## (NAR-01: "1ª vez", mortes_total, urkesh_encontros...). Salvo em user://progresso.cfg.
+## Também guarda o estado da run atual (ex.: tem_dadiva_kharn), que NÃO é salvo e zera a cada run.
+## Contador especial "duvida" (D-034): soma pistas vistas e vitórias; os gatilhos da NAR consultam.
 ## O autoload "Progresso" é uma instância desta classe; os testes criam a sua própria.
 
 signal mudou
@@ -11,6 +13,8 @@ const CAMINHO_PADRAO: String = "user://progresso.cfg"
 var caminho: String = CAMINHO_PADRAO
 var flags: Dictionary = {}
 var contadores: Dictionary = {}
+## Estado da run atual (não é salvo): flags (bool) e contadores (int).
+var estado_run: Dictionary = {}
 
 
 func _ready() -> void:
@@ -18,6 +22,8 @@ func _ready() -> void:
 
 
 func tem_flag(nome: String) -> bool:
+	if estado_run.has(nome):
+		return estado_run[nome] == true
 	return flags.get(nome, false)
 
 
@@ -27,7 +33,19 @@ func definir_flag(nome: String, valor: bool = true) -> void:
 
 
 func valor(nome: String) -> int:
+	if estado_run.has(nome) and estado_run[nome] is int:
+		return estado_run[nome]
 	return contadores.get(nome, 0)
+
+
+## Estado da run (não salvo). Ex.: definir_run("tem_dadiva_kharn", true).
+func definir_run(nome: String, valor_run: Variant = true) -> void:
+	estado_run[nome] = valor_run
+
+
+## Começo de run nova.
+func limpar_run() -> void:
+	estado_run.clear()
 
 
 func incrementar(nome: String, quantidade: int = 1) -> int:
@@ -95,5 +113,6 @@ func carregar() -> void:
 func apagar() -> void:
 	flags.clear()
 	contadores.clear()
+	estado_run.clear()
 	salvar()
 	mudou.emit()

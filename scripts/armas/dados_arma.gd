@@ -1,6 +1,8 @@
 class_name DadosArma
 extends Resource
-## Dados de uma arma (GD-01, seção 5). Um arquivo .tres por arma em scenes/armas/.
+## Dados-base de uma arma (D-038). Um arquivo .tres por arma em scenes/armas/.
+## Munição infinita: não existem armas pesadas nem troca de arma durante a run.
+## A mini árvore de habilidades modifica estes valores via ModificadorArma (ver ArmaEquipada).
 
 @export var nome: String = "Arma"
 ## Tiros por segundo segurando o botão.
@@ -13,6 +15,4 @@ extends Resource
 ## Desvio aleatório máximo, em graus, para cada lado.
 @export var espalhamento_graus: float = 0.0
 @export var projeteis_por_tiro: int = 1
-## -1 = infinita (arma principal). Pickups pesados usam munição limitada.
-@export var municao: int = -1
 @export var cena_projetil: PackedScene

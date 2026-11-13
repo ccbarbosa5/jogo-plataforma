@@ -23,7 +23,12 @@ cena_inimigo = ExtResource("4")
 [node name="Chao" type="StaticBody2D" parent="Mundo"]
 position = Vector2(0, 240)
 script = ExtResource("2")
-tamanho = Vector2(1440, 32)
+tamanho = Vector2(272, 32)
+
+[node name="Chao2" type="StaticBody2D" parent="Mundo"]
+position = Vector2(320, 240)
+script = ExtResource("2")
+tamanho = Vector2(1120, 32)
 
 [node name="ParedeEsq" type="StaticBody2D" parent="Mundo"]
 position = Vector2(-16, -64)

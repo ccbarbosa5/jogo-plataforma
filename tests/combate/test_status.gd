@@ -132,7 +132,7 @@ func test_morte_e_atordoamento_devolvem_a_ficha() -> void:
 	CenarioTeste.criar_chao(self)
 	CenarioTeste.criar_jogador(self)
 	var g := CenarioTeste.criar_guerreiro(self, Vector2(CenarioTeste.tiles(8), 0))
-	await esperar_frames(3)
+	await esperar_frames(33)  # 0,5 s de entrada (D-036)
 	afirmar(Combate.tem_ficha(g), "pegou ficha para atacar")
 	g.atordoar(1.0)
 	afirmar(not Combate.tem_ficha(g), "atordoado devolve a ficha")

@@ -18,6 +18,7 @@ const ALTURA_AGACHADO: float = 18.0
 const TEMPO_ATRAVESSAR_PLATAFORMA: float = 0.25
 
 @export var parametros: ParametrosJogador
+## Arma escolhida no Arsenal (D-038). Os modificadores da run ficam em arma_equipada.
 @export var arma: DadosArma
 @export var granada: DadosGranada
 @export var assistencias: Assistencias
@@ -28,8 +29,7 @@ const TEMPO_ATRAVESSAR_PLATAFORMA: float = 0.25
 var entrada: EntradaJogador
 ## Onde os projéteis e granadas são criados. Se vazio, usa o pai do jogador.
 var container_projeteis: Node
-var arma_principal: DadosArma
-var municao: int = -1
+var arma_equipada: ArmaEquipada
 var granadas: int = 0
 ## 0 a 100 (Combate.regras.chamado_maximo).
 var barra_chamado: float = 0.0
@@ -61,6 +61,10 @@ var _puxao_destino: Vector2 = Vector2.ZERO
 var _puxao_velocidade: float = 0.0
 var _puxao_invulneravel: bool = false
 var _timer_puxao: float = 0.0
+## Último lugar firme onde o jogador pisou (volta para cá ao cair num buraco).
+var posicao_segura: Vector2 = Vector2.ZERO
+## Abaixo desta altura o jogador caiu num buraco (a sala define).
+var limite_queda_y: float = INF
 
 
 func _ready() -> void:
@@ -85,11 +89,10 @@ func _ready() -> void:
 	vida.morreu.connect(_ao_morrer)
 	cargas_dash = parametros.cargas_dash
 	_dashes_no_ar = parametros.dashes_no_ar
-	arma_principal = arma
-	if arma != null:
-		municao = arma.municao
+	arma_equipada = ArmaEquipada.new(arma)
 	reabastecer_granadas()
 	_aplicar_altura(ALTURA_EM_PE)
+	posicao_segura = global_position
 
 
 func _physics_process(delta: float) -> void:
@@ -124,6 +127,10 @@ func _physics_process(delta: float) -> void:
 		_atualizar_ataque(delta)
 		if entrada.granada_pressionada:
 			lancar_granada()
+		if is_on_floor() and _timer_atravessar <= 0.0 and _chao_firme_embaixo():
+			posicao_segura = global_position
+		if global_position.y > limite_queda_y:
+			voltar_do_buraco()
 	entrada.fim_do_frame()
 	queue_redraw()
 
@@ -189,11 +196,40 @@ func cancelar_puxao() -> void:
 	_timer_puxao = 0.0
 
 
-## Troca a arma (ex.: pickup pesado). Quando a munição acaba, volta para a principal.
+## Escolha de arma no Arsenal, antes da run (D-038). Zera os modificadores.
 func equipar(nova_arma: DadosArma) -> void:
 	arma = nova_arma
-	municao = nova_arma.municao
+	arma_equipada = ArmaEquipada.new(nova_arma)
 	_cooldown_tiro = 0.0
+
+
+## Chamado pela sala ao começar (D-036): granadas cheias e 1 s de invulnerabilidade.
+func entrar_na_sala() -> void:
+	reabastecer_granadas()
+	vida.tornar_invulneravel(Combate.regras.invulnerabilidade_entrada_sala)
+
+
+## Caiu num buraco (D-036): perde 1 bloco e volta para o último chão firme.
+func voltar_do_buraco() -> void:
+	velocity = Vector2.ZERO
+	_dash_restante_px = 0.0
+	_timer_puxao = 0.0
+	if ferramenta != null:
+		ferramenta.cancelar()
+	global_position = posicao_segura
+	vida.receber_dano(parametros.dano_buraco, true)
+
+
+## true se há chão sob as duas bordas do corpo (não está na beirada de um buraco).
+func _chao_firme_embaixo() -> bool:
+	var espaco: PhysicsDirectSpaceState2D = get_world_2d().direct_space_state
+	for lado: float in [-LARGURA * 0.5, LARGURA * 0.5]:
+		var inicio: Vector2 = global_position + Vector2(lado, -2.0)
+		var consulta := PhysicsRayQueryParameters2D.create(inicio, inicio + Vector2(0, 6),
+				Camadas.MUNDO | Camadas.PLATAFORMAS, [get_rid()])
+		if espaco.intersect_ray(consulta).is_empty():
+			return false
+	return true
 
 
 ## Granadas voltam ao máximo a cada sala nova (GD-02, 1.3).
@@ -412,13 +448,11 @@ func _atualizar_ataque(delta: float) -> void:
 	if _cooldown_tiro > 0.0:
 		return
 	_disparar()
-	_cooldown_tiro = maxf(_cooldown_tiro, -delta) + 1.0 / arma.cadencia
+	_cooldown_tiro = maxf(_cooldown_tiro, -delta) + 1.0 / arma_equipada.cadencia()
 
 
 func _tiro_automatico_quer_atirar() -> bool:
 	if not assistencias.tiro_automatico or arma == null:
-		return false
-	if arma.municao >= 0 and not assistencias.tiro_automatico_armas_pesadas:
 		return false
 	return mira_automatica.inimigo_na_direcao(ponto_de_tiro(), mira, assistencias, get_tree()) != null
 
@@ -461,18 +495,16 @@ func _disparar() -> void:
 	var direcao: Vector2 = Vector2(mira).normalized()
 	var origem: Vector2 = ponto_de_tiro() + direcao * 10.0
 	var destino: Node = container_projeteis if container_projeteis != null else get_parent()
-	for i in arma.projeteis_por_tiro:
-		var desvio: float = deg_to_rad(randf_range(-arma.espalhamento_graus, arma.espalhamento_graus))
+	var a: ArmaEquipada = arma_equipada
+	var espalhamento: float = a.espalhamento_graus()
+	for i in a.projeteis_por_tiro():
+		var desvio: float = deg_to_rad(randf_range(-espalhamento, espalhamento))
 		var projetil: Projetil = arma.cena_projetil.instantiate()
 		destino.add_child(projetil)
-		projetil.configurar(origem, direcao.rotated(desvio), Unidades.px(arma.velocidade_projetil),
-				InfoDano.criar(arma.dano, self), arma.duracao_projetil,
+		projetil.configurar(origem, direcao.rotated(desvio), Unidades.px(a.velocidade_projetil()),
+				InfoDano.criar(a.dano(), self), a.duracao_projetil(),
 				Camadas.PROJETEIS_JOGADOR, Camadas.MUNDO | Camadas.INIMIGOS | Camadas.PONTOS_FRACOS)
 		atirou.emit(projetil)
-	if municao > 0:
-		municao -= 1
-		if municao == 0 and arma_principal != null:
-			equipar(arma_principal)
 
 
 # --- Dano e morte ---

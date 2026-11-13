@@ -25,24 +25,46 @@ func pode_tocar(id_cena: String) -> bool:
 	return progresso.avaliar(c.get("condicao", ""))
 
 
-## Monta a lista de falas da cena e já marca a flag "uma vez" (se houver).
+## Monta a lista de falas da cena e já marca as flags "uma vez" e o contador "duvida".
+## Ordem: 1) a primeira entrada de "prioridade" cuja condição vale (e que ainda não tocou);
+## 2) senão, "falas" ou o sorteio de "variantes".
 ## Retorna lista vazia quando a cena não deve tocar.
 func preparar(id_cena: String) -> Array[Dictionary]:
 	var resultado: Array[Dictionary] = []
 	if not pode_tocar(id_cena):
 		return resultado
 	var c: Dictionary = banco.cena(id_cena)
-	var falas: Array = c.get("falas", [])
-	if c.get("sortear", false):
+	var escolhida: Dictionary = _entrada_prioritaria(c)
+	var falas: Array = []
+	if not escolhida.is_empty():
+		falas = escolhida.get("falas", [])
+	elif c.get("sortear", false):
 		falas = _sortear(id_cena, c.get("variantes", []))
+	else:
+		falas = c.get("falas", [])
 	for fala: Dictionary in falas:
 		if progresso.avaliar(fala.get("condicao", "")):
 			resultado.append(fala)
-	var flag: String = c.get("uma_vez", "")
-	if not flag.is_empty() and not resultado.is_empty():
-		progresso.definir_flag(flag)
-		progresso.salvar()
+	if resultado.is_empty():
+		return resultado
+	var duvida: int = int(c.get("duvida", 0)) + int(escolhida.get("duvida", 0))
+	if duvida > 0:
+		progresso.incrementar("duvida", duvida)
+	for flag: String in [c.get("uma_vez", ""), escolhida.get("uma_vez", "")]:
+		if not flag.is_empty():
+			progresso.definir_flag(flag)
+	progresso.salvar()
 	return resultado
+
+
+func _entrada_prioritaria(c: Dictionary) -> Dictionary:
+	for entrada: Dictionary in c.get("prioridade", []):
+		var flag: String = entrada.get("uma_vez", "")
+		if not flag.is_empty() and progresso.tem_flag(flag):
+			continue
+		if progresso.avaliar(entrada.get("condicao", "")):
+			return entrada
+	return {}
 
 
 func modo(id_cena: String) -> String:
