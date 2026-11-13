@@ -36,3 +36,8 @@ func test_creditos_registram_as_fontes() -> void:
 	var creditos := FileAccess.get_file_as_string("res://assets/CREDITS.md")
 	afirmar(creditos.contains("Jersey10-Regular.ttf"), "Jersey 10 em CREDITS")
 	afirmar(creditos.contains("Micro5-Regular.ttf"), "Micro 5 em CREDITS")
+
+
+func test_fonte_padrao_do_jogo_e_a_das_falas() -> void:
+	afirmar(ThemeDB.fallback_font == Fontes.texto(), "Label sem fonte própria usa a Jersey 10")
+	afirmar_igual(ThemeDB.fallback_font_size, Fontes.TAMANHO_TEXTO, "tamanho padrão")

@@ -19,3 +19,9 @@ static func texto() -> Font:
 
 static func pequena() -> Font:
 	return load(CAMINHO_PEQUENA) as Font
+
+
+## Deixa a fonte das falas como padrão de todo Label/Control sem fonte própria.
+static func aplicar_padrao() -> void:
+	ThemeDB.fallback_font = texto()
+	ThemeDB.fallback_font_size = TAMANHO_TEXTO
