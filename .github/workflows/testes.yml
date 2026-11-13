@@ -1,0 +1,32 @@
+name: Testes
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+env:
+  GODOT_VERSION: 4.5.1
+
+jobs:
+  testes:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Baixar Godot ${{ env.GODOT_VERSION }}
+        run: |
+          curl -sSfL -o godot.zip "https://github.com/godotengine/godot/releases/download/${GODOT_VERSION}-stable/Godot_v${GODOT_VERSION}-stable_linux.x86_64.zip"
+          unzip -q godot.zip
+          mv Godot_v${GODOT_VERSION}-stable_linux.x86_64 godot
+          chmod +x godot
+
+      - name: Importar projeto (detecta erros de script e de cena)
+        run: |
+          ./godot --headless --path . --import 2>&1 | tee import.log
+          if grep -E "SCRIPT ERROR|Parse Error|ERROR: Failed" import.log; then
+            echo "::error::Erros ao importar o projeto"; exit 1
+          fi
+
+      - name: Rodar testes
+        run: ./godot --headless --path . -s res://tests/run_tests.gd
