@@ -55,7 +55,7 @@ def mistura(a, b, t):
     return [round(a[i] + (b[i] - a[i]) * t) for i in range(3)]
 
 
-def montar_paleta(modo, chaves=None, permitir_aviso=False):
+def montar_paleta(modo, chaves=None, permitir_aviso=False, rampas=None):
     """Retorna (rgb Nx3, nomes). Sprite: paleta v0.1 exata. Retrato: rampas derivadas (D-032)."""
     base = {k: hex_rgb(v[0]) for k, v in PAL.items()}
     if not permitir_aviso:
@@ -66,7 +66,7 @@ def montar_paleta(modo, chaves=None, permitir_aviso=False):
     escuro, claro = hex_rgb('#16111c'), hex_rgb('#fff6ea')
     for k, c in base.items():
         cores.append(c); nomes.append(k)
-        if modo == 'retrato' and k not in 'kKt':
+        if (rampas if rampas is not None else modo == 'retrato') and k not in 'kKt':
             for t in (0.22, 0.45):
                 cores.append(mistura(c, escuro, t)); nomes.append(k + '-')
             for t in (0.18, 0.36):
@@ -276,9 +276,9 @@ def xadrez(img, s):
 
 # ----------------------------------------------------------------- principal
 def tratar(entrada, modo='sprite', altura=None, quadro=None, separar=False, fundo='auto', chaves=None,
-           limpar=True, contorno=True, permitir_aviso=False):
+           limpar=True, contorno=True, permitir_aviso=False, rampas=None):
     img = Image.open(entrada).convert('RGBA')
-    paleta, nomes = montar_paleta(modo, chaves, permitir_aviso)
+    paleta, nomes = montar_paleta(modo, chaves, permitir_aviso, rampas)
     i_k = int(np.argmin(np.abs(paleta - np.array(hex_rgb('#16111c'))).sum(1)))
     mask = mascara_figura(img, fundo)
     caixas = componentes(mask) if separar else [None]
@@ -339,12 +339,13 @@ def main(argv=None):
     p.add_argument('--fundo', choices=['auto', 'nenhum'], default='auto')
     p.add_argument('--cores', help='só estas chaves da paleta (ex.: "kKoOhsScbBmMxXa"); contorno sempre entra')
     p.add_argument('--sem-limpeza', action='store_true'); p.add_argument('--sem-contorno', action='store_true')
+    p.add_argument('--rampas', action='store_true', help='usa as rampas ampliadas (5 a 7 tons) também no modo sprite (ex.: a ECO, toda em âmbar)')
     p.add_argument('--permitir-aviso', action='store_true', help='libera a cor AVISO (só para efeitos de ataque)')
     p.add_argument('--previa', type=int, default=4, help='zoom da prévia (0 = sem prévia)')
     a = p.parse_args(argv)
     quadro = tuple(int(v) for v in a.quadro.lower().split('x')) if a.quadro else None
     figs, rel = tratar(a.entrada, a.modo, a.altura, quadro, a.separar, a.fundo, a.cores,
-                       not a.sem_limpeza, not a.sem_contorno, a.permitir_aviso)
+                       not a.sem_limpeza, not a.sem_contorno, a.permitir_aviso, True if a.rampas else None)
     s = folha(figs); s.save(a.saida)
     if a.previa:
         base, ext = os.path.splitext(a.saida); xadrez(s, a.previa).save(base + '_previa' + ext)
