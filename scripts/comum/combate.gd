@@ -12,7 +12,8 @@ var regras: RegrasCombate
 var _portadores: Array[Node] = []
 
 
-func _ready() -> void:
+func _init() -> void:
+	# Carrega já na criação (antes do _ready), para valer desde o primeiro frame.
 	regras = load(CAMINHO_REGRAS) as RegrasCombate
 	if regras == null:
 		regras = RegrasCombate.new()

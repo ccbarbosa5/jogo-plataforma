@@ -21,6 +21,7 @@ func atualizar() -> void:
 	pular_segurado = Input.is_action_pressed(_a("pular"))
 	pular_pressionado = Input.is_action_just_pressed(_a("pular"))
 	atirar_segurado = Input.is_action_pressed(_a("atirar"))
+	atirar_pressionado = Input.is_action_just_pressed(_a("atirar"))
 	dash_pressionado = Input.is_action_just_pressed(_a("dash"))
 	travar_mira_segurado = Input.is_action_pressed(_a("travar_mira"))
 	granada_pressionada = Input.is_action_just_pressed(_a("granada"))

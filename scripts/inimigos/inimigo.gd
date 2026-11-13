@@ -6,6 +6,13 @@ extends CharacterBody2D
 ## Cada inimigo concreto estende esta classe e implementa _comportamento().
 
 signal morreu(inimigo: Inimigo)
+## Últimos instantes antes de um golpe anunciado (pedido de ART: flash na cor AVISO).
+signal aviso_final(inimigo: Inimigo)
+
+## Cor reservada para ataques anunciados (D-033). Nada mais no jogo usa esta cor.
+const COR_AVISO: Color = Color("fff3a0")
+## Duração do flash final do aviso (ART-01, seção 4).
+const DURACAO_AVISO_FINAL: float = 0.2
 
 ## Como o Grilhão reage a este inimigo (GD-02, 1.1).
 enum Peso { LEVE, MEDIO, PESADO }
@@ -43,6 +50,7 @@ var _timer_flash: float = 0.0
 var _puxado_por: Node2D
 var _velocidade_puxao: float = 0.0
 var _contato: Area2D
+var _timer_entrada: float = 0.0
 
 
 func _ready() -> void:
@@ -55,6 +63,7 @@ func _ready() -> void:
 	forma.position = Vector2(0.0, -tamanho.y * 0.5)
 	_criar_area_contato()
 	vida.morreu.connect(_ao_morrer)
+	_timer_entrada = Combate.regras.tempo_entrada_inimigo
 	tree_exiting.connect(func() -> void: Combate.devolver_ficha(self))
 
 
@@ -69,12 +78,16 @@ func _physics_process(delta: float) -> void:
 	else:
 		if not is_on_floor():
 			velocity.y += _gravidade() * delta
+		if esta_entrando():
+			_timer_entrada -= delta
 		if esta_atordoado() or _timer_empurrao > 0.0:
 			velocity.x = move_toward(velocity.x, 0.0, Unidades.px(30.0) * delta)
+		elif esta_entrando():
+			velocity.x = 0.0
 		else:
 			_comportamento(delta)
 		move_and_slide()
-		if not esta_atordoado():
+		if not esta_atordoado() and not esta_entrando():
 			_causar_dano_contato()
 	queue_redraw()
 
@@ -100,6 +113,11 @@ func esta_anunciando() -> bool:
 
 func centro() -> Vector2:
 	return global_position + Vector2(0.0, -tamanho.y * 0.5)
+
+
+## Animação de entrada (D-036): não ataca nem machuca por contato.
+func esta_entrando() -> bool:
+	return _timer_entrada > 0.0
 
 
 func esta_atordoado() -> bool:
@@ -326,6 +344,8 @@ func _ao_morrer() -> void:
 # --- Desenho provisório (status visíveis, pedido de GD a ART) ---
 
 func _desenhar_status() -> void:
+	# Entrada: o corpo pisca meio transparente (o sprite de ART substitui isso).
+	modulate.a = 0.4 + 0.3 * float(int(_timer_entrada * 20.0) % 2) if esta_entrando() else 1.0
 	var topo: float = -tamanho.y
 	if esta_atordoado():
 		var t: float = Time.get_ticks_msec() / 150.0

@@ -41,8 +41,8 @@ func tornar_invulneravel(segundos: float) -> void:
 
 
 ## Retorna true se o dano foi aplicado (false se estava invulnerável ou já morto).
-func receber_dano(quantidade: int) -> bool:
-	if quantidade <= 0 or not esta_vivo() or esta_invulneravel():
+func receber_dano(quantidade: int, ignorar_invulnerabilidade: bool = false) -> bool:
+	if quantidade <= 0 or not esta_vivo() or (esta_invulneravel() and not ignorar_invulnerabilidade):
 		return false
 	atual = maxi(atual - quantidade, 0)
 	_timer_invulneravel = invulnerabilidade_pos_dano

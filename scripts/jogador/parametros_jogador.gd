@@ -50,6 +50,8 @@ extends Resource
 
 @export_group("Vida")
 @export var vida_maxima: int = 4
+## Blocos perdidos ao cair num buraco (D-036).
+@export var dano_buraco: int = 1
 @export var invulnerabilidade_dano: float = 0.8
 
 

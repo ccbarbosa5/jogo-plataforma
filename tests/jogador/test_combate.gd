@@ -143,19 +143,46 @@ func test_dash_atravessa_tiro_inimigo() -> void:
 	afirmar(is_instance_valid(tiro) and not tiro.is_queued_for_deletion(), "o tiro passa direto")
 
 
-func test_arma_pesada_volta_para_a_principal_sem_municao() -> void:
+func test_modificador_de_arma_muda_cadencia_e_projeteis() -> void:
+	# D-038: a arma fica pronta para a mini árvore de habilidades.
 	CenarioTeste.criar_chao(self)
 	var j := CenarioTeste.criar_jogador(self)
+	var tiros: Array[int] = [0]
+	j.atirou.connect(func(_p: Projetil) -> void: tiros[0] += 1)
 	await esperar_frames(2)
-	var pesada: DadosArma = j.arma.duplicate()
-	pesada.nome = "Teste pesada"
-	pesada.municao = 3
-	pesada.cadencia = 30.0
-	var principal: DadosArma = j.arma
-	j.equipar(pesada)
+	var m := ModificadorArma.new()
+	m.mult_cadencia = 0.5
+	m.soma_projeteis_por_tiro = 2
+	m.soma_espalhamento_graus = 10.0
+	j.arma_equipada.adicionar(m)
+	afirmar_proximo(j.arma_equipada.cadencia(), 4.0, 0.001, "cadência pela metade")
 	j.entrada.atirar_segurado = true
-	await esperar_frames(20)
-	afirmar(j.arma == principal, "voltou para a arma principal")
+	await esperar_frames(60)
+	j.entrada.atirar_segurado = false
+	afirmar(tiros[0] >= 10 and tiros[0] <= 15, "~4 disparos × 3 projéteis em 1 s, saíram %d" % tiros[0])
+
+
+func test_arma_equipada_soma_e_multiplica_e_zera_na_run_nova() -> void:
+	var dados: DadosArma = load("res://scenes/armas/fuzil_de_servico.tres")
+	var a := ArmaEquipada.new(dados)
+	afirmar_igual(a.dano(), 10, "dano-base do fuzil")
+	var m1 := ModificadorArma.new()
+	m1.soma_dano = 5
+	var m2 := ModificadorArma.new()
+	m2.mult_dano = 2.0
+	m2.marcadores = [&"perfurante"] as Array[StringName]
+	a.adicionar(m1)
+	a.adicionar(m2)
+	afirmar_igual(a.dano(), 30, "(10 + 5) × 2")
+	afirmar(a.tem_marcador(&"perfurante"), "marcador de comportamento")
+	a.limpar()
+	afirmar_igual(a.dano(), 10, "fim da run: árvore zerada")
+	afirmar(not a.tem_marcador(&"perfurante"), "marcador some")
+
+
+func test_nao_existe_municao_limitada() -> void:
+	var dados := DadosArma.new()
+	afirmar(not "municao" in dados, "D-038: sem munição limitada nem arma pesada")
 
 
 func test_granadas_3_por_sala() -> void:

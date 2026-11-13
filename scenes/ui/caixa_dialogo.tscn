@@ -2,49 +2,6 @@
 
 [ext_resource type="Script" path="res://scripts/ui/caixa_dialogo.gd" id="1"]
 
-[sub_resource type="StyleBoxFlat" id="fundo"]
-bg_color = Color(0.06, 0.07, 0.11, 0.9)
-border_width_top = 1
-border_color = Color(0.6, 0.85, 1, 0.6)
-
 [node name="CaixaDialogo" type="CanvasLayer"]
 layer = 10
 script = ExtResource("1")
-
-[node name="Painel" type="Panel" parent="."]
-anchors_preset = 12
-anchor_top = 1.0
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = 12.0
-offset_top = -78.0
-offset_right = -12.0
-offset_bottom = -18.0
-mouse_filter = 2
-theme_override_styles/panel = SubResource("fundo")
-
-[node name="Nome" type="Label" parent="Painel"]
-layout_mode = 0
-offset_left = 8.0
-offset_top = 3.0
-offset_right = 300.0
-offset_bottom = 17.0
-theme_override_font_sizes/font_size = 9
-
-[node name="Texto" type="Label" parent="Painel"]
-layout_mode = 0
-offset_left = 8.0
-offset_top = 16.0
-offset_right = 448.0
-offset_bottom = 48.0
-theme_override_font_sizes/font_size = 9
-autowrap_mode = 3
-
-[node name="Direcao" type="Label" parent="Painel"]
-modulate = Color(1, 1, 1, 0.5)
-layout_mode = 0
-offset_left = 8.0
-offset_top = 46.0
-offset_right = 448.0
-offset_bottom = 58.0
-theme_override_font_sizes/font_size = 7

@@ -31,5 +31,24 @@ func tocar(id_cena: String) -> bool:
 	return true
 
 
+## Mostra uma cena sem mexer no progresso (sem flags nem "duvida"), para NAR, ART e QA
+## revisarem as falas no jogo. Usa a primeira entrada de cada parte.
+func previsualizar(id_cena: String) -> bool:
+	var caixa := get_tree().get_first_node_in_group("caixa_dialogo") as CaixaDialogo
+	if caixa == null or not banco.tem_cena(id_cena):
+		return false
+	var c: Dictionary = banco.cena(id_cena)
+	var falas: Array[Dictionary] = []
+	var fonte: Array = c.get("falas", [])
+	if fonte.is_empty() and not c.get("prioridade", []).is_empty():
+		fonte = c["prioridade"][0].get("falas", [])
+	if fonte.is_empty() and not c.get("variantes", []).is_empty():
+		fonte = c["variantes"][0]
+	for f: Dictionary in fonte:
+		falas.append(f)
+	caixa.mostrar(id_cena, falas, "conversa", banco)
+	return true
+
+
 func _ao_terminar(id_cena: String) -> void:
 	cena_terminou.emit(id_cena)

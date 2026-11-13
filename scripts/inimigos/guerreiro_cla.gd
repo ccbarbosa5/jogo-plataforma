@@ -31,6 +31,7 @@ var _timer_estado: float = 0.0
 var _tiros_restantes: int = 0
 var _direcao_tiro: Vector2 = Vector2.LEFT
 var _alvo: Node2D
+var _aviso_final_emitido: bool = false
 
 
 func _comportamento(delta: float) -> void:
@@ -42,11 +43,15 @@ func _comportamento(delta: float) -> void:
 			if _alvo != null and Combate.pedir_ficha(self):
 				estado = Estado.AVISO
 				_timer_estado = tempo_aviso
+				_aviso_final_emitido = false
 				olhar_para(_alvo)
 		Estado.AVISO:
 			velocity.x = 0.0
 			if _alvo != null:
 				olhar_para(_alvo)
+			if _timer_estado <= DURACAO_AVISO_FINAL and not _aviso_final_emitido:
+				_aviso_final_emitido = true
+				aviso_final.emit(self)
 			if _timer_estado <= 0.0:
 				_direcao_tiro = _mirar()
 				_tiros_restantes = tiros_por_rajada
@@ -137,9 +142,15 @@ func _draw() -> void:
 	# Canhão no braço.
 	var canhao: Vector2 = Vector2(olhando * (tamanho.x * 0.5), -tamanho.y * 0.6)
 	var cor_canhao: Color = Color("3b4252")
-	if estado == Estado.AVISO and int(_timer_estado * 16.0) % 2 == 0:
-		cor_canhao = Color("ff3b3b")
-		draw_rect(Rect2(Vector2(-2.0, -tamanho.y - 16.0), Vector2(4, 9)), Color("ff3b3b"))
-		draw_rect(Rect2(Vector2(-2.0, -tamanho.y - 5.0), Vector2(4, 2)), Color("ff3b3b"))
+	if estado == Estado.AVISO:
+		# Pose de preparo: canhão em brasa. Últimos 0,2 s: flash na cor AVISO (D-033).
+		cor_canhao = Color("ff5a2e")
+		var final: bool = _timer_estado <= DURACAO_AVISO_FINAL
+		if final or int(_timer_estado * 16.0) % 2 == 0:
+			var cor_aviso: Color = COR_AVISO if not final or int(_timer_estado * 40.0) % 2 == 0 else Color.WHITE
+			draw_rect(Rect2(Vector2(-2.0, -tamanho.y - 16.0), Vector2(4, 9)), cor_aviso)
+			draw_rect(Rect2(Vector2(-2.0, -tamanho.y - 5.0), Vector2(4, 2)), cor_aviso)
+			if final:
+				cor_canhao = cor_aviso
 	draw_rect(Rect2(canhao + Vector2(minf(olhando * 10.0, 0.0), -3.0), Vector2(10, 6)), cor_canhao)
 	_desenhar_status()

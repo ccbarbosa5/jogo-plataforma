@@ -7,6 +7,14 @@ extends Resource
 ## Máximo de ataques anunciados ao mesmo tempo (D-026).
 @export var teto_ataques_anunciados: int = 3
 
+@export_group("Entrada justa (GD-03 2.1 e 2.4; D-036)")
+## Nenhum inimigo surge a menos desta distância de um jogador (tiles).
+@export var distancia_minima_surgimento: float = 6.0
+## Animação de entrada do inimigo: nesse tempo ele não ataca nem machuca por contato.
+@export var tempo_entrada_inimigo: float = 0.5
+## Invulnerabilidade do jogador ao entrar numa sala.
+@export var invulnerabilidade_entrada_sala: float = 1.0
+
 @export_group("Armadura frontal")
 ## Fração do dano frontal que a armadura bloqueia.
 @export var reducao_armadura_frontal: float = 0.5

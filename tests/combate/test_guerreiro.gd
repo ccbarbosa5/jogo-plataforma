@@ -27,7 +27,7 @@ func test_avisa_0_6s_antes_e_atira_rajada_de_3() -> void:
 	CenarioTeste.criar_chao(self)
 	CenarioTeste.criar_jogador(self)
 	var g := CenarioTeste.criar_guerreiro(self, Vector2(CenarioTeste.tiles(9), 0))
-	await esperar_frames(3)
+	await esperar_frames(33)  # 0,5 s de entrada (D-036)
 	afirmar(g.esta_anunciando(), "entra em aviso ao ver o jogador")
 	await esperar_frames(30)  # ~0,55 s
 	afirmar(_projeteis_inimigos().is_empty(), "nenhum tiro durante o aviso")
@@ -43,7 +43,7 @@ func test_rajada_acerta_o_jogador_parado() -> void:
 	CenarioTeste.criar_chao(self)
 	var j := CenarioTeste.criar_jogador(self)
 	CenarioTeste.criar_guerreiro(self, Vector2(CenarioTeste.tiles(9), 0))
-	await esperar_frames(150)
+	await esperar_frames(180)
 	afirmar(j.vida.atual < 4, "a rajada acerta quem fica parado")
 	afirmar(j.vida.atual >= 3, "a invulnerabilidade impede levar os 3 tiros seguidos")
 	Combate.reiniciar()
@@ -67,7 +67,7 @@ func test_fuzil_pela_frente_causa_metade() -> void:
 	CenarioTeste.criar_chao(self)
 	var j := CenarioTeste.criar_jogador(self)
 	var g := CenarioTeste.criar_guerreiro(self, Vector2(CenarioTeste.tiles(10), 0))
-	await esperar_frames(3)
+	await esperar_frames(33)
 	j.entrada.atirar_segurado = true
 	await esperar_frames(1)
 	j.entrada.atirar_segurado = false
@@ -90,4 +90,25 @@ func test_ataca_faccao_rival_na_zona_de_guerra() -> void:
 	var j := CenarioTeste.criar_jogador(self, Vector2(CenarioTeste.tiles(12), 0))
 	await esperar_frames(1)
 	afirmar(g.escolher_alvo(Vector2(500, 200)) == j, "jogador com peso 2× continua sendo o alvo principal")
+	Combate.reiniciar()
+
+
+func test_aviso_final_0_2s_antes_do_tiro() -> void:
+	# Pedido de ART: gancho para o flash na cor AVISO nos últimos 0,2 s.
+	Combate.reiniciar()
+	CenarioTeste.criar_chao(self)
+	CenarioTeste.criar_jogador(self)
+	var g := CenarioTeste.criar_guerreiro(self, Vector2(CenarioTeste.tiles(9), 0))
+	var quadro_aviso: Array[int] = [-1]
+	var quadro: Array[int] = [0]
+	g.aviso_final.connect(func(_i: Inimigo) -> void: quadro_aviso[0] = quadro[0])
+	var quadro_tiro: int = -1
+	for i in 120:
+		await esperar_frames(1)
+		quadro[0] += 1
+		if g.estado == GuerreiroCla.Estado.RAJADA and quadro_tiro < 0:
+			quadro_tiro = quadro[0]
+	afirmar(quadro_aviso[0] > 0, "emitiu aviso_final")
+	afirmar_proximo((quadro_tiro - quadro_aviso[0]) / 60.0, 0.2, 0.04, "0,2 s antes do tiro")
+	afirmar_igual(Inimigo.COR_AVISO, Color("fff3a0"), "cor AVISO reservada (D-033)")
 	Combate.reiniciar()

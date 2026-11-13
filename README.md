@@ -24,9 +24,10 @@ O jogo é dividido em **atos**, e cada ato se passa em um **planeta** com vária
 | Tiro automático | F3 | — |
 | Avançar diálogo | E, Espaço ou J | A |
 | Apagar progresso (falas de "1ª vez" voltam) | F4 | — |
+| Revisar as falas (mostra a próxima cena, sem gravar progresso) | F6 | — |
 | Reiniciar a sala | R | Back |
 
-Os atalhos F2, F3 e F4 são provisórios até existir o menu de opções.
+Os atalhos F2, F3, F4 e F6 são provisórios até existir o menu de opções.
 
 ## Estrutura
 | Pasta | Conteúdo |

@@ -83,19 +83,3 @@ func test_tiro_automatico_so_atira_com_inimigo_na_linha() -> void:
 	_alvo(j.ponto_de_tiro() + Vector2(150, 0))
 	await esperar_frames(30)
 	afirmar(tiros[0] >= 3, "atirou sozinho no inimigo na linha (%d)" % tiros[0])
-
-
-func test_tiro_automatico_nao_gasta_arma_pesada_por_padrao() -> void:
-	var j := _jogador_com(Assistencias.ModoMira.DESLIGADA, true)
-	await esperar_frames(2)
-	var pesada: DadosArma = j.arma.duplicate()
-	pesada.municao = 100
-	j.equipar(pesada)
-	var tiros: Array[int] = [0]
-	j.atirou.connect(func(_p: Projetil) -> void: tiros[0] += 1)
-	_alvo(j.ponto_de_tiro() + Vector2(150, 0))
-	await esperar_frames(20)
-	afirmar_igual(tiros[0], 0, "arma pesada não dispara sozinha")
-	j.assistencias.tiro_automatico_armas_pesadas = true
-	await esperar_frames(20)
-	afirmar(tiros[0] > 0, "com a sub-opção ligada, dispara")

@@ -21,12 +21,14 @@ extends Node2D
 var arena_ativa: bool = false
 var arena_concluida: bool = false
 var _onda: Array[Inimigo] = []
+var _cena_revisao: int = -1
 
 
 func _ready() -> void:
 	Combate.reiniciar()
 	jogador.container_projeteis = projeteis
-	jogador.reabastecer_granadas()
+	jogador.entrar_na_sala()
+	jogador.limite_queda_y = limites_sala.end.y + 24.0
 	var grilhao := jogador.ferramenta as Grilhao
 	if grilhao != null:
 		grilhao.lancou.connect(func() -> void: Dialogos.tocar("queda_grilhao"))
@@ -37,6 +39,7 @@ func _ready() -> void:
 	camera.definir_limites(limites_sala)
 	camera.posicionar_imediato()
 	hud.conectar(jogador)
+	($CaixaDialogo as CaixaDialogo).entrada = jogador.entrada
 	gatilho_arena.collision_layer = 0
 	gatilho_arena.collision_mask = Camadas.JOGADOR
 	gatilho_arena.body_entered.connect(_ao_entrar_arena)
@@ -57,6 +60,12 @@ func _unhandled_input(evento: InputEvent) -> void:
 	if evento.is_action_pressed("debug_tiro_automatico"):
 		opcoes.tiro_automatico = not opcoes.tiro_automatico
 		hud.mostrar_mensagem("Tiro automático: %s" % ("LIGADO" if opcoes.tiro_automatico else "DESLIGADO"), 1.2)
+	if evento.is_action_pressed("debug_ver_dialogos"):
+		# Revisão das falas no jogo (NAR, ART, QA): cada F6 mostra a próxima cena, sem gravar progresso.
+		var cenas: Array = Dialogos.banco.cenas.keys()
+		_cena_revisao = (_cena_revisao + 1) % cenas.size()
+		hud.mostrar_mensagem("Cena %d/%d: %s" % [_cena_revisao + 1, cenas.size(), cenas[_cena_revisao]], 2.0)
+		Dialogos.previsualizar(cenas[_cena_revisao])
 	if evento.is_action_pressed("debug_apagar_progresso"):
 		Progresso.apagar()
 		hud.mostrar_mensagem("Progresso apagado (falas de \"1ª vez\" voltam a tocar)", 1.5)
@@ -81,9 +90,14 @@ func _iniciar_arena() -> void:
 	camera.definir_limites(limites_arena)
 	_ativar_paredes(true)
 	hud.mostrar_mensagem("ALERTA!", 1.0)
+	var jogadores: Array[Vector2] = []
+	for no in get_tree().get_nodes_in_group("jogadores"):
+		jogadores.append((no as Node2D).global_position)
+	var limite := Vector2(limites_arena.position.x + 16.0, limites_arena.end.x - 16.0)
 	for ponto in pontos_onda.get_children():
 		var inimigo: Inimigo = cena_inimigo.instantiate()
-		inimigo.position = (ponto as Node2D).position
+		# Entrada justa (D-036): nunca a menos de 6 tiles de um jogador.
+		inimigo.position = RegrasSurgimento.posicao_justa((ponto as Node2D).position, jogadores, limite)
 		inimigos.add_child(inimigo)
 		_registrar_inimigo(inimigo)
 		_onda.append(inimigo)
