@@ -10,7 +10,7 @@ config_version=5
 
 [application]
 
-config/name="Jogo Plataforma"
+config/name="No Rest"
 run/main_scene="res://scenes/salas/sala_teste.tscn"
 config/features=PackedStringArray("4.5", "GL Compatibility")
 
