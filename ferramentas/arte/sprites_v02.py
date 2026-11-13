@@ -148,28 +148,35 @@ def pernas_ryker():
 
 
 TRONCO_ASCII = """
-.............kkkk...............
-............kcccck..............
+............k.kk.k..............
+...........kckcckck.............
 ...........kcccccck.............
-..........akccccssk.............
-..........kkccsssksk............
-...........kcssssssk............
-............kSssssk.............
+..........akSScsssk.............
+..........kSSsssksk.............
+...........kSssssssk............
+............kSsSSsk.............
 ............kkSSSkk.............
-...........kOooooohk............
-..........kOoooooohhk...........
-..........kOookooohok...........
-..........kOoooooohok...........
-...........kOooooook............
-...........kOOOOOOOk............
+...........kOooshhk.............
+..........kOoossshhk............
+..........kOoosssohk............
+..........kOoosssohk............
+...........kOkwwkOk.............
+...........kOOwwOOk.............
 """  # topo da cabeça na linha 4; cintura na linha 17
+
+OMBREIRA_ASCII = """
+...............k.k
+..............kwkwk
+.............kwwwWk
+.............kWWWk.
+"""  # troféu da final da Grande Arena, no ombro DIREITO (o da frente, olhando para a direita)
 
 DIRECOES = {  # nome: vetor de mira (y para baixo)
     'frente': (1, 0), 'diag_cima': (1, -1), 'cima': (0, -1), 'diag_baixo': (1, 1), 'baixo': (0, 1)}
 OMBRO_FRENTE, OMBRO_TRAS = (18.5, 13.5), (13.5, 13.5)
 
 
-def braco(c, ombro, mao, cor, cor_sombra, dobra=1):
+def braco(c, ombro, mao, cor, cor_sombra, dobra=1, cor_antebraco=None):
     # IK de 2 ossos (4 + 4 px), cotovelo para baixo
     L1 = L2 = 4.2
     dx, dy = mao[0] - ombro[0], mao[1] - ombro[1]; dist = min(math.hypot(dx, dy), L1 + L2 - 0.01)
@@ -178,52 +185,120 @@ def braco(c, ombro, mao, cor, cor_sombra, dobra=1):
     opcoes = [(ombro[0] + L1 * math.cos(base + alfa * sg), ombro[1] + L1 * math.sin(base + alfa * sg)) for sg in (1, -1)]
     cotovelo = max(opcoes, key=lambda p: p[1])  # cotovelo sempre para baixo, longe do rosto
     segmento(c, ombro, cotovelo, 0.95, cor)
-    segmento(c, cotovelo, mao, 0.9, cor)
+    segmento(c, cotovelo, mao, 0.9, cor_antebraco or cor)  # faixas de luta no antebraço
     disco(c, mao[0], mao[1], 1.0, cor_sombra)
 
 
-def desenhar_arma(c, empunhadura, d, recuo):
-    """ARMA PROVISÓRIA (carabina de sucata). Trocar quando a arma própria do Ryker for definida (D-038)."""
+# ---------------------------------------------------------------- armas (D-041)
+# Cada arma é um "mapa" cor(t, s): t = distância ao longo do cano (0 = empunhadura),
+# s = distância lateral (negativo = lado de cima). Desenhada em qualquer direção de mira.
+def _mordida(t, s):
+    """Mordida: rebitadeira de mineração (NAR-03). Faixas de perigo LARANJA e pretas (amarelo é a cor AVISO)."""
+    if -1.2 <= t <= 0.2 and 1.2 <= s <= 3.0: return 'x'                      # cabo
+    if 2.0 <= t <= 5.0 and 1.2 <= s <= 3.2: return 'm'                       # carregador de rebites
+    if -4.0 <= t <= -1.5 and -1.5 <= s <= 0.6: return 'w' if s < -0.3 else 'W'  # placa de osso Kharn (sucata)
+    if -4.0 <= t <= 9.0 and -1.5 <= s <= 1.2:
+        if 1.0 <= t <= 7.0 and s < 0.0: return 'o' if int(t // 2) % 2 else 'k'  # faixas de perigo
+        return 'X' if s < -0.6 else 'x'
+    if 9.0 <= t <= 10.6 and -1.0 <= s <= 0.8:
+        return 'h' if t >= 10.1 and abs(s) <= 0.35 else 'x'                  # bico com rebite incandescente
+    return None
+
+
+def _bramido(t, s):
+    """Bramido: canhão dos campeões do Clã Kesh (NAR-03), quase do tamanho do Ryker."""
+    if -1.0 <= t <= 1.0 and 2.5 <= s <= 5.0: return 'x'                      # empunhadura humana soldada
+    if -5.0 <= t < -2.0 and -2.0 <= s <= 2.0: return 'x'
+    if -2.0 <= t < 13.0 and -3.0 <= s <= 2.5:
+        if 0.0 <= t <= 8.0 and s <= -0.5: return 'w' if s < -1.5 else 'W'    # placas de osso
+        if 9.5 <= t <= 10.5 or 11.5 <= t <= 12.5: return 'e'                # listras do Clã Kesh
+        return 'X' if s < -2.2 else 'x'
+    if 13.0 <= t <= 16.6 and -3.5 <= s <= 3.0:
+        if t >= 15.8 and abs(s) <= 1.3: return 'f'                           # brasa dentro da boca
+        return 'X' if s < -2.7 else 'x'
+    return None
+
+
+ARMAS = {  # mapa, limites (t0, t1, s0, s1), comprimento até a boca, distância da mão de apoio
+    'mordida': (_mordida, (-4.5, 11.0, -2.0, 3.5), 10.6, 4.0),
+    'bramido': (_bramido, (-5.5, 17.0, -4.0, 5.5), 16.6, 7.0),
+}
+
+
+def desenhar_arma(c, empunhadura, d, recuo, arma='mordida'):
+    fn, (t0, t1, s0, s1), comp, _ = ARMAS[arma]
     ux, uy = d; n = math.hypot(ux, uy); ux, uy = ux / n, uy / n
-    px_, py_ = -uy, ux  # perpendicular
+    px_, py_ = -uy, ux  # perpendicular: + = lado de baixo da arma
     g = (empunhadura[0] - ux * recuo, empunhadura[1] - uy * recuo)
-    coronha = (g[0] - ux * 4, g[1] - uy * 4)
-    cano = (g[0] + ux * 9, g[1] + uy * 9)
-    corpo_fim = (g[0] + ux * 5, g[1] + uy * 5)
-    lc = camada()
-    linha(lc, coronha, cano, rgb('x'))
-    linha(lc, (coronha[0] + px_ * -1, coronha[1] + py_ * -1), (corpo_fim[0] + px_ * -1, corpo_fim[1] + py_ * -1), rgb('X'))
-    linha(lc, g, (g[0] + px_ * 2, g[1] + py_ * 2), rgb('x'))  # cabo
+    lc = camada(*c.size); W, H = c.size
+    raio = int(max(abs(t0), abs(t1), abs(s0), abs(s1))) + 2
+    for y in range(int(g[1]) - raio, int(g[1]) + raio + 1):  # pinta cada pixel pelo seu centro
+        for x in range(int(g[0]) - raio, int(g[0]) + raio + 1):
+            if not (0 <= x < W and 0 <= y < H): continue
+            dx, dy = x + 0.5 - g[0], y + 0.5 - g[1]
+            t, s_ = dx * ux + dy * uy, dx * px_ + dy * py_
+            if t0 <= t <= t1 and s0 <= s_ <= s1:
+                ch = fn(t, s_)
+                if ch: lc.putpixel((x, y), rgb(ch))
     c.alpha_composite(outline(lc))
-    return cano
+    return (g[0] + ux * comp, g[1] + uy * comp)
 
 
-def tronco_quadro(nome, recuo=0, flash=False):
+def clarao(q, cano, u, tipo):
+    """Clarões de boca. Nunca usam a cor AVISO (D-033)."""
+    cx, cy = cano
+    if tipo == 'mordida':
+        disco(q, cx + u[0] * 2, cy + u[1] * 2, 1.8, rgb('h')); disco(q, cx + u[0] * 2, cy + u[1] * 2, 1.0, rgb('t'))
+    elif tipo == 'mordida_rajada':  # três clarões em fila = "rajada de 3"
+        for k, r in ((2, 1.7), (5, 1.4), (8, 1.1)):
+            disco(q, cx + u[0] * k, cy + u[1] * k, r, rgb('h'))
+        disco(q, cx + u[0] * 2, cy + u[1] * 2, 0.9, rgb('t'))
+    elif tipo == 'bramido_balins':  # leque largo e curto
+        for ang in (-28, -14, 0, 14, 28):
+            a = math.radians(ang); v = (u[0] * math.cos(a) - u[1] * math.sin(a), u[0] * math.sin(a) + u[1] * math.cos(a))
+            segmento(q, (cx, cy), (cx + v[0] * 6, cy + v[1] * 6), 0.7, rgb('f'))
+            segmento(q, (cx, cy), (cx + v[0] * 3.5, cy + v[1] * 3.5), 0.6, rgb('h'))
+        disco(q, cx + u[0], cy + u[1], 1.6, rgb('t'))
+    elif tipo == 'bramido_cerco':  # jato longo e estreito = "bala única"
+        segmento(q, (cx, cy), (cx + u[0] * 10, cy + u[1] * 10), 1.5, rgb('f'))
+        segmento(q, (cx, cy), (cx + u[0] * 7, cy + u[1] * 7), 0.8, rgb('t'))
+
+
+def tronco_quadro(nome, recuo=0, flash=None, arma='mordida', lado=32):
+    """Tronco + braços + arma numa direção. lado 32 (origem nos pés em (16,32)) ou 48 (origem em (24,48))."""
+    ox, oy = (lado - 32) // 2, lado - 32
     d = DIRECOES[nome]; n = math.hypot(*d); u = (d[0] / n, d[1] / n)
-    centro = (17.0, 15.5)  # altura do peito
+    sh = lambda p: (p[0] + ox, p[1] + oy)
+    centro = sh((17.0, 15.5))  # altura do peito
     emp = (centro[0] + u[0] * 5 + (2 if d[0] == 0 else 0), centro[1] + u[1] * 4)
-    apoio = (emp[0] + u[0] * 4, emp[1] + u[1] * 4)
-    # braço de trás (algema + corrente), atrás do corpo
-    bt = camada()
-    braco(bt, OMBRO_TRAS, (apoio[0] - u[0] * recuo, apoio[1] - u[1] * recuo), rgb('S'), rgb('S'))
+    dist_apoio = ARMAS[arma][3]
+    apoio = (emp[0] + u[0] * dist_apoio, emp[1] + u[1] * dist_apoio)
+    bt = camada(lado, lado)
+    braco(bt, sh(OMBRO_TRAS), (apoio[0] - u[0] * recuo, apoio[1] - u[1] * recuo), rgb('S'), rgb('m'), 1, rgb('m'))
     mx, my = int(apoio[0] - u[0] * recuo), int(apoio[1] - u[1] * recuo)
-    bt.putpixel((mx, my), rgb('M'))  # algema
+    if 0 <= mx < lado and 0 <= my < lado: bt.putpixel((mx, my), rgb('M'))  # algema
     for i in range(1, 4):  # corrente pendurada (sempre cai para baixo)
-        if 0 <= my + i < 32: bt.putpixel((mx - (i // 2), my + i), rgb('m'))
+        if 0 <= my + i < lado and 0 <= mx - (i // 2) < lado: bt.putpixel((mx - (i // 2), my + i), rgb('m'))
     bt = outline(bt)
-    corpo = camada(); ascii_em(corpo, TRONCO_ASCII, 0, 4); corpo = outline(corpo)
-    arma = camada(); cano = desenhar_arma(arma, emp, u, recuo)
-    bf = camada(); braco(bf, OMBRO_FRENTE, (emp[0] - u[0] * recuo, emp[1] - u[1] * recuo), rgb('s'), rgb('S'), -1)
+    corpo = camada(lado, lado); ascii_em(corpo, TRONCO_ASCII, ox, 4 + oy); corpo = outline(corpo)
+    camada_arma = camada(lado, lado); cano = desenhar_arma(camada_arma, emp, u, recuo, arma)
+    bf = camada(lado, lado); braco(bf, sh(OMBRO_FRENTE), (emp[0] - u[0] * recuo, emp[1] - u[1] * recuo), rgb('s'), rgb('M'), -1, rgb('M'))
     bf = outline(bf)
-    q = compor(bt, corpo, arma, bf)
-    if flash:  # clarão de boca (nunca usa a cor AVISO)
-        fx, fy = cano[0] + u[0] * 2, cano[1] + u[1] * 2
-        disco(q, fx, fy, 1.8, rgb('h')); disco(q, fx, fy, 1.0, rgb('t'))
+    omb = camada(lado, lado); ascii_em(omb, OMBREIRA_ASCII, ox, 11 + oy)
+    q = compor(bt, corpo, camada_arma, bf, omb)
+    if flash: clarao(q, cano, u, flash)
     return q
 
 
-def tronco_ryker():
-    return {nome: [tronco_quadro(nome), tronco_quadro(nome, 1, True), tronco_quadro(nome, 1)] for nome in DIRECOES}
+def tronco_ryker(arma='mordida', lado=48):
+    """4 quadros por direção: 0 parado, 1 disparo, 2 recuo, 3 disparo do modo especial. Quadro 48×48, origem (24, 48)."""
+    if arma == 'mordida':
+        return {n: [tronco_quadro(n, 0, None, 'mordida', lado), tronco_quadro(n, 1, 'mordida', 'mordida', lado),
+                    tronco_quadro(n, 1, None, 'mordida', lado), tronco_quadro(n, 1, 'mordida_rajada', 'mordida', lado)]
+                for n in DIRECOES}
+    return {n: [tronco_quadro(n, 0, None, 'bramido', lado), tronco_quadro(n, 2, 'bramido_balins', 'bramido', lado),
+                tronco_quadro(n, 1, None, 'bramido', lado), tronco_quadro(n, 2, 'bramido_cerco', 'bramido', lado)]
+            for n in DIRECOES}
 
 
 def silhueta_cor(img, cor):
@@ -235,8 +310,9 @@ def silhueta_cor(img, cor):
 
 
 def ryker_inteiro(pernas, tronco, desl=0, tronco_dy=0):
-    q = camada(); q.alpha_composite(pernas)
-    t = camada(); t.alpha_composite(tronco, (0, desl + tronco_dy)); q.alpha_composite(t)
+    """Pernas (32×32) + tronco (48×48) num quadro 48×48, origem nos pés em (24, 48)."""
+    q = camada(48, 48); q.alpha_composite(pernas, (8, 16))
+    t = camada(48, 48); t.alpha_composite(tronco, (0, desl + tronco_dy)); q.alpha_composite(t)
     return q
 
 
@@ -245,11 +321,11 @@ def dash_ryker(pern, tron):
     corpo = ryker_inteiro(base_p, tron['frente'][0], d, 1)
     rastro = silhueta_cor(corpo, 'a'); rastro.putalpha(rastro.getchannel('A').point(lambda v: v * 0.45))
     quadros = []
-    for i, off in enumerate([0, 3, 5, 6]):
-        q = camada(48, 32)  # quadro largo para o rastro âmbar; origem em (32, 32)
+    for i, off in enumerate([0, 3, 5, 6]):  # rastro âmbar ficando para trás
+        q = camada(48, 48)
         if i > 0:
-            q.alpha_composite(rastro, (16 - off - 4, 0))
-        q.alpha_composite(corpo, (16, 0))
+            q.alpha_composite(rastro, (-off - 4, 0))
+        q.alpha_composite(corpo)
         quadros.append(q)
     return quadros
 
@@ -257,7 +333,7 @@ def dash_ryker(pern, tron):
 def morte_ryker(pern, tron):
     """O corpo vira poeira de luz âmbar subindo: a âncora puxando de volta para a Eco."""
     corpo = ryker_inteiro(pern['parado'][0][0], tron['frente'][0])
-    rnd = random.Random(4); px = [(x, y) for y in range(32) for x in range(32) if corpo.getpixel((x, y))[3]]
+    rnd = random.Random(4); px = [(x, y) for y in range(48) for x in range(48) if corpo.getpixel((x, y))[3]]
     ordem = sorted(px, key=lambda p: (p[1] + rnd.random() * 10))  # some de cima para baixo, com ruído
     quadros = []
     for i in range(8):
@@ -266,8 +342,8 @@ def morte_ryker(pern, tron):
             q.putpixel((x, y), TRANSP)
         for (x, y) in ordem[max(0, n - 25):n]:
             yy = y - (i * 2) - rnd.randint(0, 3)
-            if 0 <= yy < 32 and rnd.random() < 0.45:
-                q.putpixel((x, yy), rgb('a') if rnd.random() < 0.7 else rgb('y' if False else 't'))
+            if 0 <= yy < 48 and rnd.random() < 0.45:
+                q.putpixel((x, yy), rgb('a') if rnd.random() < 0.7 else rgb('t'))
         quadros.append(q)
     return quadros
 
@@ -513,10 +589,45 @@ def mockup_v02():
     tela.alpha_composite(tile(6, 2), (16 * 16, 4 * 16))
     tela.alpha_composite(tile(1, 3), (4 * 16, 13 * 16)); tela.alpha_composite(tile(3, 3), (18 * 16, 13 * 16))
     pern = pernas_ryker(); tron = tronco_ryker(); qs, ds = pern['correr']
-    tela.alpha_composite(ryker_inteiro(qs[2], tron['diag_cima'][1], ds[2]), (94, 192))
+    tela.alpha_composite(ryker_inteiro(qs[2], tron['diag_cima'][1], ds[2]), (86, 176))
     k = guerreiro(0, 2).transpose(Image.FLIP_LEFT_RIGHT); tela.alpha_composite(k, (268, 160))
     tela.alpha_composite(Image.open(os.path.join(V, 'varrek_parallax_3_primeiro_plano.png')))
     return tela
+
+# =====================================================================
+# PROJÉTEIS E ÍCONES DAS ARMAS — desenhados apontando para a DIREITA (o código gira).
+# Tiros do jogador: sem contorno e claros; tiros inimigos: com contorno (ART-01, seção 3).
+# =====================================================================
+def projetil(tipo):
+    if tipo == 'rebite':  # Mordida: rebite incandescente
+        im = camada(7, 3); ascii_em(im, "..oohh.\n.Oohhtt\n..oohh.")
+    elif tipo == 'rebite_rajada':  # Mordida no modo rajada (ramo B): rastro mais longo e cabeça mais clara
+        im = camada(10, 3); ascii_em(im, "...oohhh..\nOOoohhhttt\n...oohhh..")
+    elif tipo == 'golpe_do_campeao':  # Mordida, Ápice A3 "Grande Arena"
+        im = camada(14, 7)
+        ascii_em(im, "......ohh.....\n...oohhhhhh...\n.Oohhhtttthh..\nOoohhtttttthh.\n.Oohhhtttthh..\n...oohhhhhh...\n......ohh.....")
+    elif tipo == 'balim':  # Bramido: cada um dos balins
+        im = camada(3, 3); ascii_em(im, ".h.\nhth\n.h.")
+    elif tipo == 'bala_cerco':  # Bramido no modo bala única (ramo A)
+        im = camada(13, 5); ascii_em(im, "...ffffhh....\n.Offfhhhhtt..\nOfffhhhtttth.\n.Offfhhhhtt..\n...ffffhh....")
+    elif tipo == 'bala_carregada':  # Bramido, Ápice A3 "Artilharia" (explode no impacto)
+        im = camada(16, 9)
+        ascii_em(im, ".......ff.......\n....fffhhff.....\n..ffhhhhhhhf....\n.Ofhhhtttthhf...\nOffhhttttttthf..\n.Ofhhhtttthhf...\n..ffhhhhhhhf....\n....fffhhff.....\n.......ff.......")
+    return im
+
+
+def icone_arma(arma, w, h, escala):
+    """Ícone de perfil (Arsenal, árvore): a arma desenhada maior, sem personagem."""
+    fn, (t0, t1, s0, s1), comp, _ = ARMAS[arma]
+    im = camada(w, h)
+    g = (w / 2 - (t0 + t1) / 2 * escala, h / 2 - (s0 + s1) / 2 * escala)
+    for y in range(h):
+        for x in range(w):
+            t, s_ = (x + 0.5 - g[0]) / escala, (y + 0.5 - g[1]) / escala
+            ch = fn(t, s_)
+            if ch: im.putpixel((x, y), rgb(ch))
+    return outline(im)
+
 
 # =====================================================================
 def main():
@@ -524,8 +635,14 @@ def main():
     R = ('personagens', 'ryker')
     for nome, (qs, _) in pern.items():
         salvar(folha(qs), *R, f'ryker_pernas_{nome}.png')
-    for nome, qs in tron.items():
+    for nome, qs in tron.items():  # Mordida (arma própria) = folhas sem sufixo
         salvar(folha(qs), *R, f'ryker_tronco_{nome}.png')
+    for nome, qs in tronco_ryker('bramido').items():
+        salvar(folha(qs), *R, f'ryker_tronco_bramido_{nome}.png')
+    for tipo in ('rebite', 'rebite_rajada', 'golpe_do_campeao', 'balim', 'bala_cerco', 'bala_carregada'):
+        salvar(projetil(tipo), 'armas', 'projeteis', f'{tipo}.png')
+    salvar(icone_arma('mordida', 32, 16, 1.9), 'armas', 'icones', 'icone_mordida.png')
+    salvar(icone_arma('bramido', 48, 24, 1.9), 'armas', 'icones', 'icone_bramido.png')
     salvar(folha(dash_ryker(pern, tron)), *R, 'ryker_dash.png')
     salvar(folha(morte_ryker(pern, tron)), *R, 'ryker_morte.png')
     for nome, (_, ds) in pern.items():  # deslocamento do tronco por quadro (copiar para o LEIAME se mudar)
