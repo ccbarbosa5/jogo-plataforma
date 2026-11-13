@@ -1,0 +1,47 @@
+GIMP Palette
+Name: Jogo Plataforma v0.1
+Columns: 8
+#
+ 22  17  28	Contorno
+ 43  34  54	Sombra profunda
+196 101  46	Macacão
+130  57  31	Macacão sombra
+235 163  92	Macacão luz
+220 160 122	Pele
+160 100  74	Pele sombra
+ 51  36  31	Cabelo
+ 61  76  96	Lona azul
+ 38  49  66	Lona sombra
+ 94  99 112	Metal
+164 171 182	Metal luz
+ 75  71  83	Arma
+125 120 134	Arma luz
+ 86  96  74	Kharn pele
+ 54  61  48	Kharn sombra
+124 138 108	Kharn luz
+220 207 174	Osso
+157 145 117	Osso sombra
+156  53  39	Pintura de guerra
+255  90  46	Energia Kharn
+ 76  44  94	Quitina
+ 43  24  56	Quitina sombra
+125  76 144	Quitina luz
+163 226  60	Ácido
+ 87 144  31	Ácido escuro
+184 212 224	Asa
+255 201  92	Âmbar (ECO)
+ 79 176 166	Antigos
+ 42 106 102	Antigos sombra
+255 243 160	AVISO (reservada)
+223 248 255	Tiro do jogador
+ 30  20  36	Cenário ceu0
+ 58  31  48	Cenário ceu1
+106  48  48	Cenário ceu2
+162  82  58	Cenário ceu3
+201 119  63	Cenário ceu4
+ 74  42  51	Cenário longe
+ 47  29  40	Cenário meio
+ 32  20  29	Cenário perto
+ 58  51  64	Cenário chao
+ 91  82  98	Cenário chao_luz
+ 37  31  43	Cenário chao_sombra
