@@ -1,4 +1,4 @@
-# Jogo Plataforma (título provisório)
+# No Rest
 
 Shooter de plataforma 2D no estilo **Metal Slug**, com estrutura roguelike inspirada em **Hades**.
 

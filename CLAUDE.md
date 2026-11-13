@@ -1,4 +1,4 @@
-# Regras do repositório — Jogo Plataforma
+# Regras do repositório — No Rest
 
 Este repositório é o código do jogo do estúdio. A visão do jogo e as decisões oficiais ficam no documento `00-DIRETORIA/CENTRAL.md` do projeto "Jogo Plataforma" no Claude. Leia esse documento antes de começar qualquer mudança de design.
 
