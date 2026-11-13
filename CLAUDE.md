@@ -16,6 +16,13 @@ Este repositório é o código do jogo do estúdio. A visão do jogo e as decis�
 - Uma cena por entidade (jogador, inimigo, arma, sala), com o script na mesma pasta lógica.
 - Antes de abrir o PR, confirme que o projeto abre e roda sem erros.
 
+## Testes automáticos
+- Todo PR roda o workflow `Testes` (GitHub Actions). Ele importa o projeto no Godot 4.5.1 headless e executa `tests/run_tests.gd`. Um PR com teste falhando não é aceito.
+- Para rodar localmente: `godot --headless --path . --import` e depois `godot --headless --path . -s res://tests/run_tests.gd`.
+- Para escrever um teste: crie `tests/<area>/test_<nome>.gd` com `extends TestCase` e métodos `func test_algo() -> void:`. Use `afirmar`, `afirmar_igual`, `afirmar_proximo`, `instanciar("res://...tscn")` e `await esperar_frames(n)`.
+- Toda mecânica nova chega com pelo menos um teste. Exemplos: o pulo atinge a altura definida por GD, o dash dá invulnerabilidade, o tiro causa o dano configurado.
+- O teste `test_todas_as_cenas_carregam` verifica automaticamente se todas as cenas em `scenes/` carregam.
+
 ## Arte e áudio
 - Pixel art com resolução interna de 480×270 e filtro *Nearest* (já configurado no `project.godot`).
 - Sprites em PNG, áudio em OGG (música) ou WAV (efeitos curtos).
