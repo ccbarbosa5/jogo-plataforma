@@ -8,3 +8,4 @@ const PROJETEIS_JOGADOR: int = 1 << 3 ## camada 4
 const PROJETEIS_INIMIGO: int = 1 << 4 ## camada 5
 const PLATAFORMAS: int = 1 << 5       ## camada 6: plataformas de mão única (dá para atravessar por baixo)
 const GANCHOS: int = 1 << 6           ## camada 7: pontos onde o Grilhão engata
+const PONTOS_FRACOS: int = 1 << 7     ## camada 8: hitbox de ponto fraco dos inimigos

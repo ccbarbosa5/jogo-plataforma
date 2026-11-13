@@ -7,7 +7,7 @@ size = Vector2(6, 2)
 
 [node name="ProjetilJogador" type="Area2D"]
 collision_layer = 8
-collision_mask = 5
+collision_mask = 133
 monitorable = false
 script = ExtResource("1")
 cor = Color(1, 0.92, 0.45, 1)

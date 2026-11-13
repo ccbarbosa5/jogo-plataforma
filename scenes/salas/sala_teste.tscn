@@ -3,10 +3,14 @@
 [ext_resource type="Script" path="res://scripts/salas/sala.gd" id="1"]
 [ext_resource type="Script" path="res://scripts/salas/bloco.gd" id="2"]
 [ext_resource type="Script" path="res://scripts/salas/ponto_gancho.gd" id="3"]
-[ext_resource type="PackedScene" path="res://scenes/inimigos/soldado.tscn" id="4"]
+[ext_resource type="PackedScene" path="res://scenes/inimigos/guerreiro_cla.tscn" id="4"]
 [ext_resource type="PackedScene" path="res://scenes/jogador/ryker.tscn" id="5"]
 [ext_resource type="Script" path="res://scripts/salas/camera_jogo.gd" id="6"]
 [ext_resource type="PackedScene" path="res://scenes/ui/hud.tscn" id="7"]
+[ext_resource type="PackedScene" path="res://scenes/inimigos/boneco.tscn" id="8"]
+[ext_resource type="Script" path="res://scripts/inimigos/ponto_fraco.gd" id="9"]
+[ext_resource type="PackedScene" path="res://scenes/ui/caixa_dialogo.tscn" id="10"]
+[ext_resource type="Script" path="res://scripts/salas/gatilho_dialogo.gd" id="11"]
 
 [sub_resource type="RectangleShape2D" id="gatilho"]
 size = Vector2(16, 270)
@@ -58,7 +62,7 @@ script = ExtResource("2")
 tamanho = Vector2(48, 32)
 
 [node name="Plataforma4" type="StaticBody2D" parent="Mundo"]
-position = Vector2(820, 176)
+position = Vector2(820, 160)
 script = ExtResource("2")
 tamanho = Vector2(96, 8)
 uma_via = true
@@ -88,20 +92,39 @@ script = ExtResource("3")
 
 [node name="Inimigos" type="Node2D" parent="."]
 
-[node name="Soldado1" parent="Inimigos" instance=ExtResource("4")]
-position = Vector2(440, 240)
+[node name="BonecoLeve" parent="Inimigos" instance=ExtResource("8")]
+position = Vector2(220, 240)
+peso = 0
+tamanho = Vector2(16, 24)
 
-[node name="Soldado2" parent="Inimigos" instance=ExtResource("4")]
-position = Vector2(560, 192)
+[node name="Guerreiro1" parent="Inimigos" instance=ExtResource("4")]
+position = Vector2(470, 240)
 
-[node name="SoldadoPesado" parent="Inimigos" instance=ExtResource("4")]
+[node name="Guerreiro2" parent="Inimigos" instance=ExtResource("4")]
+position = Vector2(580, 192)
+
+[node name="BonecoPesado" parent="Inimigos" instance=ExtResource("8")]
 position = Vector2(880, 240)
-pesado = true
+peso = 2
+tamanho = Vector2(40, 64)
+
+[node name="PontoFraco" type="Area2D" parent="Inimigos/BonecoPesado"]
+position = Vector2(14, -56)
+script = ExtResource("9")
 
 [node name="Ryker" parent="." instance=ExtResource("5")]
 position = Vector2(48, 240)
 
 [node name="Projeteis" type="Node2D" parent="."]
+
+[node name="AvisoInimigoGrande" type="Area2D" parent="."]
+position = Vector2(330, 0)
+script = ExtResource("11")
+cena = "queda_inimigo_grande"
+
+[node name="Forma" type="CollisionShape2D" parent="AvisoInimigoGrande"]
+position = Vector2(8, 135)
+shape = SubResource("gatilho")
 
 [node name="GatilhoArena" type="Area2D" parent="."]
 position = Vector2(1000, 0)
@@ -125,16 +148,21 @@ cor = Color(0.75, 0.3, 0.3, 1)
 [node name="PontosOnda" type="Node2D" parent="."]
 
 [node name="Onda1" type="Marker2D" parent="PontosOnda"]
-position = Vector2(1100, 240)
+position = Vector2(1120, 240)
 
 [node name="Onda2" type="Marker2D" parent="PontosOnda"]
-position = Vector2(1380, 240)
+position = Vector2(1400, 240)
 
 [node name="Onda3" type="Marker2D" parent="PontosOnda"]
 position = Vector2(1328, 184)
+
+[node name="Onda4" type="Marker2D" parent="PontosOnda"]
+position = Vector2(1240, 240)
 
 [node name="Camera" type="Camera2D" parent="."]
 position = Vector2(240, 135)
 script = ExtResource("6")
 
 [node name="Hud" parent="." instance=ExtResource("7")]
+
+[node name="CaixaDialogo" parent="." instance=ExtResource("10")]

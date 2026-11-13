@@ -1,0 +1,1012 @@
+{
+ "fonte": "NAR/01-dialogos-primeira-run.md v0.1",
+ "falantes": {
+  "RYKER": {
+   "nome": "Ryker",
+   "cor": "#c8b273"
+  },
+  "ECO": {
+   "nome": "ECO",
+   "cor": "#9be7ff"
+  },
+  "TOR-AMA": {
+   "nome": "Tor-Ama",
+   "cor": "#d08770"
+  },
+  "COLMEIA": {
+   "nome": "A Colmeia",
+   "cor": "#a3be8c"
+  },
+  "MERCADOR": {
+   "nome": "Mercador Ilo",
+   "cor": "#b48ead"
+  },
+  "UR-KESH": {
+   "nome": "Ur-Kesh",
+   "cor": "#bf616a"
+  },
+  "GARRAK": {
+   "nome": "Garrak",
+   "cor": "#d8a657"
+  },
+  "VOSSA": {
+   "nome": "Vossa Margem",
+   "cor": "#e0b0ff"
+  },
+  "SETE": {
+   "nome": "Sete",
+   "cor": "#8ce99a"
+  },
+  "SINAL": {
+   "nome": "Sinal",
+   "cor": "#a0a0a0"
+  }
+ },
+ "cenas": {
+  "abertura": {
+   "modo": "conversa",
+   "uma_vez": "abertura_vista",
+   "falas": [
+    {
+     "id": "ABER_01",
+     "falante": "ECO",
+     "texto": "Molde 4. Reconstrução concluída. Batimentos: presentes. Sarcasmo: carregando."
+    },
+    {
+     "id": "ABER_02",
+     "falante": "RYKER",
+     "texto": "...Eu morri."
+    },
+    {
+     "id": "ABER_03",
+     "falante": "ECO",
+     "texto": "Morreu. Com bastante estilo, segundo os registros. Sua nave de fuga foi atingida por um Kharn e por um Vesh ao mesmo tempo. Eles quase nunca concordam em alguma coisa."
+    },
+    {
+     "id": "ABER_04",
+     "falante": "RYKER",
+     "texto": "Quem é você? Onde eu tô?"
+    },
+    {
+     "id": "ABER_05",
+     "falante": "ECO",
+     "texto": "Eu sou a ECO. Esta é a Eco. Sim, a nave e eu temos o mesmo nome. Não fui eu que escolhi."
+    },
+    {
+     "id": "ABER_06",
+     "falante": "RYKER",
+     "texto": "E quem escolheu?"
+    },
+    {
+     "id": "ABER_07",
+     "falante": "ECO",
+     "texto": "Pessoas que morreram há muito tempo."
+    },
+    {
+     "id": "ABER_08",
+     "falante": "RYKER",
+     "texto": "...Você reconstruiu até a algema.",
+     "direcao": "olha para o pulso, onde ainda está a algema"
+    },
+    {
+     "id": "ABER_09",
+     "falante": "ECO",
+     "texto": "Eu reconstruo o que você é. Pelo visto, a algema faz parte."
+    },
+    {
+     "id": "ABER_10",
+     "falante": "RYKER",
+     "texto": "Tá. Valeu, eu acho. Agora me larga num planeta humano qualquer e a gente fica quite.",
+     "direcao": "pausa"
+    },
+    {
+     "id": "ABER_11",
+     "falante": "ECO",
+     "texto": "Não existe planeta humano neste setor. Existe isto."
+    },
+    {
+     "id": "ABER_12",
+     "falante": "SINAL",
+     "texto": "...qualquer um... Varrek... ainda estamos vivos...",
+     "direcao": "chiado, voz humana falhando"
+    },
+    {
+     "id": "ABER_13",
+     "falante": "RYKER",
+     "texto": "...Humanos."
+    },
+    {
+     "id": "ABER_14",
+     "falante": "ECO",
+     "texto": "O sinal vem de Varrek, o planeta logo abaixo. Um cemitério de naves. Os Kharn e os Vesh estão em guerra lá embaixo."
+    },
+    {
+     "id": "ABER_15",
+     "falante": "RYKER",
+     "texto": "Kharn. Claro que tem Kharn."
+    },
+    {
+     "id": "ABER_16",
+     "falante": "ECO",
+     "texto": "Eu posso te mandar lá para baixo. E posso te trazer de volta se você morrer. De novo."
+    },
+    {
+     "id": "ABER_17",
+     "falante": "RYKER",
+     "texto": "E o que você ganha com isso?"
+    },
+    {
+     "id": "ABER_18",
+     "falante": "ECO",
+     "texto": "Tem uma peça minha lá embaixo também. Eu ganho a peça. Você ganha um motivo para continuar vivo. Ou quase vivo."
+    }
+   ]
+  },
+  "hangar_primeira": {
+   "modo": "conversa",
+   "uma_vez": "hangar_visto",
+   "falas": [
+    {
+     "id": "HANG_01",
+     "falante": "ECO",
+     "texto": "Isto é a âncora. Ela me envia tudo o que você vê e sente. Se você morrer lá embaixo, eu te imprimo aqui em cima.",
+     "direcao": "instalação na nuca, som metálico"
+    },
+    {
+     "id": "HANG_02",
+     "falante": "RYKER",
+     "texto": "Tudo o que eu sinto?"
+    },
+    {
+     "id": "HANG_03",
+     "falante": "ECO",
+     "texto": "Tudo. Inclusive o medo. Pode ficar tranquilo, eu não comento."
+    },
+    {
+     "id": "HANG_04",
+     "falante": "RYKER",
+     "texto": "Você acabou de comentar."
+    },
+    {
+     "id": "HANG_05",
+     "falante": "ECO",
+     "texto": "Uma regra, Ryker: o que é seu volta. Corpo, memória e o que você me transmitir. Armas e presentes de alienígenas ficam lá embaixo."
+    },
+    {
+     "id": "HANG_06",
+     "falante": "RYKER",
+     "texto": "Então eu desço armado e volto pelado."
+    },
+    {
+     "id": "HANG_07",
+     "falante": "ECO",
+     "texto": "Você desce armado e volta... bem informado."
+    },
+    {
+     "id": "HANG_08",
+     "falante": "ECO",
+     "texto": "Boa queda.",
+     "direcao": "cápsula lançada"
+    },
+    {
+     "id": "HANG_09",
+     "falante": "RYKER",
+     "texto": "Isso não é uma expressão."
+    }
+   ]
+  },
+  "hangar_repeticao": {
+   "modo": "conversa",
+   "sortear": true,
+   "variantes": [
+    [
+     {
+      "id": "HANG_R1",
+      "falante": "ECO",
+      "texto": "Boa queda. E dessa vez, tente voltar inteiro."
+     }
+    ],
+    [
+     {
+      "id": "HANG_R2",
+      "falante": "ECO",
+      "texto": "Ur-Kesh ainda está lá embaixo. Eu verifiquei. Ele também está verificando você."
+     }
+    ],
+    [
+     {
+      "id": "HANG_R3",
+      "falante": "ECO",
+      "texto": "O sinal continua. Eles ainda estão vivos."
+     }
+    ],
+    [
+     {
+      "id": "HANG_R4",
+      "falante": "RYKER",
+      "texto": "Mais uma vez, Varrek."
+     }
+    ],
+    [
+     {
+      "id": "HANG_R5",
+      "falante": "RYKER",
+      "texto": "Pelo menos a queda é de graça."
+     }
+    ]
+   ],
+   "condicao": "hangar_visto"
+  },
+  "queda_saida": {
+   "modo": "rapida",
+   "uma_vez": "visto_QUED_01",
+   "falas": [
+    {
+     "id": "QUED_01",
+     "falante": "RYKER",
+     "texto": "Varrek. Mil naves mortas e nenhuma com ar-condicionado."
+    }
+   ]
+  },
+  "queda_inimigo_grande": {
+   "modo": "rapida",
+   "uma_vez": "visto_QUED_02",
+   "falas": [
+    {
+     "id": "QUED_02",
+     "falante": "ECO",
+     "texto": "Use o dash quando algo grande vier na sua direção. Aqui, tudo é grande."
+    }
+   ]
+  },
+  "queda_grilhao": {
+   "modo": "rapida",
+   "uma_vez": "visto_QUED_03",
+   "falas": [
+    {
+     "id": "QUED_03",
+     "falante": "RYKER",
+     "texto": "Ainda tenho a corrente. Os Kharn deviam ter tirado isso de mim."
+    }
+   ]
+  },
+  "queda_primeira_morte_inimigo": {
+   "modo": "rapida",
+   "uma_vez": "visto_QUED_04",
+   "falas": [
+    {
+     "id": "QUED_04",
+     "falante": "RYKER",
+     "texto": "Um a zero, Varrek."
+    }
+   ]
+  },
+  "kharn_primeira": {
+   "modo": "conversa",
+   "uma_vez": "1a_oferta_kharn",
+   "falas": [
+    {
+     "id": "KHAR_01",
+     "falante": "TOR-AMA",
+     "texto": "Krat'zu. O rato que mordeu o campeão."
+    },
+    {
+     "id": "KHAR_02",
+     "falante": "RYKER",
+     "texto": "Se veio me levar de volta pra arena, entra na fila."
+    },
+    {
+     "id": "KHAR_03",
+     "falante": "TOR-AMA",
+     "texto": "O Clã Ossoferro não acorrenta quem venceu a Grande Arena. Isso é coisa de clã pequeno. Ur-Kesh está neste planeta e quer a sua cabeça."
+    },
+    {
+     "id": "KHAR_04",
+     "falante": "RYKER",
+     "texto": "Ele sempre quis."
+    },
+    {
+     "id": "KHAR_05",
+     "falante": "TOR-AMA",
+     "texto": "Então morda de novo. Com dentes melhores.",
+     "direcao": "escolha do upgrade"
+    },
+    {
+     "id": "KHAR_06",
+     "falante": "TOR-AMA",
+     "texto": "Faça barulho, pequeno. O clã está ouvindo.",
+     "direcao": "depois da escolha"
+    }
+   ]
+  },
+  "kharn_repeticao": {
+   "modo": "conversa",
+   "sortear": true,
+   "variantes": [
+    [
+     {
+      "id": "KHAR_R1",
+      "falante": "TOR-AMA",
+      "texto": "Mais dentes, Krat'zu?"
+     }
+    ],
+    [
+     {
+      "id": "KHAR_R2",
+      "falante": "TOR-AMA",
+      "texto": "O clã gosta de ver você quebrar coisas."
+     }
+    ],
+    [
+     {
+      "id": "KHAR_R3",
+      "falante": "TOR-AMA",
+      "texto": "Bata primeiro. Bata mais forte."
+     }
+    ]
+   ],
+   "condicao": "1a_oferta_kharn"
+  },
+  "vesh_primeira": {
+   "modo": "conversa",
+   "uma_vez": "1a_oferta_vesh",
+   "falas": [
+    {
+     "id": "VESH_01",
+     "falante": "COLMEIA",
+     "texto": "Nós vemos um corpo sozinho."
+    },
+    {
+     "id": "VESH_02",
+     "falante": "RYKER",
+     "texto": "Ótimo. Inseto falante."
+    },
+    {
+     "id": "VESH_03",
+     "falante": "COLMEIA",
+     "texto": "Um corpo sozinho é um erro. Nós corrigimos erros. Mas você... você continua funcionando. Isso nos interessa."
+    },
+    {
+     "id": "VESH_04",
+     "falante": "RYKER",
+     "texto": "Vocês querem me ajudar ou me dissecar?"
+    },
+    {
+     "id": "VESH_05",
+     "falante": "COLMEIA",
+     "texto": "Nós ainda não decidimos. Aceite isto. Multiplique-se."
+    },
+    {
+     "id": "VESH_06",
+     "falante": "RYKER",
+     "texto": "Eu sou um só."
+    },
+    {
+     "id": "VESH_07",
+     "falante": "COLMEIA",
+     "texto": "Por enquanto."
+    }
+   ]
+  },
+  "vesh_repeticao": {
+   "modo": "conversa",
+   "sortear": true,
+   "variantes": [
+    [
+     {
+      "id": "VESH_R1",
+      "falante": "COLMEIA",
+      "texto": "Nós voltamos. Nós sempre voltamos."
+     }
+    ],
+    [
+     {
+      "id": "VESH_R2",
+      "falante": "COLMEIA",
+      "texto": "Mais de você. Mais de nós."
+     }
+    ],
+    [
+     {
+      "id": "VESH_R3",
+      "falante": "COLMEIA",
+      "texto": "O corpo sozinho persiste. Curioso."
+     }
+    ]
+   ],
+   "condicao": "1a_oferta_vesh"
+  },
+  "dual": {
+   "modo": "conversa",
+   "uma_vez": "1a_dual",
+   "falas": [
+    {
+     "id": "DUAL_01",
+     "falante": "RYKER",
+     "texto": "Um presente Kharn e um Vesh no mesmo bolso. Se eles soubessem..."
+    },
+    {
+     "id": "DUAL_02",
+     "falante": "ECO",
+     "texto": "Eles saberiam que só um humano faria isso. É por isso que eu preciso de você."
+    }
+   ]
+  },
+  "loja_primeira": {
+   "modo": "conversa",
+   "uma_vez": "1a_loja",
+   "falas": [
+    {
+     "id": "LOJA_01",
+     "falante": "MERCADOR",
+     "texto": "Um cliente humano! Que raro. Que... comercialmente promissor."
+    },
+    {
+     "id": "LOJA_02",
+     "falante": "RYKER",
+     "texto": "Você vende pros Kharn também, né?"
+    },
+    {
+     "id": "LOJA_03",
+     "falante": "MERCADOR",
+     "texto": "Eu vendo para todos os lados. Por isso eu continuo vivo e eles continuam brigando. Créditos, por favor."
+    }
+   ]
+  },
+  "loja_repeticao": {
+   "modo": "conversa",
+   "sortear": true,
+   "variantes": [
+    [
+     {
+      "id": "LOJA_R1",
+      "falante": "MERCADOR",
+      "texto": "Bem-vindo de volta! Ou é a primeira vez? Com vocês reimpressos, eu nunca sei."
+     }
+    ],
+    [
+     {
+      "id": "LOJA_R2",
+      "falante": "MERCADOR",
+      "texto": "Guerra boa para os negócios. Péssima para todo o resto."
+     }
+    ]
+   ],
+   "condicao": "1a_loja"
+  },
+  "loja_sem_creditos": {
+   "modo": "rapida",
+   "falas": [
+    {
+     "id": "LOJA_R3",
+     "falante": "MERCADOR",
+     "texto": "Ah. Só olhando. Que... corajoso."
+    }
+   ]
+  },
+  "zona_de_guerra": {
+   "modo": "rapida",
+   "uma_vez": "visto_CAMI_01",
+   "falas": [
+    {
+     "id": "CAMI_01",
+     "falante": "RYKER",
+     "texto": "Kharn de um lado, Vesh do outro, e eu no meio. Tipo a arena, só que com mais gente."
+    }
+   ]
+  },
+  "reliquia": {
+   "modo": "rapida",
+   "uma_vez": "visto_CAMI_02",
+   "falas": [
+    {
+     "id": "CAMI_02",
+     "falante": "ECO",
+     "texto": "Estou sentindo a peça. E o sinal está mais forte aqui."
+    },
+    {
+     "id": "CAMI_03",
+     "falante": "SINAL",
+     "texto": "...se alguém ouvir... a relíquia... não deixa eles...",
+     "direcao": "cai"
+    },
+    {
+     "id": "CAMI_04",
+     "falante": "RYKER",
+     "texto": "Aguenta firme. Tô chegando."
+    }
+   ]
+  },
+  "urkesh_primeiro": {
+   "modo": "conversa",
+   "uma_vez": "urkesh_visto",
+   "falas": [
+    {
+     "id": "UREK_01",
+     "falante": "UR-KESH",
+     "texto": "KRAT'ZU! Eu sabia. Senti cheiro de rato desde a órbita."
+    },
+    {
+     "id": "UREK_02",
+     "falante": "RYKER",
+     "texto": "Ur-Kesh. Ganhou um robô novo? Ficou com vergonha de lutar com o próprio corpo?"
+    },
+    {
+     "id": "UREK_03",
+     "falante": "UR-KESH",
+     "texto": "Você me tirou tudo na Grande Arena. Meu título. Meu nome. Hoje eu tiro a única coisa que você tem."
+    },
+    {
+     "id": "UREK_04",
+     "falante": "RYKER",
+     "texto": "Meu charme?"
+    },
+    {
+     "id": "UREK_05",
+     "falante": "UR-KESH",
+     "texto": "A SUA VIDA!"
+    },
+    {
+     "id": "UREK_06",
+     "falante": "RYKER",
+     "texto": "Isso eu tenho de sobra agora.",
+     "direcao": "início da luta"
+    }
+   ]
+  },
+  "urkesh_repeticao": {
+   "modo": "conversa",
+   "sortear": true,
+   "condicao": "urkesh_visto",
+   "variantes": [
+    [
+     {
+      "id": "UREK_R1",
+      "falante": "UR-KESH",
+      "texto": "Você de novo. Eu também, rato."
+     }
+    ],
+    [
+     {
+      "id": "UREK_R2",
+      "falante": "UR-KESH",
+      "texto": "Quantas vezes eu preciso te matar para você entender?"
+     }
+    ],
+    [
+     {
+      "id": "UREK_R3",
+      "falante": "RYKER",
+      "texto": "Oi, Ur-Kesh. Sentiu minha falta?"
+     },
+     {
+      "id": "UREK_R4",
+      "falante": "UR-KESH",
+      "texto": "TODOS OS DIAS."
+     }
+    ]
+   ]
+  },
+  "urkesh_barks": {
+   "modo": "rapida",
+   "sortear": true,
+   "variantes": [
+    [
+     {
+      "id": "UREK_B1",
+      "falante": "UR-KESH",
+      "texto": "FIQUE PARADO!"
+     }
+    ],
+    [
+     {
+      "id": "UREK_B2",
+      "falante": "UR-KESH",
+      "texto": "Um rato não derruba um andador!"
+     }
+    ],
+    [
+     {
+      "id": "UREK_B3",
+      "falante": "UR-KESH",
+      "texto": "Corra, Krat'zu. Como na arena."
+     }
+    ]
+   ]
+  },
+  "urkesh_bark_meia_vida": {
+   "modo": "rapida",
+   "falas": [
+    {
+     "id": "UREK_B4",
+     "falante": "UR-KESH",
+     "texto": "Você continua pequeno. E eu continuo maior!"
+    }
+   ]
+  },
+  "ryker_barks": {
+   "modo": "rapida",
+   "sortear": true,
+   "variantes": [
+    [
+     {
+      "id": "RYKE_B1",
+      "falante": "RYKER",
+      "texto": "Já desviei de coisa maior que você."
+     }
+    ],
+    [
+     {
+      "id": "RYKE_B2",
+      "falante": "RYKER",
+      "texto": "Tá lento, campeão."
+     }
+    ]
+   ]
+  },
+  "ryker_bark_ponto_fraco": {
+   "modo": "rapida",
+   "falas": [
+    {
+     "id": "RYKE_B3",
+     "falante": "RYKER",
+     "texto": "Achei a parte macia."
+    }
+   ]
+  },
+  "vitoria": {
+   "modo": "conversa",
+   "falas": [
+    {
+     "id": "VITO_01",
+     "falante": "UR-KESH",
+     "texto": "Isso... não acabou. O clã vai lembrar... que eu perdi para um rato... duas vezes.",
+     "direcao": "cabine em chamas"
+    },
+    {
+     "id": "VITO_02",
+     "falante": "RYKER",
+     "texto": "Três é o número da sorte."
+    },
+    {
+     "id": "VITO_03",
+     "falante": "UR-KESH",
+     "texto": "Eu vou voltar."
+    },
+    {
+     "id": "VITO_04",
+     "falante": "RYKER",
+     "texto": "Pelo jeito, todo mundo volta."
+    },
+    {
+     "id": "VITO_05",
+     "falante": "ECO",
+     "texto": "Essa é a peça. Pode pegar. Agora você carrega um pedaço de mim.",
+     "direcao": "Ryker se aproxima da relíquia"
+    },
+    {
+     "id": "VITO_06",
+     "falante": "RYKER",
+     "texto": "Pesa."
+    },
+    {
+     "id": "VITO_07",
+     "falante": "ECO",
+     "texto": "Eu sei."
+    },
+    {
+     "id": "VITO_08",
+     "falante": "ECO",
+     "texto": "Com ela, eu posso saltar. O sinal saiu de Varrek, Ryker. Foi para outro planeta. E nós vamos atrás."
+    },
+    {
+     "id": "VITO_09",
+     "falante": "",
+     "texto": "",
+     "direcao": "Fim do Vertical Slice: \"Continua no Ato 2\""
+    }
+   ]
+  },
+  "morte_primeira": {
+   "modo": "conversa",
+   "uma_vez": "morte_primeira_vista",
+   "condicao": "mortes_total>=1",
+   "falas": [
+    {
+     "id": "MORT_01",
+     "falante": "RYKER",
+     "texto": "...Morri de novo.",
+     "direcao": "ofegante"
+    },
+    {
+     "id": "MORT_02",
+     "falante": "ECO",
+     "texto": "Segunda vez. Está pegando o jeito."
+    },
+    {
+     "id": "MORT_U1",
+     "falante": "RYKER",
+     "texto": "Ur-Kesh. De todos os Kharn do universo...",
+     "condicao": "1a_morte_urkesh"
+    },
+    {
+     "id": "MORT_U2",
+     "falante": "ECO",
+     "texto": "Ele gritou seu nome várias vezes depois que você caiu. Achei que você ia querer saber.",
+     "condicao": "1a_morte_urkesh"
+    },
+    {
+     "id": "MORT_U3",
+     "falante": "RYKER",
+     "texto": "Não queria.",
+     "condicao": "1a_morte_urkesh"
+    },
+    {
+     "id": "MORT_03",
+     "falante": "RYKER",
+     "texto": "E as armas? As coisas que os alienígenas me deram?"
+    },
+    {
+     "id": "MORT_04",
+     "falante": "ECO",
+     "texto": "Ficaram em Varrek. Sempre ficam."
+    },
+    {
+     "id": "MORT_05",
+     "falante": "RYKER",
+     "texto": "Então eu perdi tudo."
+    },
+    {
+     "id": "MORT_06",
+     "falante": "ECO",
+     "texto": "Não. Você me mandou isto. Núcleos. Energia que a âncora coletou. Com eles, você fica um pouco mais difícil de matar.",
+     "direcao": "Núcleos aparecem"
+    },
+    {
+     "id": "MORT_07",
+     "falante": "RYKER",
+     "texto": "E quem vende isso?"
+    },
+    {
+     "id": "MORT_08",
+     "falante": "ECO",
+     "texto": "Temos um inquilino."
+    }
+   ]
+  },
+  "morte_repeticao": {
+   "modo": "conversa",
+   "sortear": true,
+   "variantes": [
+    [
+     {
+      "id": "MORT_R1",
+      "falante": "ECO",
+      "texto": "Bem-vindo de volta."
+     }
+    ],
+    [
+     {
+      "id": "MORT_R2",
+      "falante": "ECO",
+      "texto": "Molde 4, de novo. Batimentos: presentes."
+     }
+    ],
+    [
+     {
+      "id": "MORT_R3",
+      "falante": "RYKER",
+      "texto": "Isso nunca vai ficar normal."
+     }
+    ],
+    [
+     {
+      "id": "MORT_R4",
+      "falante": "ECO",
+      "texto": "Você durou mais dessa vez. Eu medi."
+     }
+    ]
+   ],
+   "condicao": "morte_primeira_vista"
+  },
+  "vossa_primeira": {
+   "modo": "conversa",
+   "uma_vez": "vossa_conhecido",
+   "falas": [
+    {
+     "id": "VOSS_01",
+     "falante": "VOSSA",
+     "texto": "Ah, o produto reimpresso! Quer dizer... o cliente. Vossa Margem, do Sindicato Ilo, a seu dispor."
+    },
+    {
+     "id": "VOSS_02",
+     "falante": "RYKER",
+     "texto": "O que um Ilo faz numa nave abandonada?"
+    },
+    {
+     "id": "VOSS_03",
+     "falante": "VOSSA",
+     "texto": "Abandonada? Ela tem você. E onde tem um humano que morre muito, tem mercado para melhorias. Eu alugo este compartimento da ECO."
+    },
+    {
+     "id": "VOSS_04",
+     "falante": "RYKER",
+     "texto": "Ela cobra aluguel?"
+    },
+    {
+     "id": "VOSS_05",
+     "falante": "ECO",
+     "texto": "Ele paga em informação."
+    },
+    {
+     "id": "VOSS_06",
+     "falante": "VOSSA",
+     "texto": "E em companhia agradável. Núcleos, por favor."
+    }
+   ]
+  },
+  "garrak_primeira": {
+   "modo": "conversa",
+   "uma_vez": "garrak_conhecido",
+   "condicao": "mortes_total>=1",
+   "falas": [
+    {
+     "id": "GARR_01",
+     "falante": "",
+     "texto": "",
+     "direcao": "Ryker entra. Garrak está de costas, afiando uma lâmina. Silêncio."
+    },
+    {
+     "id": "GARR_02",
+     "falante": "RYKER",
+     "texto": "...Garrak."
+    },
+    {
+     "id": "GARR_03",
+     "falante": "GARRAK",
+     "texto": "Krat'zu."
+    },
+    {
+     "id": "GARR_04",
+     "falante": "RYKER",
+     "texto": "Não me chama assim."
+    },
+    {
+     "id": "GARR_05",
+     "falante": "GARRAK",
+     "texto": "Era o seu nome quando eu te ensinei a segurar uma lâmina."
+    },
+    {
+     "id": "GARR_06",
+     "falante": "RYKER",
+     "texto": "Era o nome que vocês me deram quando me compraram."
+    },
+    {
+     "id": "GARR_07",
+     "falante": "GARRAK",
+     "texto": "Eu sei.",
+     "direcao": "pausa longa"
+    },
+    {
+     "id": "GARR_08",
+     "falante": "RYKER",
+     "texto": "O que você tá fazendo aqui?"
+    },
+    {
+     "id": "GARR_09",
+     "falante": "GARRAK",
+     "texto": "O clã me mandou cortar sua cabeça depois da Grande Arena. Eu não cortei. Agora eu não tenho clã."
+    },
+    {
+     "id": "GARR_10",
+     "falante": "RYKER",
+     "texto": "Quer que eu agradeça?"
+    },
+    {
+     "id": "GARR_11a",
+     "falante": "GARRAK",
+     "texto": "Quero que você pare de morrer para Ur-Kesh. É vergonhoso. Eu te treinei melhor que isso. Escolha uma arma.",
+     "condicao": "1a_morte_urkesh"
+    },
+    {
+     "id": "GARR_11b",
+     "falante": "GARRAK",
+     "texto": "Quero que você pare de morrer. Ainda é vergonhoso. Escolha uma arma.",
+     "condicao": "!1a_morte_urkesh"
+    },
+    {
+     "id": "GARR_12",
+     "falante": "ECO",
+     "texto": "Ele chegou faz três dias. Disse que ia esperar você. Não disse por quê.",
+     "direcao": "depois, na Ponte"
+    }
+   ]
+  },
+  "sete_chegada": {
+   "modo": "conversa",
+   "uma_vez": "sete_chegou",
+   "condicao": "pegou_vesh_na_run",
+   "falas": [
+    {
+     "id": "SETE_01",
+     "falante": "ECO",
+     "texto": "Ryker. A âncora transmitiu uma amostra biológica na sua última descida."
+    },
+    {
+     "id": "SETE_02",
+     "falante": "RYKER",
+     "texto": "Que amostra?"
+    },
+    {
+     "id": "SETE_03",
+     "falante": "ECO",
+     "texto": "Era pequena. Eu imprimi. Ela está... falando."
+    },
+    {
+     "id": "SETE_04",
+     "falante": "SETE",
+     "texto": "Nós—... Nós? ...Não tem nós. Cadê o nós?"
+    },
+    {
+     "id": "SETE_05",
+     "falante": "RYKER",
+     "texto": "É um Vesh. Você imprimiu um Vesh."
+    },
+    {
+     "id": "SETE_06",
+     "falante": "SETE",
+     "texto": "É um... um eu? Eu é muito quieto."
+    },
+    {
+     "id": "SETE_07",
+     "falante": "RYKER",
+     "texto": "Bem-vindo ao clube, inseto."
+    },
+    {
+     "id": "SETE_08",
+     "falante": "SETE",
+     "texto": "Inseto. Eu sou um inseto. Eu sou UM inseto.",
+     "direcao": "gosta da ideia"
+    },
+    {
+     "id": "SETE_09",
+     "falante": "ECO",
+     "texto": "Vou chamá-lo de Sete. Era o número da amostra."
+    },
+    {
+     "id": "SETE_10",
+     "falante": "SETE",
+     "texto": "Sete. Eu sou Sete. O Sete sou eu."
+    }
+   ]
+  },
+  "misterio": {
+   "modo": "conversa",
+   "uma_vez": "misterio_visto",
+   "condicao": "mortes_total>=3",
+   "falas": [
+    {
+     "id": "MIST_01",
+     "falante": "RYKER",
+     "texto": "Quando eu acordei, você disse \"Molde 4\"."
+    },
+    {
+     "id": "MIST_02",
+     "falante": "ECO",
+     "texto": "Disse."
+    },
+    {
+     "id": "MIST_03",
+     "falante": "RYKER",
+     "texto": "Quem foram os três primeiros?"
+    },
+    {
+     "id": "MIST_04",
+     "falante": "ECO",
+     "texto": "Pessoas que eu não consegui trazer de volta. Ainda.",
+     "direcao": "pausa"
+    }
+   ]
+  }
+ }
+}

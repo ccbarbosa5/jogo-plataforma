@@ -1,0 +1,15 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/armas/granada.gd" id="1"]
+
+[sub_resource type="CircleShape2D" id="forma"]
+radius = 3.0
+
+[node name="Granada" type="Area2D"]
+collision_layer = 0
+collision_mask = 37
+monitorable = false
+script = ExtResource("1")
+
+[node name="Forma" type="CollisionShape2D" parent="."]
+shape = SubResource("forma")

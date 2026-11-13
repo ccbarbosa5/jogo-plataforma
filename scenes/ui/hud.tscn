@@ -12,7 +12,7 @@ anchors_preset = 0
 offset_left = 8.0
 offset_top = 8.0
 offset_right = 120.0
-offset_bottom = 40.0
+offset_bottom = 60.0
 mouse_filter = 2
 script = ExtResource("2")
 
@@ -38,5 +38,5 @@ anchor_bottom = 1.0
 offset_top = -14.0
 modulate = Color(1, 1, 1, 0.6)
 theme_override_font_sizes/font_size = 8
-text = "A/D mover · W/S mirar · Espaço pular · J atirar · Shift dash · I travar mira · O Grilhão · F2 mira auto · F3 tiro auto · R reiniciar"
+text = "A/D mover · W/S mirar · Espaço pular · J atirar · Shift dash · K granada · I travar · O Grilhão · E falas · F2/F3 assist. · R reiniciar"
 horizontal_alignment = 1

@@ -1,0 +1,26 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/inimigos/guerreiro_cla.gd" id="1"]
+[ext_resource type="PackedScene" path="res://scenes/armas/projetil_inimigo.tscn" id="2"]
+[ext_resource type="Script" path="res://scripts/comum/vida.gd" id="3"]
+
+[sub_resource type="RectangleShape2D" id="corpo"]
+size = Vector2(32, 64)
+
+[node name="GuerreiroCla" type="CharacterBody2D"]
+collision_layer = 4
+collision_mask = 33
+script = ExtResource("1")
+peso = 1
+faccao = &"kharn"
+armadura_frontal = true
+tamanho = Vector2(32, 64)
+cena_projetil = ExtResource("2")
+
+[node name="Forma" type="CollisionShape2D" parent="."]
+position = Vector2(0, -32)
+shape = SubResource("corpo")
+
+[node name="Vida" type="Node" parent="."]
+script = ExtResource("3")
+maxima = 120
