@@ -15,15 +15,18 @@ O jogo é dividido em **atos**, e cada ato se passa em um **planeta** com vária
 |---|---|---|
 | Mover / mirar | A D (W cima, S agachar/baixo) ou setas | Analógico esquerdo ou D-pad |
 | Pular (baixo + pular desce da plataforma) | Espaço | A |
-| Atirar | J | X |
+| Atirar (de perto vira golpe de corrente) | J | X |
+| Granada (3 por sala) | K | Y |
 | Dash | Shift ou L | B |
 | Travar mira | Segurar I | RB |
 | Grilhão (Ferramenta do Ryker) | O | LB |
 | Mira automática (desligada / assistida / total) | F2 | — |
 | Tiro automático | F3 | — |
+| Avançar diálogo | E, Espaço ou J | A |
+| Apagar progresso (falas de "1ª vez" voltam) | F4 | — |
 | Reiniciar a sala | R | Back |
 
-Os atalhos F2/F3 são provisórios até existir o menu de opções.
+Os atalhos F2, F3 e F4 são provisórios até existir o menu de opções.
 
 ## Estrutura
 | Pasta | Conteúdo |
@@ -31,6 +34,7 @@ Os atalhos F2/F3 são provisórios até existir o menu de opções.
 | `scenes/` | Cenas do Godot (`.tscn`) e dados de balanceamento (`.tres`) |
 | `scripts/` | Código GDScript (`.gd`), com as mesmas subpastas de `scenes/` |
 | `tests/` | Testes automáticos (rodam em todo PR) |
+| `data/dialogos/` | Falas do jogo (cópia jogável do NAR-01, com os IDs da Narrativa) |
 | `assets/sprites/` | Arte |
 | `assets/audio/` | Música e efeitos sonoros |
 | `assets/fonts/` | Fontes |

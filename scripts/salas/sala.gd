@@ -20,14 +20,19 @@ extends Node2D
 
 var arena_ativa: bool = false
 var arena_concluida: bool = false
-var _onda: Array[Soldado] = []
+var _onda: Array[Inimigo] = []
 
 
 func _ready() -> void:
+	Combate.reiniciar()
 	jogador.container_projeteis = projeteis
+	jogador.reabastecer_granadas()
+	var grilhao := jogador.ferramenta as Grilhao
+	if grilhao != null:
+		grilhao.lancou.connect(func() -> void: Dialogos.tocar("queda_grilhao"))
 	jogador.morreu.connect(_ao_jogador_morrer)
 	for inimigo in inimigos.get_children():
-		_registrar_inimigo(inimigo as Soldado)
+		_registrar_inimigo(inimigo as Inimigo)
 	camera.alvos = [jogador]
 	camera.definir_limites(limites_sala)
 	camera.posicionar_imediato()
@@ -37,6 +42,7 @@ func _ready() -> void:
 	gatilho_arena.body_entered.connect(_ao_entrar_arena)
 	_ativar_paredes(false)
 	hud.mostrar_mensagem("PROTÓTIPO · FASE 1", 2.0)
+	Dialogos.tocar("queda_saida")
 
 
 func _unhandled_input(evento: InputEvent) -> void:
@@ -51,9 +57,12 @@ func _unhandled_input(evento: InputEvent) -> void:
 	if evento.is_action_pressed("debug_tiro_automatico"):
 		opcoes.tiro_automatico = not opcoes.tiro_automatico
 		hud.mostrar_mensagem("Tiro automático: %s" % ("LIGADO" if opcoes.tiro_automatico else "DESLIGADO"), 1.2)
+	if evento.is_action_pressed("debug_apagar_progresso"):
+		Progresso.apagar()
+		hud.mostrar_mensagem("Progresso apagado (falas de \"1ª vez\" voltam a tocar)", 1.5)
 
 
-func _registrar_inimigo(inimigo: Soldado) -> void:
+func _registrar_inimigo(inimigo: Inimigo) -> void:
 	if inimigo == null:
 		return
 	inimigo.container_projeteis = projeteis
@@ -73,14 +82,15 @@ func _iniciar_arena() -> void:
 	_ativar_paredes(true)
 	hud.mostrar_mensagem("ALERTA!", 1.0)
 	for ponto in pontos_onda.get_children():
-		var soldado: Soldado = cena_inimigo.instantiate()
-		soldado.position = (ponto as Node2D).position
-		inimigos.add_child(soldado)
-		_registrar_inimigo(soldado)
-		_onda.append(soldado)
+		var inimigo: Inimigo = cena_inimigo.instantiate()
+		inimigo.position = (ponto as Node2D).position
+		inimigos.add_child(inimigo)
+		_registrar_inimigo(inimigo)
+		_onda.append(inimigo)
 
 
-func _ao_inimigo_morrer(inimigo: Soldado) -> void:
+func _ao_inimigo_morrer(inimigo: Inimigo) -> void:
+	Dialogos.tocar("queda_primeira_morte_inimigo")
 	_onda.erase(inimigo)
 	if arena_ativa and _onda.is_empty():
 		_concluir_arena()
@@ -99,6 +109,9 @@ func _ativar_paredes(ativas: bool) -> void:
 
 
 func _ao_jogador_morrer(_jogador: Jogador) -> void:
+	Progresso.incrementar("mortes_total")
+	Progresso.definir_flag("1a_morte")
+	Progresso.salvar()
 	hud.mostrar_mensagem("ECO: RECONSTRUINDO...")
 	await get_tree().create_timer(tempo_teleporte).timeout
 	get_tree().reload_current_scene()

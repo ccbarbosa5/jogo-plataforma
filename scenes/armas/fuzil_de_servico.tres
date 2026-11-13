@@ -7,7 +7,7 @@
 script = ExtResource("1")
 nome = "Fuzil de serviço"
 cadencia = 8.0
-dano = 1
-velocidade_projetil = 30.0
-duracao_projetil = 0.9
+dano = 10
+velocidade_projetil = 37.5
+duracao_projetil = 1.0
 cena_projetil = ExtResource("2")

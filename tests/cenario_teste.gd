@@ -2,7 +2,8 @@ class_name CenarioTeste
 ## Ajudantes para montar cenários mínimos dentro dos testes.
 
 const CENA_RYKER: String = "res://scenes/jogador/ryker.tscn"
-const CENA_SOLDADO: String = "res://scenes/inimigos/soldado.tscn"
+const CENA_GUERREIRO: String = "res://scenes/inimigos/guerreiro_cla.tscn"
+const CENA_BONECO: String = "res://scenes/inimigos/boneco.tscn"
 const CHAO_Y: float = 0.0
 
 
@@ -30,14 +31,27 @@ static func criar_jogador(caso: TestCase, posicao: Vector2 = Vector2(0, CHAO_Y))
 	return jogador
 
 
-static func criar_soldado(caso: TestCase, posicao: Vector2, pesado: bool = false) -> Soldado:
-	var cena: PackedScene = load(CENA_SOLDADO)
-	var soldado := cena.instantiate() as Soldado
-	soldado.pesado = pesado
-	caso.add_child(soldado)
-	soldado.global_position = posicao
-	soldado.container_projeteis = caso
-	return soldado
+static func criar_guerreiro(caso: TestCase, posicao: Vector2) -> GuerreiroCla:
+	var cena: PackedScene = load(CENA_GUERREIRO)
+	var g := cena.instantiate() as GuerreiroCla
+	caso.add_child(g)
+	g.global_position = posicao
+	g.container_projeteis = caso
+	return g
+
+
+## Boneco de treino (não anda nem ataca) com o peso e o tamanho pedidos.
+static func criar_boneco(caso: TestCase, posicao: Vector2, peso: Inimigo.Peso = Inimigo.Peso.MEDIO,
+		tamanho: Vector2 = Vector2(20, 32), armadura: bool = false, vida: int = 500) -> Boneco:
+	var cena: PackedScene = load(CENA_BONECO)
+	var b := cena.instantiate() as Boneco
+	b.peso = peso
+	b.tamanho = tamanho
+	b.armadura_frontal = armadura
+	b.get_node("Vida").maxima = vida
+	caso.add_child(b)
+	b.global_position = posicao
+	return b
 
 
 static func tiles(n: float) -> float:

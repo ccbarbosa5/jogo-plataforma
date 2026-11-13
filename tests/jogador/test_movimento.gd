@@ -229,3 +229,43 @@ func test_sobe_na_plataforma_por_baixo() -> void:
 	j.entrada.pular_segurado = true
 	await esperar_frames(70)
 	afirmar_proximo(j.global_position.y, -CenarioTeste.tiles(2.5), 1.0, "parou em cima da plataforma")
+
+
+func test_dash_no_ar_so_1_vez_por_pulo() -> void:
+	var j := _preparar()
+	j.parametros = j.parametros.duplicate()
+	j.parametros.cargas_dash = 3  # isola a regra do ar da regra de cargas
+	j.cargas_dash = 3
+	await esperar_frames(3)
+	j.entrada.pular_pressionado = true
+	j.entrada.pular_segurado = true
+	await esperar_frames(4)
+	j.entrada.dash_pressionado = true
+	await esperar_frames(1)
+	afirmar(j.esta_em_dash(), "1º dash no ar")
+	while j.esta_em_dash():
+		await esperar_frames(1)
+	j.entrada.dash_pressionado = true
+	await esperar_frames(1)
+	afirmar(not j.esta_em_dash(), "2º dash no mesmo pulo não sai")
+	for i in 90:
+		await esperar_frames(1)
+		if j.is_on_floor():
+			break
+	await esperar_frames(1)
+	j.entrada.pular_pressionado = true
+	j.entrada.pular_segurado = true
+	await esperar_frames(4)
+	j.entrada.dash_pressionado = true
+	await esperar_frames(1)
+	afirmar(j.esta_em_dash(), "novo pulo, novo dash no ar")
+
+
+func test_frenagem_para_em_0_04s() -> void:
+	var j := _preparar()
+	await esperar_frames(3)
+	j.entrada.direcao = Vector2i(1, 0)
+	await esperar_frames(10)
+	j.entrada.direcao = Vector2i.ZERO
+	await esperar_frames(3)  # 0,05 s
+	afirmar_proximo(j.velocity.x, 0.0, 0.01, "parado")
