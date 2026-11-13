@@ -18,14 +18,15 @@ extends RefCounted
 ##     }
 ##   }
 ## }
-## falante = { "nome", "titulo", "cor", "moldura": humano|eco|kharn|vesh|ilo|antigos, "lado": esquerda|direita }
+## falante = { "nome" (o que aparece na placa, D-046), "cor", "moldura": humano|humano_danificada|eco|kharn|vesh|ilo,
+##             "lado": esquerda|direita, "expressoes": [...] (a 1ª é a padrão), "retrato": retrato|estatica }
 ## fala = { "id": "ABER_01", "falante": "ECO", "texto": "...", "direcao": "...", "condicao": "...",
 ##          "expressao": "neutro", "aud": "zumbido" }
 ## "direcao" guarda a direção de cena (os [colchetes] do NAR-01): não é falada.
 ## "aud": marcação para o Áudio (ex.: o zumbido de colmeia na voz da ECO).
 
 ## Molduras por personagem ou facção (D-032).
-const MOLDURAS: Array[String] = ["humano", "eco", "kharn", "vesh", "ilo", "antigos"]
+const MOLDURAS: Array[String] = ["humano", "humano_danificada", "eco", "kharn", "vesh", "ilo", "antigos"]
 
 var falantes: Dictionary = {}
 var cenas: Dictionary = {}
@@ -61,8 +62,14 @@ func cor_do_falante(codigo: String) -> Color:
 	return Color.from_string(falantes.get(codigo, {}).get("cor", "#ffffff"), Color.WHITE)
 
 
-func titulo_do_falante(codigo: String) -> String:
-	return falantes.get(codigo, {}).get("titulo", "")
+## Expressões do retrato, na ordem dos quadros da folha da ART (a 1ª é a padrão).
+func expressoes_do_falante(codigo: String) -> Array:
+	return falantes.get(codigo, {}).get("expressoes", [])
+
+
+## "retrato" (padrão) ou "estatica" (SINAL e REGISTRO não têm retrato).
+func retrato_do_falante(codigo: String) -> String:
+	return falantes.get(codigo, {}).get("retrato", "retrato")
 
 
 func moldura_do_falante(codigo: String) -> String:

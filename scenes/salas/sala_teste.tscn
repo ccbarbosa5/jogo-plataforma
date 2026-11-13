@@ -1,16 +1,31 @@
 [gd_scene format=3]
 
 [ext_resource type="Script" path="res://scripts/salas/sala.gd" id="1"]
+
 [ext_resource type="Script" path="res://scripts/salas/bloco.gd" id="2"]
+
 [ext_resource type="Script" path="res://scripts/salas/ponto_gancho.gd" id="3"]
+
 [ext_resource type="PackedScene" path="res://scenes/inimigos/guerreiro_cla.tscn" id="4"]
+
 [ext_resource type="PackedScene" path="res://scenes/jogador/ryker.tscn" id="5"]
+
 [ext_resource type="Script" path="res://scripts/salas/camera_jogo.gd" id="6"]
+
 [ext_resource type="PackedScene" path="res://scenes/ui/hud.tscn" id="7"]
+
 [ext_resource type="PackedScene" path="res://scenes/inimigos/boneco.tscn" id="8"]
+
 [ext_resource type="Script" path="res://scripts/inimigos/ponto_fraco.gd" id="9"]
+
 [ext_resource type="PackedScene" path="res://scenes/ui/caixa_dialogo.tscn" id="10"]
+
 [ext_resource type="Script" path="res://scripts/salas/gatilho_dialogo.gd" id="11"]
+[ext_resource type="Texture2D" path="res://assets/sprites/cenarios/varrek/varrek_parallax_3_primeiro_plano.png" id="26_v35vq"]
+[ext_resource type="Texture2D" path="res://assets/sprites/cenarios/varrek/varrek_parallax_0_ceu_anel.png" id="3_gt0y0"]
+[ext_resource type="Texture2D" path="res://assets/sprites/cenarios/varrek/varrek_parallax_1_cascos_longe.png" id="4_r1qyi"]
+[ext_resource type="Texture2D" path="res://assets/sprites/cenarios/varrek/varrek_parallax_2_cascos_meio.png" id="5_kcsqv"]
+[ext_resource type="TileSet" path="res://scenes/salas/varrek_tileset.tres" id="6_tmv1y"]
 
 [sub_resource type="RectangleShape2D" id="gatilho"]
 size = Vector2(16, 270)
@@ -19,73 +34,44 @@ size = Vector2(16, 270)
 script = ExtResource("1")
 cena_inimigo = ExtResource("4")
 
+[node name="FundoParallax" type="Node2D" parent="."]
+z_index = -10
+
+[node name="Camada0_ceu_anel" type="Parallax2D" parent="FundoParallax"]
+scroll_scale = Vector2(0, 0)
+
+[node name="Imagem" type="Sprite2D" parent="FundoParallax/Camada0_ceu_anel"]
+texture = ExtResource("3_gt0y0")
+centered = false
+
+[node name="Camada1_cascos_longe" type="Parallax2D" parent="FundoParallax"]
+scroll_scale = Vector2(0.2, 0)
+repeat_size = Vector2(480, 0)
+repeat_times = 4
+
+[node name="Imagem" type="Sprite2D" parent="FundoParallax/Camada1_cascos_longe"]
+texture = ExtResource("4_r1qyi")
+centered = false
+
+[node name="Camada2_cascos_meio" type="Parallax2D" parent="FundoParallax"]
+scroll_scale = Vector2(0.5, 0)
+repeat_size = Vector2(480, 0)
+repeat_times = 4
+
+[node name="Imagem" type="Sprite2D" parent="FundoParallax/Camada2_cascos_meio"]
+texture = ExtResource("5_kcsqv")
+centered = false
+
 [node name="Mundo" type="Node2D" parent="."]
-[node name="Chao" type="StaticBody2D" parent="Mundo"]
-position = Vector2(0, 240)
-script = ExtResource("2")
-tamanho = Vector2(272, 32)
 
-[node name="Chao2" type="StaticBody2D" parent="Mundo"]
-position = Vector2(320, 240)
-script = ExtResource("2")
-tamanho = Vector2(1120, 32)
+[node name="Decoracao" type="TileMapLayer" parent="Mundo"]
+tile_map_data = PackedByteArray("AAAFAA4AAAADAAMAAAAbAA4AAAADAAMAAAA8AA4AAAADAAMAAABMAA4AAAADAAMAAAAqAA4AAAABAAMAAABYAA4AAAACAAMAAAA=")
+tile_set = ExtResource("6_tmv1y")
+collision_enabled = false
 
-[node name="ParedeEsq" type="StaticBody2D" parent="Mundo"]
-position = Vector2(-16, -64)
-script = ExtResource("2")
-tamanho = Vector2(16, 336)
-
-[node name="ParedeDir" type="StaticBody2D" parent="Mundo"]
-position = Vector2(1440, -64)
-script = ExtResource("2")
-tamanho = Vector2(16, 336)
-
-[node name="Plataforma1" type="StaticBody2D" parent="Mundo"]
-position = Vector2(160, 192)
-script = ExtResource("2")
-tamanho = Vector2(96, 8)
-uma_via = true
-cor = Color(0.36, 0.4, 0.48, 1)
-
-[node name="Plataforma2" type="StaticBody2D" parent="Mundo"]
-position = Vector2(320, 160)
-script = ExtResource("2")
-tamanho = Vector2(80, 8)
-uma_via = true
-cor = Color(0.36, 0.4, 0.48, 1)
-
-[node name="Plataforma3" type="StaticBody2D" parent="Mundo"]
-position = Vector2(500, 192)
-script = ExtResource("2")
-tamanho = Vector2(128, 8)
-uma_via = true
-cor = Color(0.36, 0.4, 0.48, 1)
-
-[node name="Caixa" type="StaticBody2D" parent="Mundo"]
-position = Vector2(700, 208)
-script = ExtResource("2")
-tamanho = Vector2(48, 32)
-
-[node name="Plataforma4" type="StaticBody2D" parent="Mundo"]
-position = Vector2(820, 160)
-script = ExtResource("2")
-tamanho = Vector2(96, 8)
-uma_via = true
-cor = Color(0.36, 0.4, 0.48, 1)
-
-[node name="Plataforma5" type="StaticBody2D" parent="Mundo"]
-position = Vector2(1040, 184)
-script = ExtResource("2")
-tamanho = Vector2(96, 8)
-uma_via = true
-cor = Color(0.36, 0.4, 0.48, 1)
-
-[node name="Plataforma6" type="StaticBody2D" parent="Mundo"]
-position = Vector2(1280, 184)
-script = ExtResource("2")
-tamanho = Vector2(96, 8)
-uma_via = true
-cor = Color(0.36, 0.4, 0.48, 1)
+[node name="Terreno" type="TileMapLayer" parent="Mundo"]
+tile_map_data = PackedByteArray("AAAAAA8AAAAGAAEAAAAAABAAAAADAAEAAAABAA8AAAAGAAEAAAABABAAAAADAAEAAAACAA8AAAAGAAEAAAACABAAAAADAAEAAAADAA8AAAAGAAEAAAADABAAAAADAAEAAAAEAA8AAAAGAAEAAAAEABAAAAADAAEAAAAFAA8AAAAGAAEAAAAFABAAAAADAAEAAAAGAA8AAAAGAAEAAAAGABAAAAADAAEAAAAHAA8AAAAGAAEAAAAHABAAAAADAAEAAAAIAA8AAAAGAAEAAAAIABAAAAADAAEAAAAJAA8AAAAGAAEAAAAJABAAAAADAAEAAAAKAA8AAAAGAAEAAAAKABAAAAADAAEAAAALAA8AAAAGAAEAAAALABAAAAADAAEAAAAMAA8AAAAGAAEAAAAMABAAAAADAAEAAAANAA8AAAAGAAEAAAANABAAAAADAAEAAAAOAA8AAAAGAAEAAAAOABAAAAADAAEAAAAPAA8AAAAGAAEAAAAPABAAAAADAAEAAAAQAA8AAAAEAAEAAAAQABAAAAABAAEAAAAUAA8AAAAGAAAAAAAUABAAAAADAAAAAAAVAA8AAAAGAAEAAAAVABAAAAADAAEAAAAWAA8AAAAGAAEAAAAWABAAAAADAAEAAAAXAA8AAAAGAAEAAAAXABAAAAADAAEAAAAYAA8AAAAGAAEAAAAYABAAAAADAAEAAAAZAA8AAAAGAAEAAAAZABAAAAADAAEAAAAaAA8AAAAGAAEAAAAaABAAAAADAAEAAAAbAA8AAAAGAAEAAAAbABAAAAADAAEAAAAcAA8AAAAGAAEAAAAcABAAAAADAAEAAAAdAA8AAAAGAAEAAAAdABAAAAADAAEAAAAeAA8AAAAGAAEAAAAeABAAAAADAAEAAAAfAA8AAAAGAAEAAAAfABAAAAADAAEAAAAgAA8AAAAGAAEAAAAgABAAAAADAAEAAAAhAA8AAAAGAAEAAAAhABAAAAADAAEAAAAiAA8AAAAGAAEAAAAiABAAAAADAAEAAAAjAA8AAAAGAAEAAAAjABAAAAADAAEAAAAkAA8AAAAGAAEAAAAkABAAAAADAAEAAAAlAA8AAAAGAAEAAAAlABAAAAADAAEAAAAmAA8AAAAGAAEAAAAmABAAAAADAAEAAAAnAA8AAAAGAAEAAAAnABAAAAADAAEAAAAoAA8AAAAGAAEAAAAoABAAAAADAAEAAAApAA8AAAAGAAEAAAApABAAAAADAAEAAAAqAA8AAAAGAAEAAAAqABAAAAADAAEAAAArAA8AAAAGAAEAAAArABAAAAADAAEAAAAsAA8AAAAHAAEAAAAsABAAAAADAAEAAAAtAA8AAAAAAAIAAAAtABAAAAADAAEAAAAuAA8AAAAHAAEAAAAuABAAAAADAAEAAAAvAA8AAAAGAAEAAAAvABAAAAADAAEAAAAwAA8AAAAGAAEAAAAwABAAAAADAAEAAAAxAA8AAAAGAAEAAAAxABAAAAADAAEAAAAyAA8AAAAGAAEAAAAyABAAAAADAAEAAAAzAA8AAAAGAAEAAAAzABAAAAADAAEAAAA0AA8AAAAGAAEAAAA0ABAAAAADAAEAAAA1AA8AAAAGAAEAAAA1ABAAAAADAAEAAAA2AA8AAAAGAAEAAAA2ABAAAAADAAEAAAA3AA8AAAAGAAEAAAA3ABAAAAADAAEAAAA4AA8AAAAGAAEAAAA4ABAAAAADAAEAAAA5AA8AAAAGAAEAAAA5ABAAAAADAAEAAAA6AA8AAAAGAAEAAAA6ABAAAAADAAEAAAA7AA8AAAAGAAEAAAA7ABAAAAADAAEAAAA8AA8AAAAGAAEAAAA8ABAAAAADAAEAAAA9AA8AAAAGAAEAAAA9ABAAAAADAAEAAAA+AA8AAAAGAAEAAAA+ABAAAAADAAEAAAA/AA8AAAAGAAEAAAA/ABAAAAADAAEAAABAAA8AAAAGAAEAAABAABAAAAADAAEAAABBAA8AAAAGAAEAAABBABAAAAADAAEAAABCAA8AAAAGAAEAAABCABAAAAADAAEAAABDAA8AAAAGAAEAAABDABAAAAADAAEAAABEAA8AAAAGAAEAAABEABAAAAADAAEAAABFAA8AAAAGAAEAAABFABAAAAADAAEAAABGAA8AAAAGAAEAAABGABAAAAADAAEAAABHAA8AAAAGAAEAAABHABAAAAADAAEAAABIAA8AAAAGAAEAAABIABAAAAADAAEAAABJAA8AAAAGAAEAAABJABAAAAADAAEAAABKAA8AAAAGAAEAAABKABAAAAADAAEAAABLAA8AAAAGAAEAAABLABAAAAADAAEAAABMAA8AAAAGAAEAAABMABAAAAADAAEAAABNAA8AAAAGAAEAAABNABAAAAADAAEAAABOAA8AAAAGAAEAAABOABAAAAADAAEAAABPAA8AAAAGAAEAAABPABAAAAADAAEAAABQAA8AAAAGAAEAAABQABAAAAADAAEAAABRAA8AAAAGAAEAAABRABAAAAADAAEAAABSAA8AAAAGAAEAAABSABAAAAADAAEAAABTAA8AAAAGAAEAAABTABAAAAADAAEAAABUAA8AAAAGAAEAAABUABAAAAADAAEAAABVAA8AAAAGAAEAAABVABAAAAADAAEAAABWAA8AAAAGAAEAAABWABAAAAADAAEAAABXAA8AAAAGAAEAAABXABAAAAADAAEAAABYAA8AAAAGAAEAAABYABAAAAADAAEAAABZAA8AAAAGAAEAAABZABAAAAADAAEAAAD///z/AAAEAAAAAAD///3/AAAFAAAAAAD///7/AAAFAAAAAAD/////AAAFAAAAAAD//wAAAAAFAAAAAAD//wEAAAAFAAAAAAD//wIAAAAFAAAAAAD//wMAAAAFAAAAAAD//wQAAAAFAAAAAAD//wUAAAAFAAAAAAD//wYAAAAFAAAAAAD//wcAAAAFAAAAAAD//wgAAAAFAAAAAAD//wkAAAAFAAAAAAD//woAAAAFAAAAAAD//wsAAAAFAAAAAAD//wwAAAAFAAAAAAD//w0AAAAFAAAAAAD//w4AAAAFAAAAAAD//w8AAAAHAAAAAAD//xAAAAADAAAAAABaAPz/AAAEAAAAAABaAP3/AAAFAAAAAABaAP7/AAAFAAAAAABaAP//AAAFAAAAAABaAAAAAAAFAAAAAABaAAEAAAAFAAAAAABaAAIAAAAFAAAAAABaAAMAAAAFAAAAAABaAAQAAAAFAAAAAABaAAUAAAAFAAAAAABaAAYAAAAFAAAAAABaAAcAAAAFAAAAAABaAAgAAAAFAAAAAABaAAkAAAAFAAAAAABaAAoAAAAFAAAAAABaAAsAAAAFAAAAAABaAAwAAAAFAAAAAABaAA0AAAAFAAAAAABaAA4AAAAFAAAAAABaAA8AAAAFAAEAAABaABAAAAABAAEAAAAsAA0AAAAGAAAAAAAsAA4AAAAHAAAAAAAtAA0AAAAGAAEAAAAtAA4AAAAHAAEAAAAuAA0AAAAEAAEAAAAuAA4AAAAFAAEAAAAKAAwAAAADAAIAAAALAAwAAAAEAAIAAAAMAAwAAAAEAAIAAAANAAwAAAAEAAIAAAAOAAwAAAAEAAIAAAAPAAwAAAAFAAIAAAAUAAoAAAADAAIAAAAVAAoAAAAEAAIAAAAWAAoAAAAEAAIAAAAXAAoAAAAEAAIAAAAYAAoAAAAFAAIAAAAfAAwAAAADAAIAAAAgAAwAAAAEAAIAAAAhAAwAAAAEAAIAAAAiAAwAAAAEAAIAAAAjAAwAAAAEAAIAAAAkAAwAAAAEAAIAAAAlAAwAAAAEAAIAAAAmAAwAAAAFAAIAAAAzAAoAAAADAAIAAAA0AAoAAAAEAAIAAAA1AAoAAAAEAAIAAAA2AAoAAAAEAAIAAAA3AAoAAAAEAAIAAAA4AAoAAAAFAAIAAABBAAsAAAADAAIAAABCAAsAAAAEAAIAAABDAAsAAAAEAAIAAABEAAsAAAAEAAIAAABFAAsAAAAEAAIAAABGAAsAAAAFAAIAAABQAAsAAAADAAIAAABRAAsAAAAEAAIAAABSAAsAAAAEAAIAAABTAAsAAAAEAAIAAABUAAsAAAAEAAIAAABVAAsAAAAFAAIAAAA=")
+tile_set = ExtResource("6_tmv1y")
 
 [node name="Gancho1" type="Area2D" parent="Mundo"]
 position = Vector2(420, 96)
@@ -159,7 +145,7 @@ position = Vector2(1120, 240)
 position = Vector2(1400, 240)
 
 [node name="Onda3" type="Marker2D" parent="PontosOnda"]
-position = Vector2(1328, 184)
+position = Vector2(1328, 176)
 
 [node name="Onda4" type="Marker2D" parent="PontosOnda"]
 position = Vector2(1240, 240)
@@ -171,3 +157,15 @@ script = ExtResource("6")
 [node name="Hud" parent="." instance=ExtResource("7")]
 
 [node name="CaixaDialogo" parent="." instance=ExtResource("10")]
+
+[node name="FrenteParallax" type="Node2D" parent="."]
+z_index = 20
+
+[node name="Camada3_primeiro_plano" type="Parallax2D" parent="FrenteParallax"]
+scroll_scale = Vector2(1.3, 0)
+repeat_size = Vector2(480, 0)
+repeat_times = 4
+
+[node name="Imagem" type="Sprite2D" parent="FrenteParallax/Camada3_primeiro_plano"]
+texture = ExtResource("26_v35vq")
+centered = false

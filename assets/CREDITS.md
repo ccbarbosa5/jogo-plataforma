@@ -2,6 +2,8 @@
 
 | Asset | Autor | Licença | Link |
 |---|---|---|---|
+| `assets/fonts/jersey10/Jersey10-Regular.ttf` (fonte das falas e placas) | The Soft Type Project Authors (Sarah Cadigan-Fried) | SIL Open Font License 1.1 (`assets/fonts/jersey10/OFL.txt`) | https://github.com/scfried/soft-type-jersey |
+| `assets/fonts/micro5/Micro5-Regular.ttf` (fonte pequena: HUD e ajuda) | The Soft Type Project Authors (Sarah Cadigan-Fried) | SIL Open Font License 1.1 (`assets/fonts/micro5/OFL.txt`) | https://github.com/scfried/soft-type-micro |
 
 ## Imagens geradas por IA (D-039)
 Geradas pelo dono no ChatGPT a partir dos prompts da ART (`ART/prompts/` no projeto do Claude) e tratadas com `ferramentas/arte/tratar_ia.py`. Os originais ficam em `ferramentas/arte/originais_ia/` (pasta ignorada pelo Godot). **Se o jogo for para a Steam, declarar o uso de IA. Antes de vender, conferir os termos de uso comercial da ferramenta.**

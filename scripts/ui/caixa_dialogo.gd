@@ -10,6 +10,9 @@ extends CanvasLayer
 
 signal terminou(id_cena: String)
 
+const COR_TEXTO: Color = Color("eceff4")
+const COR_DIRECAO: Color = Color("a7adba")
+
 ## Segundos por caractere no modo rápido (com um mínimo).
 @export var segundos_por_caractere: float = 0.05
 @export var minimo_rapida: float = 1.8
@@ -25,7 +28,6 @@ var retrato_direita: RetratoDialogo
 var caixa: MolduraDialogo
 var placa: MolduraDialogo
 var nome: Label
-var titulo: Label
 var texto: Label
 var direcao: Label
 var rapida: MolduraDialogo
@@ -111,56 +113,43 @@ func _exibir() -> void:
 	var moldura: String = _banco.moldura_do_falante(falante) if not falante.is_empty() else "humano"
 	caixa.moldura = moldura
 	texto.text = fala.get("texto", "")
+	texto.add_theme_color_override("font_color", COR_TEXTO)
 	var dir: String = fala.get("direcao", "")
 	direcao.text = "[%s]" % dir if not dir.is_empty() else ""
-	texto.add_theme_color_override("font_color", Color("eceff4"))
 	if falante.is_empty():
-		# Só direção de cena: vira o texto principal, em tom apagado, sem retrato nem placa.
+		# Só direção de cena: vira o texto principal, em tom apagado, sem placa.
 		texto.text = dir
-		texto.add_theme_color_override("font_color", Color("a7adba"))
+		texto.add_theme_color_override("font_color", COR_DIRECAO)
 		direcao.text = ""
 		placa.visible = false
-		nome.text = ""
 		retrato_esquerda.ativo = false
 		retrato_direita.ativo = false
-		_posicionar_texto("")
 		return
+	# Os dois lados podem aparecer (mockup v04 da ART); quem não fala fica mais escuro.
 	var lado: String = _banco.lado_do_falante(falante)
 	var retrato: RetratoDialogo = retrato_esquerda if lado == "esquerda" else retrato_direita
 	var outro: RetratoDialogo = retrato_direita if lado == "esquerda" else retrato_esquerda
-	retrato.mostrar(falante, fala.get("expressao", "neutro"), cor, moldura)
+	var expressao: String = fala.get("expressao", "")
+	var expressoes: Array = _banco.expressoes_do_falante(falante)
+	if expressao.is_empty() and not expressoes.is_empty():
+		expressao = expressoes[0]
+	retrato.mostrar(falante, expressao, expressoes, cor, moldura, _banco.retrato_do_falante(falante))
 	retrato.ativo = true
-	outro.visible = false  # só quem fala aparece: o outro retrato cobriria o texto
+	outro.ativo = false
+	# Placa só com o NOME (D-046), encostada no lado de quem fala.
 	placa.visible = true
 	placa.moldura = moldura
-	nome.text = nome_falante
+	nome.text = nome_falante.to_upper()
 	nome.add_theme_color_override("font_color", cor)
-	titulo.text = _banco.titulo_do_falante(falante)
-	_posicionar_texto(lado)
-
-
-func _posicionar_texto(lado: String) -> void:
-	var margem_retrato: float = RetratoDialogo.TAMANHO.x - 4.0
-	var x0: float = 14.0
-	var largura: float = caixa.size.x - 28.0
-	if lado == "esquerda":
-		x0 = margem_retrato
-		largura = caixa.size.x - margem_retrato - 16.0
-	elif lado == "direita":
-		largura = caixa.size.x - margem_retrato - 16.0
-	# A seta de continuar fica sempre fora do retrato.
-	caixa.seta_x = caixa.size.x - margem_retrato - 6.0 if lado == "direita" else caixa.size.x - 14.0
-	texto.position = Vector2(x0, 9.0)
-	texto.size = Vector2(largura, 44.0)
-	direcao.position = Vector2(x0, caixa.size.y - 16.0)
-	direcao.size = Vector2(largura, 12.0)
-	var largura_placa: float = 172.0
-	placa.size = Vector2(largura_placa, 28.0)
-	var y: float = caixa.position.y - 24.0
+	var largura_nome: float = Fontes.texto().get_string_size(nome.text, HORIZONTAL_ALIGNMENT_LEFT, -1, Fontes.TAMANHO_TEXTO).x
+	placa.size = Vector2(maxf(largura_nome + 28.0, 64.0), 24.0)
+	nome.position = Vector2(14.0, 4.0)
+	nome.size = Vector2(placa.size.x - 28.0, 16.0)
+	var y_placa: float = caixa.position.y - placa.size.y + 4.0
 	if lado == "direita":
-		placa.position = Vector2(caixa.position.x + caixa.size.x - margem_retrato - largura_placa + 8.0, y)
+		placa.position = Vector2(caixa.position.x + caixa.size.x - placa.size.x - 8.0, y_placa)
 	else:
-		placa.position = Vector2(caixa.position.x + margem_retrato - 8.0, y)
+		placa.position = Vector2(caixa.position.x + 8.0, y_placa)
 
 
 func _process(delta: float) -> void:
@@ -210,7 +199,7 @@ func _esconder_tudo() -> void:
 	rapida.visible = false
 
 
-# --- Montagem dos nós (tela de 480×270) ---
+# --- Montagem dos nós (tela de 480×270; layout do mockup v04 da ART) ---
 
 func _montar() -> void:
 	var tela := Vector2(480, 270)
@@ -220,59 +209,57 @@ func _montar() -> void:
 	escurecer.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	add_child(escurecer)
 
-	caixa = MolduraDialogo.new()
-	caixa.position = Vector2(8, 196)
-	caixa.size = Vector2(464, 68)
-	caixa.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	add_child(caixa)
-	texto = _rotulo(caixa, 9, Color("eceff4"))
-	texto.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	direcao = _rotulo(caixa, 7, Color(1, 1, 1, 0.45))
-
-	# Os retratos vêm depois da caixa: passam por cima da borda dela.
+	# Retratos nas laterais, atrás da caixa (o corte da cintura fica escondido por ela).
 	retrato_esquerda = RetratoDialogo.new()
-	retrato_esquerda.position = Vector2(-4, tela.y - RetratoDialogo.TAMANHO.y - 2)
+	retrato_esquerda.position = Vector2(-6, tela.y - RetratoDialogo.TAMANHO.y)
 	retrato_esquerda.size = RetratoDialogo.TAMANHO
 	retrato_esquerda.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	add_child(retrato_esquerda)
 	retrato_direita = RetratoDialogo.new()
 	retrato_direita.espelhar = true
-	retrato_direita.position = Vector2(tela.x - RetratoDialogo.TAMANHO.x + 4, tela.y - RetratoDialogo.TAMANHO.y - 2)
+	retrato_direita.position = Vector2(tela.x - RetratoDialogo.TAMANHO.x + 6, tela.y - RetratoDialogo.TAMANHO.y)
 	retrato_direita.size = RetratoDialogo.TAMANHO
 	retrato_direita.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	add_child(retrato_direita)
 
+	caixa = MolduraDialogo.new()
+	caixa.position = Vector2(92, 192)
+	caixa.size = Vector2(296, 72)
+	add_child(caixa)
+	texto = _rotulo(caixa, Fontes.texto(), Fontes.TAMANHO_TEXTO, COR_TEXTO)
+	texto.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	texto.position = Vector2(14, 9)
+	texto.size = Vector2(caixa.size.x - 28, 46)
+	direcao = _rotulo(caixa, Fontes.pequena(), Fontes.TAMANHO_PEQUENA, COR_DIRECAO)
+	direcao.position = Vector2(14, caixa.size.y - 18)
+	direcao.size = Vector2(caixa.size.x - 44, 12)
+	direcao.clip_text = true
+
 	placa = MolduraDialogo.new()
 	placa.mostrar_seta = false
-	placa.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	add_child(placa)
-	nome = _rotulo(placa, 10, Color.WHITE)
-	nome.position = Vector2(9, 2)
-	nome.size = Vector2(156, 14)
-	nome.uppercase = true
-	titulo = _rotulo(placa, 7, Color(1, 1, 1, 0.7))
-	titulo.position = Vector2(9, 15)
-	titulo.size = Vector2(156, 10)
+	nome = _rotulo(placa, Fontes.texto(), Fontes.TAMANHO_TEXTO, Color.WHITE)
 
 	rapida = MolduraDialogo.new()
 	rapida.mostrar_seta = false
 	rapida.position = Vector2(132, 4)
-	rapida.size = Vector2(tela.x - 136, 40)
-	rapida.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	rapida.size = Vector2(tela.x - 136, 44)
 	add_child(rapida)
-	rapida_nome = _rotulo(rapida, 8, Color.WHITE)
-	rapida_nome.position = Vector2(8, 3)
-	rapida_nome.size = Vector2(rapida.size.x - 16, 10)
-	rapida_texto = _rotulo(rapida, 8, Color("eceff4"))
+	rapida_nome = _rotulo(rapida, Fontes.pequena(), Fontes.TAMANHO_PEQUENA, Color.WHITE)
+	rapida_nome.position = Vector2(12, 5)
+	rapida_nome.size = Vector2(rapida.size.x - 24, 10)
+	rapida_texto = _rotulo(rapida, Fontes.texto(), Fontes.TAMANHO_TEXTO, COR_TEXTO)
 	rapida_texto.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	rapida_texto.position = Vector2(8, 14)
-	rapida_texto.size = Vector2(rapida.size.x - 16, 24)
+	rapida_texto.position = Vector2(12, 14)
+	rapida_texto.size = Vector2(rapida.size.x - 24, 28)
 
 
-func _rotulo(pai: Control, tamanho_fonte: int, cor: Color) -> Label:
+func _rotulo(pai: Control, fonte: Font, tamanho_fonte: int, cor: Color) -> Label:
 	var r := Label.new()
+	r.add_theme_font_override("font", fonte)
 	r.add_theme_font_size_override("font_size", tamanho_fonte)
 	r.add_theme_color_override("font_color", cor)
+	r.add_theme_constant_override("line_spacing", 0)
 	r.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	pai.add_child(r)
 	return r

@@ -7,6 +7,7 @@
 [ext_resource type="Script" path="res://scripts/comum/vida.gd" id="5"]
 [ext_resource type="Script" path="res://scripts/jogador/grilhao.gd" id="6"]
 [ext_resource type="Resource" path="res://scenes/armas/granada_padrao.tres" id="7"]
+[ext_resource type="Script" path="res://scripts/jogador/visual_ryker.gd" id="8"]
 
 [sub_resource type="RectangleShape2D" id="forma"]
 size = Vector2(12, 28)
@@ -29,4 +30,8 @@ script = ExtResource("5")
 maxima = 4
 
 [node name="Grilhao" type="Node2D" parent="."]
+z_index = 1
 script = ExtResource("6")
+
+[node name="Visual" type="Node2D" parent="."]
+script = ExtResource("8")

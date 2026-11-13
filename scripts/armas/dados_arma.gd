@@ -5,6 +5,8 @@ extends Resource
 ## A mini árvore de habilidades modifica estes valores via ModificadorArma (ver ArmaEquipada).
 
 @export var nome: String = "Arma"
+## Qual folha de tronco do Ryker usar (assets/sprites/personagens/ryker/): mordida ou bramido.
+@export var visual: StringName = &"mordida"
 ## Tiros por segundo segurando o botão.
 @export var cadencia: float = 8.0
 @export var dano: int = 1

@@ -1,82 +1,120 @@
 {
- "fonte": "NAR/01-dialogos-primeira-run.md v0.2",
+ "fonte": "NAR/01-dialogos-primeira-run.md v0.3 + NAR/03-armas.md v0.2 (falas ARSE_* e CAMP_*)",
  "falantes": {
   "RYKER": {
-   "nome": "Ryker Vale",
-   "titulo": "Krat'zu, o Gladiador Fugitivo",
+   "nome": "RYKER",
    "cor": "#c4652e",
    "moldura": "humano",
-   "lado": "esquerda"
+   "lado": "esquerda",
+   "expressoes": [
+    "neutro",
+    "deboche",
+    "raiva",
+    "abalado"
+   ]
   },
   "ECO": {
    "nome": "ECO",
-   "titulo": "A Voz da Nave",
    "cor": "#ffc95c",
    "moldura": "eco",
-   "lado": "direita"
-  },
-  "TOR-AMA": {
-   "nome": "Tor-Ama",
-   "titulo": "Matriarca do Clã Ossoferro",
-   "cor": "#ff5a2e",
-   "moldura": "kharn",
-   "lado": "direita"
-  },
-  "COLMEIA": {
-   "nome": "A Colmeia",
-   "titulo": "Os Muitos",
-   "cor": "#a3e23c",
-   "moldura": "vesh",
-   "lado": "direita"
-  },
-  "MERCADOR": {
-   "nome": "Mercador Ilo",
-   "titulo": "Sindicato Ilo",
-   "cor": "#d9b26a",
-   "moldura": "ilo",
-   "lado": "direita"
-  },
-  "UR-KESH": {
-   "nome": "Ur-Kesh",
-   "titulo": "Campeão do Clã Kesh",
-   "cor": "#9c3527",
-   "moldura": "kharn",
-   "lado": "direita"
+   "lado": "direita",
+   "expressoes": [
+    "acolhedora",
+    "sorriso",
+    "preocupada",
+    "distante"
+   ]
   },
   "GARRAK": {
-   "nome": "Garrak",
-   "titulo": "O Exilado",
+   "nome": "GARRAK",
    "cor": "#dccfae",
    "moldura": "kharn",
-   "lado": "direita"
-  },
-  "VOSSA": {
-   "nome": "Vossa Margem",
-   "titulo": "Sindicato Ilo",
-   "cor": "#e0b0ff",
-   "moldura": "ilo",
-   "lado": "direita"
+   "lado": "direita",
+   "expressoes": [
+    "severo",
+    "orgulho contido",
+    "vergonha",
+    "raiva"
+   ]
   },
   "SETE": {
-   "nome": "Sete",
-   "titulo": "Amostra nº 7",
+   "nome": "SETE",
    "cor": "#ffc95c",
    "moldura": "vesh",
-   "lado": "direita"
+   "lado": "direita",
+   "expressoes": [
+    "curioso",
+    "encolhido",
+    "feliz",
+    "confuso"
+   ]
+  },
+  "VOSSA": {
+   "nome": "VOSSA MARGEM",
+   "cor": "#e0b0ff",
+   "moldura": "ilo",
+   "lado": "direita",
+   "expressoes": [
+    "sorriso comercial",
+    "ganancioso",
+    "nervoso"
+   ]
+  },
+  "MERCADOR": {
+   "nome": "MERCADOR ILO",
+   "cor": "#d9b26a",
+   "moldura": "ilo",
+   "lado": "direita",
+   "expressoes": [
+    "sorriso comercial",
+    "decepcionado"
+   ]
+  },
+  "TOR-AMA": {
+   "nome": "TOR-AMA",
+   "cor": "#ff5a2e",
+   "moldura": "kharn",
+   "lado": "direita",
+   "expressoes": [
+    "imponente",
+    "divertida",
+    "aprovação"
+   ]
+  },
+  "COLMEIA": {
+   "nome": "A COLMEIA",
+   "cor": "#a3e23c",
+   "moldura": "vesh",
+   "lado": "direita",
+   "expressoes": [
+    "calmo",
+    "agitado"
+   ]
+  },
+  "UR-KESH": {
+   "nome": "UR-KESH",
+   "cor": "#ff5a2e",
+   "moldura": "kharn",
+   "lado": "direita",
+   "expressoes": [
+    "fúria",
+    "desdém",
+    "ferido"
+   ]
   },
   "SINAL": {
-   "nome": "Sinal",
-   "titulo": "Transmissão humana",
+   "nome": "SINAL DESCONHECIDO",
    "cor": "#b8d4e0",
-   "moldura": "humano",
-   "lado": "direita"
+   "moldura": "humano_danificada",
+   "lado": "direita",
+   "retrato": "estatica"
   },
   "REGISTRO": {
-   "nome": "Registro",
-   "titulo": "Dado corrompido",
+   "nome": "REGISTRO CORROMPIDO",
    "cor": "#4fb0a6",
-   "moldura": "antigos",
-   "lado": "direita"
+   "moldura": "humano_danificada",
+   "lado": "direita",
+   "retrato": "estatica"
   }
  },
  "cenas": {
@@ -87,12 +125,14 @@
     {
      "id": "ABER_01",
      "falante": "ECO",
-     "texto": "Molde 4. Reconstrução concluída. Batimentos: presentes. Sarcasmo: carregando."
+     "texto": "Molde 4. Reconstrução concluída. Batimentos: presentes. Sarcasmo: carregando.",
+     "expressao": "sorriso"
     },
     {
      "id": "ABER_02",
      "falante": "RYKER",
-     "texto": "...Eu morri."
+     "texto": "...Eu morri.",
+     "expressao": "abalado"
     },
     {
      "id": "ABER_03",
@@ -107,7 +147,8 @@
     {
      "id": "ABER_05",
      "falante": "ECO",
-     "texto": "Eu sou a ECO. Esta é a Eco. Sim, a nave e eu temos o mesmo nome. Não fui eu que escolhi."
+     "texto": "Eu sou a ECO. Esta é a Eco. Sim, a nave e eu temos o mesmo nome. Não fui eu que escolhi.",
+     "expressao": "sorriso"
     },
     {
      "id": "ABER_06",
@@ -118,7 +159,9 @@
      "id": "ABER_07",
      "falante": "ECO",
      "texto": "Pessoas que dormem há muito tempo.",
-     "aud": "zumbido"
+     "expressao": "distante",
+     "aud": "zumbido",
+     "duvida": 1
     },
     {
      "id": "ABER_08",
@@ -136,12 +179,14 @@
      "id": "ABER_10",
      "falante": "RYKER",
      "texto": "...Tá. Valeu, eu acho. Agora me larga num planeta humano qualquer e a gente fica quite.",
+     "expressao": "deboche",
      "direcao": "pausa"
     },
     {
      "id": "ABER_11",
      "falante": "ECO",
-     "texto": "Não existe planeta humano neste setor. Você está muito longe de casa, Ryker. Mas existe isto."
+     "texto": "Não existe planeta humano neste setor. Você está muito longe de casa, Ryker. Mas existe isto.",
+     "expressao": "preocupada"
     },
     {
      "id": "ABER_12",
@@ -162,7 +207,8 @@
     {
      "id": "ABER_15",
      "falante": "RYKER",
-     "texto": "Kharn. Claro que tem Kharn."
+     "texto": "Kharn. Claro que tem Kharn.",
+     "expressao": "raiva"
     },
     {
      "id": "ABER_16",
@@ -178,7 +224,7 @@
      "id": "ABER_18",
      "falante": "ECO",
      "texto": "Tem uma peça minha lá embaixo. E... faz muito tempo que ninguém fica aqui comigo. Eu ganho companhia.",
-     "direcao": "sorri"
+     "expressao": "sorriso"
     }
    ]
   },
@@ -201,12 +247,14 @@
      "id": "HANG_03",
      "falante": "ECO",
      "texto": "Tudo. Inclusive o medo. Pode ficar tranquilo, eu não comento. Muito.",
+     "expressao": "sorriso",
      "direcao": "pausa"
     },
     {
      "id": "HANG_04",
      "falante": "RYKER",
-     "texto": "Você acabou de comentar."
+     "texto": "Você acabou de comentar.",
+     "expressao": "deboche"
     },
     {
      "id": "HANG_05",
@@ -216,12 +264,14 @@
     {
      "id": "HANG_06",
      "falante": "RYKER",
-     "texto": "Então eu desço armado e volto pelado."
+     "texto": "Então eu desço armado e volto pelado.",
+     "expressao": "deboche"
     },
     {
      "id": "HANG_07",
      "falante": "ECO",
      "texto": "Você desce armado e volta... para mim. Bem informado, eu quis dizer.",
+     "expressao": "sorriso",
      "direcao": "beat"
     },
     {
@@ -281,7 +331,7 @@
      {
       "id": "HANG_R6",
       "falante": "ECO",
-      "texto": "Você não precisa ir, sabe. Pode ficar um pouco. ...Tudo bem. Boa queda.",
+      "texto": "Você não precisa ir, sabe. Pode ficar. Descansar um pouco. ...Tudo bem. Boa queda.",
       "direcao": "Ryker entra na cápsula"
      }
     ]
@@ -338,12 +388,14 @@
     {
      "id": "KHAR_01",
      "falante": "TOR-AMA",
-     "texto": "Krat'zu. O rato que mordeu o campeão."
+     "texto": "Krat'zu. O rato que mordeu o campeão.",
+     "expressao": "imponente"
     },
     {
      "id": "KHAR_02",
      "falante": "RYKER",
-     "texto": "Se veio me levar de volta pra arena, entra na fila."
+     "texto": "Se veio me levar de volta pra arena, entra na fila.",
+     "expressao": "deboche"
     },
     {
      "id": "KHAR_03",
@@ -359,12 +411,14 @@
      "id": "KHAR_05",
      "falante": "TOR-AMA",
      "texto": "Então morda de novo. Com dentes melhores.",
+     "expressao": "divertida",
      "direcao": "escolha do upgrade"
     },
     {
      "id": "KHAR_06",
      "falante": "TOR-AMA",
      "texto": "Faça barulho, pequeno. O clã está ouvindo.",
+     "expressao": "aprovação",
      "direcao": "depois da escolha"
     }
    ]
@@ -416,7 +470,8 @@
     {
      "id": "VESH_02",
      "falante": "RYKER",
-     "texto": "Ótimo. Inseto falante."
+     "texto": "Ótimo. Inseto falante.",
+     "expressao": "deboche"
     },
     {
      "id": "VESH_03",
@@ -441,7 +496,8 @@
     {
      "id": "VESH_07",
      "falante": "COLMEIA",
-     "texto": "Por enquanto."
+     "texto": "Por enquanto.",
+     "expressao": "agitado"
     }
    ]
   },
@@ -453,30 +509,32 @@
     {
      "condicao": "ofertas_vesh_total>=3",
      "uma_vez": "pista_vesh_1",
-     "duvida": 1,
      "falas": [
       {
        "id": "VESH_P1",
        "falante": "COLMEIA",
        "texto": "Nós servimos. Nós não lembramos a quem.",
-       "direcao": "pausa longa"
+       "direcao": "pausa longa",
+       "duvida": 1
       }
      ]
     },
     {
      "condicao": "ofertas_vesh_total>=3",
      "uma_vez": "pista_vesh_2",
-     "duvida": 1,
      "falas": [
       {
        "id": "VESH_P2",
        "falante": "COLMEIA",
-       "texto": "Você tem cheiro de... casa. Por que um corpo sozinho tem cheiro de casa?"
+       "texto": "Você tem cheiro de... casa. Por que um corpo sozinho tem cheiro de casa?",
+       "expressao": "agitado",
+       "duvida": 1
       },
       {
        "id": "VESH_P2b",
        "falante": "RYKER",
-       "texto": "Deve ser o desodorante."
+       "texto": "Deve ser o desodorante.",
+       "expressao": "deboche"
       }
      ]
     }
@@ -549,8 +607,7 @@
    "prioridade": [
     {
      "condicao": "visitas_loja>=4",
-     "uma_vez": "pista_loja_1",
-     "duvida": 1,
+     "uma_vez": "loja_p1_vista",
      "falas": [
       {
        "id": "LOJA_P1",
@@ -562,12 +619,12 @@
     {
      "condicao": "visitas_loja>=7",
      "uma_vez": "pista_loja_2",
-     "duvida": 1,
      "falas": [
       {
        "id": "LOJA_P2",
        "falante": "MERCADOR",
-       "texto": "Sua nave tem uma anfitriã encantadora. Eu nunca fecho negócio com ela. Ela sempre sabe o meu preço."
+       "texto": "Sua nave tem uma anfitriã encantadora. Eu nunca fecho negócio com ela. Ela sempre sabe o meu preço.",
+       "duvida": 1
       }
      ]
     }
@@ -632,7 +689,8 @@
     {
      "id": "LOJA_C5",
      "falante": "MERCADOR",
-     "texto": "Ah. Só olhando. Que... corajoso."
+     "texto": "Ah. Só olhando. Que... corajoso.",
+     "expressao": "decepcionado"
     }
    ]
   },
@@ -642,7 +700,8 @@
     {
      "id": "LOJA_S1",
      "falante": "MERCADOR",
-     "texto": "Volte quando tiver mais medo. Medo vende."
+     "texto": "Volte quando tiver mais medo. Medo vende.",
+     "expressao": "decepcionado"
     }
    ]
   },
@@ -663,7 +722,8 @@
     {
      "id": "CAMI_00",
      "falante": "RYKER",
-     "texto": "Os Vesh tão carregando os mortos lá pra dentro... Pra onde?"
+     "texto": "Os Vesh tão carregando os mortos lá pra dentro... Pra onde?",
+     "duvida": 1
     }
    ]
   },
@@ -703,13 +763,13 @@
   "registro_molde1": {
    "modo": "conversa",
    "uma_vez": "registro_molde1_1",
-   "duvida": 1,
    "falas": [
     {
      "id": "REG1_01",
      "falante": "REGISTRO",
      "texto": "...Molde 1, registro... se ela sorrir, conte os... não durma na lu—",
-     "direcao": "voz humana, masculina, muito velha, cortada; estática"
+     "direcao": "voz humana, masculina, muito velha, cortada; estática",
+     "duvida": 1
     },
     {
      "id": "REG1_02",
@@ -730,12 +790,14 @@
     {
      "id": "UREK_01",
      "falante": "UR-KESH",
-     "texto": "KRAT'ZU! Eu sabia. Senti cheiro de rato desde a órbita."
+     "texto": "KRAT'ZU! Eu sabia. Senti cheiro de rato desde a órbita.",
+     "expressao": "fúria"
     },
     {
      "id": "UREK_02",
      "falante": "RYKER",
-     "texto": "Ur-Kesh. Ganhou um robô novo? Ficou com vergonha de lutar com o próprio corpo?"
+     "texto": "Ur-Kesh. Ganhou um robô novo? Ficou com vergonha de lutar com o próprio corpo?",
+     "expressao": "deboche"
     },
     {
      "id": "UREK_03",
@@ -745,12 +807,14 @@
     {
      "id": "UREK_04",
      "falante": "RYKER",
-     "texto": "Meu charme?"
+     "texto": "Meu charme?",
+     "expressao": "deboche"
     },
     {
      "id": "UREK_05",
      "falante": "UR-KESH",
-     "texto": "A SUA VIDA!"
+     "texto": "A SUA VIDA!",
+     "expressao": "fúria"
     },
     {
      "id": "UREK_06",
@@ -766,6 +830,24 @@
    "condicao": "urkesh_visto",
    "prioridade": [
     {
+     "condicao": "arma_atual==bramido",
+     "uma_vez": "urkesh_viu_bramido",
+     "falas": [
+      {
+       "id": "UREK_BR",
+       "falante": "UR-KESH",
+       "texto": "ESSE É O MEU BRAMIDO! Você... você aponta a MINHA arma para MIM?",
+       "expressao": "fúria"
+      },
+      {
+       "id": "UREK_BR2",
+       "falante": "RYKER",
+       "texto": "Achei nos seus destroços. Ficou pequeno pra você.",
+       "expressao": "deboche"
+      }
+     ]
+    },
+    {
      "condicao": "tem_dadiva_kharn e tem_dadiva_vesh",
      "falas": [
       {
@@ -776,7 +858,8 @@
       {
        "id": "UREK_KV2",
        "falante": "RYKER",
-       "texto": "Do tipo que ganha."
+       "texto": "Do tipo que ganha.",
+       "expressao": "deboche"
       }
      ]
     },
@@ -786,7 +869,8 @@
       {
        "id": "UREK_K",
        "falante": "UR-KESH",
-       "texto": "Ossoferro te deu presentes? Tor-Ama perdeu a vergonha!"
+       "texto": "Ossoferro te deu presentes? Tor-Ama perdeu a vergonha!",
+       "expressao": "desdém"
       }
      ]
     },
@@ -796,7 +880,8 @@
       {
        "id": "UREK_V",
        "falante": "UR-KESH",
-       "texto": "Você tem cheiro de inseto, Krat'zu. Caiu baixo."
+       "texto": "Você tem cheiro de inseto, Krat'zu. Caiu baixo.",
+       "expressao": "desdém"
       }
      ]
     },
@@ -841,12 +926,14 @@
      {
       "id": "UREK_G3a",
       "falante": "RYKER",
-      "texto": "Oi, Ur-Kesh. Sentiu minha falta?"
+      "texto": "Oi, Ur-Kesh. Sentiu minha falta?",
+      "expressao": "deboche"
      },
      {
       "id": "UREK_G3b",
       "falante": "UR-KESH",
-      "texto": "TODOS OS DIAS."
+      "texto": "TODOS OS DIAS.",
+      "expressao": "fúria"
      }
     ]
    ]
@@ -968,27 +1055,32 @@
        "id": "UREK_F3a",
        "falante": "UR-KESH",
        "texto": "Chega de máquina. Como na Grande Arena, Krat'zu. Só você, eu e a areia.",
+       "expressao": "fúria",
        "direcao": "sai da cabine em chamas e acende o machado de energia"
       },
       {
        "id": "UREK_F3b",
        "falante": "RYKER",
-       "texto": "Aqui não tem areia. Só sucata."
+       "texto": "Aqui não tem areia. Só sucata.",
+       "expressao": "deboche"
       },
       {
        "id": "UREK_F3c",
        "falante": "UR-KESH",
-       "texto": "Naquele dia, a multidão gritou o SEU nome. Hoje ninguém vai gritar."
+       "texto": "Naquele dia, a multidão gritou o SEU nome. Hoje ninguém vai gritar.",
+       "expressao": "desdém"
       },
       {
        "id": "UREK_F3d",
        "falante": "RYKER",
-       "texto": "Ninguém nunca gritou meu nome. Gritavam o apelido que vocês me deram."
+       "texto": "Ninguém nunca gritou meu nome. Gritavam o apelido que vocês me deram.",
+       "expressao": "raiva"
       },
       {
        "id": "UREK_F3e",
        "falante": "UR-KESH",
-       "texto": "ENTÃO MORRA COM ELE!"
+       "texto": "ENTÃO MORRA COM ELE!",
+       "expressao": "fúria"
       }
      ]
     }
@@ -1003,7 +1095,8 @@
      {
       "id": "UREK_F3R1b",
       "falante": "RYKER",
-      "texto": "Do jeito que você perdeu."
+      "texto": "Do jeito que você perdeu.",
+      "expressao": "deboche"
      }
     ],
     [
@@ -1015,7 +1108,8 @@
      {
       "id": "UREK_F3R2b",
       "falante": "RYKER",
-      "texto": "Continua sem areia, Ur-Kesh."
+      "texto": "Continua sem areia, Ur-Kesh.",
+      "expressao": "deboche"
      }
     ]
    ]
@@ -1106,22 +1200,43 @@
        "id": "VITO_01",
        "falante": "UR-KESH",
        "texto": "Isso... não acabou. O clã vai lembrar... que eu perdi para um rato... duas vezes.",
+       "expressao": "ferido",
        "direcao": "de joelhos, machado apagado"
       },
       {
        "id": "VITO_02",
        "falante": "RYKER",
-       "texto": "Três é o número da sorte."
+       "texto": "Três é o número da sorte.",
+       "expressao": "deboche"
       },
       {
        "id": "VITO_03",
        "falante": "UR-KESH",
-       "texto": "Eu vou voltar."
+       "texto": "Eu vou voltar.",
+       "expressao": "ferido"
       },
       {
        "id": "VITO_04",
        "falante": "RYKER",
        "texto": "Pelo jeito, todo mundo volta."
+      },
+      {
+       "id": "VITO_W1",
+       "falante": "",
+       "texto": "",
+       "direcao": "Ryker passa pelos destroços do andador. Um canhão de mão Kharn, enorme e gravado com o símbolo do Clã Kesh, está preso no braço da máquina. Ele arranca."
+      },
+      {
+       "id": "VITO_W2",
+       "falante": "RYKER",
+       "texto": "O canhão dos campeões de Kesh... Quem venceu leva, né?"
+      },
+      {
+       "id": "VITO_W3",
+       "falante": "ECO",
+       "texto": "Segure firme por um momento. Pronto. Agora eu guardo o molde dele. Garrak vai saber o que fazer.",
+       "expressao": "sorriso",
+       "direcao": "a âncora brilha"
       },
       {
        "id": "VITO_05",
@@ -1138,18 +1253,30 @@
        "id": "VITO_07",
        "falante": "ECO",
        "texto": "Eu sei.",
+       "expressao": "distante",
        "aud": "zumbido"
       },
       {
        "id": "VITO_08",
        "falante": "ECO",
-       "texto": "Com ela, eu posso saltar. O sinal saiu de Varrek, Ryker. Foi para outro planeta. E nós vamos atrás."
+       "texto": "Com ela, eu posso saltar. O sinal saiu de Varrek, Ryker. Foi para outro planeta."
       },
       {
        "id": "VITO_09",
+       "falante": "ECO",
+       "texto": "Você lutou demais hoje. Descanse um pouco antes do salto.",
+       "expressao": "acolhedora"
+      },
+      {
+       "id": "VITO_10",
+       "falante": "RYKER",
+       "texto": "Sem descanso. Não enquanto aquela voz estiver chamando."
+      },
+      {
+       "id": "VITO_FIM",
        "falante": "",
        "texto": "",
-       "direcao": "Fim do Vertical Slice: \"Continua no Ato 2\""
+       "direcao": "Fim do Vertical Slice: \"Continua no Ato 2\". O jogador volta à Eco com o Bramido liberado no Arsenal."
       }
      ]
     },
@@ -1200,13 +1327,13 @@
     {
      "condicao": "mortes_urkesh>=3",
      "uma_vez": "pista_urkesh_m3",
-     "duvida": 1,
      "falas": [
       {
        "id": "UREK_M3",
        "falante": "UR-KESH",
        "texto": "...Ele vai voltar. Eles sempre voltam desse planeta.",
-       "direcao": "olhando para o céu"
+       "direcao": "olhando para o céu",
+       "duvida": 1
       }
      ]
     }
@@ -1237,12 +1364,14 @@
      "id": "MORT_01",
      "falante": "RYKER",
      "texto": "...Morri de novo.",
+     "expressao": "abalado",
      "direcao": "ofegante"
     },
     {
      "id": "MORT_02",
      "falante": "ECO",
      "texto": "Segunda vez. Está pegando o jeito. E eu gosto de ser a primeira coisa que você vê.",
+     "expressao": "acolhedora",
      "direcao": "ela já está lá, inclinada sobre ele"
     },
     {
@@ -1276,12 +1405,14 @@
     {
      "id": "MORT_05",
      "falante": "RYKER",
-     "texto": "Então eu perdi tudo."
+     "texto": "Então eu perdi tudo.",
+     "expressao": "abalado"
     },
     {
      "id": "MORT_06",
      "falante": "ECO",
      "texto": "Não. Você me mandou isto. Núcleos. Energia que a âncora coletou. Com eles, você fica um pouco mais difícil de matar.",
+     "expressao": "sorriso",
      "direcao": "Núcleos aparecem"
     },
     {
@@ -1293,7 +1424,14 @@
      "id": "MORT_08",
      "falante": "ECO",
      "texto": "Temos um inquilino. Mas antes... descanse um pouco.",
-     "direcao": "quando Ryker sai"
+     "expressao": "acolhedora",
+     "direcao": "quando Ryker vai sair"
+    },
+    {
+     "id": "MORT_09",
+     "falante": "RYKER",
+     "texto": "Depois.",
+     "direcao": "já andando"
     }
    ]
   },
@@ -1336,6 +1474,19 @@
       "falante": "ECO",
       "texto": "Eu refiz você com cuidado. Como sempre."
      }
+    ],
+    [
+     {
+      "id": "MORT_R6a",
+      "falante": "ECO",
+      "texto": "Descanse.",
+      "expressao": "acolhedora"
+     },
+     {
+      "id": "MORT_R6b",
+      "falante": "RYKER",
+      "texto": "Não."
+     }
     ]
    ]
   },
@@ -1346,7 +1497,8 @@
     {
      "id": "VOSS_01",
      "falante": "VOSSA",
-     "texto": "Ah, o produto reimpresso! Quer dizer... o cliente. Vossa Margem, do Sindicato Ilo, a seu dispor."
+     "texto": "Ah, o produto reimpresso! Quer dizer... o cliente. Vossa Margem, do Sindicato Ilo, a seu dispor.",
+     "expressao": "sorriso comercial"
     },
     {
      "id": "VOSS_02",
@@ -1356,12 +1508,14 @@
     {
      "id": "VOSS_03",
      "falante": "VOSSA",
-     "texto": "Abandonada? Ela tem você. E onde tem um humano que morre muito, tem mercado para melhorias. Eu alugo este compartimento da ECO."
+     "texto": "Abandonada? Ela tem você. E onde tem um humano que morre muito, tem mercado para melhorias. Eu alugo este compartimento da ECO.",
+     "expressao": "ganancioso"
     },
     {
      "id": "VOSS_04",
      "falante": "RYKER",
-     "texto": "Ela cobra aluguel?"
+     "texto": "Ela cobra aluguel?",
+     "expressao": "deboche"
     },
     {
      "id": "VOSS_05",
@@ -1371,7 +1525,8 @@
     {
      "id": "VOSS_06",
      "falante": "VOSSA",
-     "texto": "E em companhia agradável. Núcleos, por favor."
+     "texto": "E em companhia agradável. Núcleos, por favor.",
+     "expressao": "nervoso"
     }
    ]
   },
@@ -1394,12 +1549,14 @@
     {
      "id": "GARR_03",
      "falante": "GARRAK",
-     "texto": "Krat'zu."
+     "texto": "Krat'zu.",
+     "expressao": "severo"
     },
     {
      "id": "GARR_04",
      "falante": "RYKER",
-     "texto": "Não me chama assim."
+     "texto": "Não me chama assim.",
+     "expressao": "raiva"
     },
     {
      "id": "GARR_05",
@@ -1409,12 +1566,14 @@
     {
      "id": "GARR_06",
      "falante": "RYKER",
-     "texto": "Era o nome que vocês me deram quando me compraram."
+     "texto": "Era o nome que vocês me deram quando me compraram.",
+     "expressao": "raiva"
     },
     {
      "id": "GARR_07",
      "falante": "GARRAK",
      "texto": "Eu sei.",
+     "expressao": "vergonha",
      "direcao": "pausa longa"
     },
     {
@@ -1430,25 +1589,426 @@
     {
      "id": "GARR_10",
      "falante": "RYKER",
-     "texto": "Quer que eu agradeça?"
+     "texto": "Quer que eu agradeça?",
+     "expressao": "deboche"
     },
     {
      "id": "GARR_11a",
      "falante": "GARRAK",
-     "texto": "Quero que você pare de morrer para Ur-Kesh. É vergonhoso. Eu te treinei melhor que isso. Escolha uma arma.",
+     "texto": "Quero que você pare de morrer para Ur-Kesh. É vergonhoso. Eu te treinei melhor que isso.",
+     "expressao": "severo",
      "condicao": "1a_morte_urkesh"
     },
     {
      "id": "GARR_11b",
      "falante": "GARRAK",
-     "texto": "Quero que você pare de morrer. Ainda é vergonhoso. Escolha uma arma.",
+     "texto": "Quero que você pare de morrer. Ainda é vergonhoso.",
+     "expressao": "severo",
      "condicao": "!1a_morte_urkesh"
+    },
+    {
+     "id": "ARSE_M1",
+     "falante": "GARRAK",
+     "texto": "A luz achou isto no seu molde. Imprimiu. Eu afinei.",
+     "direcao": "tira um pano de cima da bancada"
+    },
+    {
+     "id": "ARSE_M2",
+     "falante": "RYKER",
+     "texto": "...A Mordida."
+    },
+    {
+     "id": "ARSE_M3",
+     "falante": "GARRAK",
+     "texto": "O prego do rato. O público riu quando te deram isso."
+    },
+    {
+     "id": "ARSE_M4",
+     "falante": "RYKER",
+     "texto": "Parou de rir na final.",
+     "expressao": "deboche"
+    },
+    {
+     "id": "ARSE_M5",
+     "falante": "GARRAK",
+     "texto": "Eu lembro. Eu estava lá. Eu troquei o gatilho dela três vezes naquele ano. Você nunca perguntou por quê.",
+     "expressao": "orgulho contido",
+     "direcao": "pausa"
+    },
+    {
+     "id": "ARSE_M6",
+     "falante": "RYKER",
+     "texto": "",
+     "direcao": "olha para ele, sem responder"
+    },
+    {
+     "id": "ARSE_M7",
+     "falante": "GARRAK",
+     "texto": "Pegue. E traga de volta com sangue de Kesh.",
+     "expressao": "severo"
     },
     {
      "id": "GARR_12",
      "falante": "ECO",
      "texto": "A nave dele caiu logo depois da sua. Ele disse que ia esperar você acordar. Não disse por quê.",
      "direcao": "depois, na Ponte"
+    }
+   ]
+  },
+  "arsenal_bramido": {
+   "modo": "conversa",
+   "uma_vez": "arsenal_bramido_visto",
+   "condicao": "bramido_liberado",
+   "falas": [
+    {
+     "id": "ARSE_B1",
+     "falante": "GARRAK",
+     "texto": "...O Bramido do Clã Kesh.",
+     "direcao": "segurando o canhão com as duas mãos, em silêncio"
+    },
+    {
+     "id": "ARSE_B2",
+     "falante": "RYKER",
+     "texto": "Tava preso no braço do andador. Achei que ele não ia sentir falta.",
+     "expressao": "deboche"
+    },
+    {
+     "id": "ARSE_B3",
+     "falante": "GARRAK",
+     "texto": "Só campeões carregam isto. Ur-Kesh carregou por nove temporadas."
+    },
+    {
+     "id": "ARSE_B4",
+     "falante": "RYKER",
+     "texto": "E agora?"
+    },
+    {
+     "id": "ARSE_B5",
+     "falante": "GARRAK",
+     "texto": "Agora quem venceu duas vezes foi você. Mão de Kharn não serve em você. Vou fazer servir.",
+     "expressao": "orgulho contido",
+     "direcao": "corta a empunhadura com uma lâmina"
+    },
+    {
+     "id": "ARSE_B6",
+     "falante": "RYKER",
+     "texto": "É quase do meu tamanho."
+    },
+    {
+     "id": "ARSE_B7",
+     "falante": "GARRAK",
+     "texto": "Então segure com o corpo inteiro. Do jeito que eu te ensinei a segurar um escudo.",
+     "expressao": "severo"
+    }
+   ]
+  },
+  "arsenal_liquidacao": {
+   "modo": "conversa",
+   "uma_vez": "arsenal_liquidacao_visto",
+   "condicao": "liquidacao_liberada",
+   "falas": [
+    {
+     "id": "ARSE_L1",
+     "falante": "GARRAK",
+     "texto": "Arma de cobrador. Não tem honra nenhuma nisto.",
+     "expressao": "raiva",
+     "direcao": "segura a pistola com dois dedos, com nojo"
+    },
+    {
+     "id": "ARSE_L2",
+     "falante": "RYKER",
+     "texto": "Mas ricocheteia.",
+     "expressao": "deboche"
+    },
+    {
+     "id": "ARSE_L3",
+     "falante": "GARRAK",
+     "texto": "...Ricocheteia. Liguei numa célula de nave. Não aponte para o Ilo do compartimento ao lado.",
+     "direcao": "suspira"
+    },
+    {
+     "id": "ARSE_L4",
+     "falante": "VOSSA",
+     "texto": "Eu ouvi isso! E eu nunca vi esse Leiloeiro na vida!",
+     "expressao": "nervoso",
+     "direcao": "de longe"
+    }
+   ]
+  },
+  "arsenal_lanterna": {
+   "modo": "conversa",
+   "uma_vez": "arsenal_lanterna_visto",
+   "condicao": "lanterna_liberada",
+   "falas": [
+    {
+     "id": "ARSE_V1",
+     "falante": "GARRAK",
+     "texto": "Isso eu não afino.",
+     "direcao": "não toca na lanterna"
+    },
+    {
+     "id": "ARSE_V2",
+     "falante": "RYKER",
+     "texto": "Por quê?"
+    },
+    {
+     "id": "ARSE_V3",
+     "falante": "GARRAK",
+     "texto": "Os Kharn têm uma palavra para coisa que não se conserta: sagrada. Ele te deu isto? Ou você tomou?",
+     "direcao": "pausa"
+    },
+    {
+     "id": "ARSE_V4",
+     "falante": "RYKER",
+     "texto": "Ele me deu. E disse \"não durma\"."
+    },
+    {
+     "id": "ARSE_V5",
+     "falante": "GARRAK",
+     "texto": "...Então não durma.",
+     "expressao": "severo",
+     "direcao": "olha na direção da Ponte, onde a ECO costuma aparecer"
+    }
+   ]
+  },
+  "arsenal_escolha_mordida": {
+   "modo": "rapida",
+   "sortear": true,
+   "variantes": [
+    [
+     {
+      "id": "ARSE_EM1",
+      "falante": "GARRAK",
+      "texto": "A velha de guerra."
+     }
+    ],
+    [
+     {
+      "id": "ARSE_EM2",
+      "falante": "GARRAK",
+      "texto": "Morda primeiro."
+     }
+    ],
+    [
+     {
+      "id": "ARSE_EM3",
+      "falante": "GARRAK",
+      "texto": "O prego do rato, de novo. Bom."
+     }
+    ]
+   ]
+  },
+  "arsenal_escolha_bramido": {
+   "modo": "rapida",
+   "sortear": true,
+   "variantes": [
+    [
+     {
+      "id": "ARSE_EB1",
+      "falante": "GARRAK",
+      "texto": "Pesado demais para você. Leve assim mesmo."
+     }
+    ],
+    [
+     {
+      "id": "ARSE_EB2",
+      "falante": "GARRAK",
+      "texto": "Faça o Clã Kesh ouvir."
+     }
+    ]
+   ]
+  },
+  "arsenal_escolha_liquidacao": {
+   "modo": "rapida",
+   "sortear": true,
+   "variantes": [
+    [
+     {
+      "id": "ARSE_EL1",
+      "falante": "GARRAK",
+      "texto": "Arma de cobrador..."
+     }
+    ],
+    [
+     {
+      "id": "ARSE_EL2",
+      "falante": "GARRAK",
+      "texto": "Vá cobrar alguém."
+     }
+    ]
+   ]
+  },
+  "arsenal_escolha_lanterna": {
+   "modo": "rapida",
+   "sortear": true,
+   "variantes": [
+    [
+     {
+      "id": "ARSE_EV1",
+      "falante": "GARRAK",
+      "texto": "",
+      "direcao": "só acena, sem falar"
+     }
+    ],
+    [
+     {
+      "id": "ARSE_EV2",
+      "falante": "GARRAK",
+      "texto": "Mantenha a luz acesa."
+     }
+    ]
+   ]
+  },
+  "arsenal_treino_primeiro": {
+   "modo": "conversa",
+   "uma_vez": "treino_garrak_visto",
+   "condicao": "treino_garrak",
+   "falas": [
+    {
+     "id": "ARSE_T1",
+     "falante": "GARRAK",
+     "texto": "Antes de descer: um truque. Igual na arena, quando ninguém olhava."
+    },
+    {
+     "id": "ARSE_T2",
+     "falante": "RYKER",
+     "texto": "Você ainda faz isso escondido?"
+    },
+    {
+     "id": "ARSE_T3",
+     "falante": "GARRAK",
+     "texto": "Não tem mais ninguém para esconder. Velho hábito."
+    }
+   ]
+  },
+  "arsenal_treino_repeticao": {
+   "modo": "rapida",
+   "sortear": true,
+   "condicao": "treino_garrak_visto",
+   "variantes": [
+    [
+     {
+      "id": "ARSE_TR1",
+      "falante": "GARRAK",
+      "texto": "Lembre do truque."
+     }
+    ],
+    [
+     {
+      "id": "ARSE_TR2",
+      "falante": "GARRAK",
+      "texto": "Mão firme, cabeça fria."
+     }
+    ]
+   ]
+  },
+  "arsenal_aprimoramento": {
+   "modo": "conversa",
+   "uma_vez": "arsenal_aprimoramento_visto",
+   "condicao": "1o_aprimoramento_pego",
+   "falas": [
+    {
+     "id": "ARSE_A1",
+     "falante": "GARRAK",
+     "texto": "Vi o que você fez com a arma lá embaixo. Sucata de nave soldada no cano."
+    },
+    {
+     "id": "ARSE_A2",
+     "falante": "RYKER",
+     "texto": "Funcionou."
+    },
+    {
+     "id": "ARSE_A3",
+     "falante": "GARRAK",
+     "texto": "Funcionou. Humano. Vocês não têm garras, então inventam.",
+     "expressao": "orgulho contido",
+     "direcao": "quase um sorriso"
+    }
+   ]
+  },
+  "campo_aprimoramento_primeiro": {
+   "modo": "rapida",
+   "uma_vez": "visto_CAMP_A1",
+   "falas": [
+    {
+     "id": "CAMP_A1",
+     "falante": "RYKER",
+     "texto": "Sucata boa. Dá pra fazer estrago com isso."
+    }
+   ]
+  },
+  "campo_aprimoramento": {
+   "modo": "rapida",
+   "sortear": true,
+   "condicao": "visto_CAMP_A1",
+   "variantes": [
+    [
+     {
+      "id": "CAMP_A2a",
+      "falante": "RYKER",
+      "texto": "Mais uma peça."
+     }
+    ],
+    [
+     {
+      "id": "CAMP_A2b",
+      "falante": "RYKER",
+      "texto": "Gambiarra nível arena."
+     }
+    ],
+    [
+     {
+      "id": "CAMP_A2c",
+      "falante": "RYKER",
+      "texto": "Isso aqui era de uma nave Kharn. Agora é meu."
+     }
+    ]
+   ]
+  },
+  "campo_morte_com_arvore": {
+   "modo": "conversa",
+   "uma_vez": "visto_CAMP_A3",
+   "condicao": "usou_arvore",
+   "falas": [
+    {
+     "id": "CAMP_A3",
+     "falante": "ECO",
+     "texto": "As melhorias ficaram lá embaixo. Eu guardo o molde. O resto você aprende de novo. Descanse.",
+     "expressao": "acolhedora"
+    }
+   ]
+  },
+  "campo_primeiro_apice": {
+   "modo": "rapida",
+   "uma_vez": "visto_CAMP_AP",
+   "falas": [
+    {
+     "id": "CAMP_AP",
+     "falante": "RYKER",
+     "texto": "Isso... isso é o que eu fazia na final."
+    }
+   ]
+  },
+  "campo_primeiro_tiro_bramido": {
+   "modo": "rapida",
+   "uma_vez": "visto_CAMP_B1",
+   "falas": [
+    {
+     "id": "CAMP_B1",
+     "falante": "RYKER",
+     "texto": "...Tá. Entendi por que só campeão carrega isso.",
+     "direcao": "é empurrado pelo coice"
+    }
+   ]
+  },
+  "campo_lanterna_revela": {
+   "modo": "rapida",
+   "uma_vez": "visto_CAMP_V1",
+   "falas": [
+    {
+     "id": "CAMP_V1",
+     "falante": "RYKER",
+     "texto": "...Isso não tava aí antes. Ou tava?"
     }
    ]
   },
@@ -1470,12 +2030,14 @@
     {
      "id": "SETE_03",
      "falante": "ECO",
-     "texto": "Era pequena. Eu imprimi. Ela está... falando."
+     "texto": "Era pequena. Eu imprimi. Ela está... falando.",
+     "expressao": "sorriso"
     },
     {
      "id": "SETE_04",
      "falante": "SETE",
-     "texto": "Nós—... Nós? ...Não tem nós. Cadê o nós?"
+     "texto": "Nós—... Nós? ...Não tem nós. Cadê o nós?",
+     "expressao": "confuso"
     },
     {
      "id": "SETE_05",
@@ -1485,18 +2047,20 @@
     {
      "id": "SETE_06",
      "falante": "SETE",
-     "texto": "É um... um eu? Eu é muito quieto."
+     "texto": "É um... um eu? Eu é muito quieto.",
+     "expressao": "confuso"
     },
     {
      "id": "SETE_07",
      "falante": "RYKER",
-     "texto": "Bem-vindo ao clube, inseto."
+     "texto": "Bem-vindo ao clube, inseto.",
+     "expressao": "deboche"
     },
     {
      "id": "SETE_08",
      "falante": "SETE",
      "texto": "Inseto. Eu sou um inseto. Eu sou UM inseto.",
-     "direcao": "gosta da ideia"
+     "expressao": "feliz"
     },
     {
      "id": "SETE_09",
@@ -1507,6 +2071,7 @@
      "id": "SETE_10",
      "falante": "SETE",
      "texto": "...Sete. Eu sou Sete. O Sete sou eu.",
+     "expressao": "encolhido",
      "direcao": "olha para a ECO, se encolhe atrás da perna do Ryker"
     }
    ]
@@ -1520,12 +2085,15 @@
      "id": "SETE_E1",
      "falante": "SETE",
      "texto": "Shh. Ela escuta.",
-     "direcao": "sussurrando"
+     "expressao": "encolhido",
+     "direcao": "sussurrando",
+     "duvida": 1
     },
     {
      "id": "SETE_E2",
      "falante": "ECO",
-     "texto": "Ele é tímido."
+     "texto": "Ele é tímido.",
+     "expressao": "sorriso"
     },
     {
      "id": "SETE_E3",
@@ -1553,6 +2121,7 @@
      "id": "SETE_E6",
      "falante": "SETE",
      "texto": "É quentinho. Sete não gosta de quentinho. Quentinho faz esquecer o eu.",
+     "expressao": "confuso",
      "direcao": "pausa"
     }
    ]
@@ -1565,7 +2134,9 @@
     {
      "id": "SETE_E7",
      "falante": "SETE",
-     "texto": "Ryker. Quando ela diz \"descanse\"... você descansa?"
+     "texto": "Ryker. Quando ela diz \"descanse\"... você descansa?",
+     "expressao": "encolhido",
+     "duvida": 1
     },
     {
      "id": "SETE_E8",
@@ -1577,6 +2148,11 @@
      "falante": "SETE",
      "texto": "O nós dizia isso. Antes de Sete virar eu. Sete não descansa.",
      "direcao": "silêncio"
+    },
+    {
+     "id": "SETE_E10",
+     "falante": "RYKER",
+     "texto": "...Nem eu, Sete. Nem eu."
     }
    ]
   },
@@ -1604,8 +2180,10 @@
      "id": "MIST_04",
      "falante": "ECO",
      "texto": "Pessoas que eu não consegui trazer de volta. Ainda. Mas você eu trago. Sempre. Descanse.",
+     "expressao": "distante",
      "direcao": "sorri, chega mais perto; beat",
-     "aud": "zumbido"
+     "aud": "zumbido",
+     "duvida": 1
     }
    ]
   }

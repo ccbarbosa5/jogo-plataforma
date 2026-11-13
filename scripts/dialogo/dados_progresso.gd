@@ -58,6 +58,7 @@ func incrementar(nome: String, quantidade: int = 1) -> int:
 ##   "flag"        → a flag está ligada
 ##   "!flag"       → a flag está desligada
 ##   "contador>=3" → também aceita >, <, <=, ==, !=
+##   "arma_atual==bramido" → compara texto do estado da run (== e !=)
 ##   "a e b"       → todas as partes precisam ser verdadeiras
 func avaliar(condicao: String) -> bool:
 	if condicao.strip_edges().is_empty():
@@ -72,8 +73,15 @@ func _avaliar_parte(parte: String) -> bool:
 	for operador: String in [">=", "<=", "==", "!=", ">", "<"]:
 		var i: int = parte.find(operador)
 		if i > 0:
-			var esquerda: int = valor(parte.substr(0, i).strip_edges())
-			var direita: int = parte.substr(i + operador.length()).strip_edges().to_int()
+			var nome: String = parte.substr(0, i).strip_edges()
+			var lado_direito: String = parte.substr(i + operador.length()).strip_edges()
+			# Texto (ex.: arma_atual==bramido): compara com o estado da run.
+			# Lado direito que não é número = comparação de texto; sem valor na run vale "".
+			if not lado_direito.is_valid_int() and operador in ["==", "!="]:
+				var atual: String = str(estado_run.get(nome, ""))
+				return (atual == lado_direito) == (operador == "==")
+			var esquerda: int = valor(nome)
+			var direita: int = lado_direito.to_int()
 			match operador:
 				">=": return esquerda >= direita
 				"<=": return esquerda <= direita

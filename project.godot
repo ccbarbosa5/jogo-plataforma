@@ -29,6 +29,10 @@ window/size/window_height_override=810
 window/stretch/mode="viewport"
 window/stretch/scale_mode="integer"
 
+[gui]
+
+theme/custom="res://scenes/ui/tema_jogo.tres"
+
 [input]
 
 mover_esquerda={
