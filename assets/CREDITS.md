@@ -15,3 +15,8 @@ Geradas pelo dono no ChatGPT a partir dos prompts da ART (`ART/prompts/` no proj
 | `assets/sprites/retratos/ryker/ryker_retratos.png` | `02_ryker_retratos_v1.png` | 02 v2 — Ryker, retrato 4 expressões | 2026-11-13 |
 | `assets/sprites/retratos/eco/eco_retratos.png` | `03B_eco_retratos_v1.png` | 03B v2 — ECO, retrato 4 expressões | 2026-11-13 |
 | `assets/sprites/personagens/ryker/ryker_poses_chave.png` (referência, não é sprite de jogo) | `05_ryker_poses_v1.png` | 05 — Ryker com a Mordida, 8 poses-chave | 2026-11-13 |
+
+## Fontes
+| Asset | Autor | Licença |
+|---|---|---|
+| `assets/fontes/no_rest_5*.fnt/.png` | Estúdio No Rest (ART, gerada por `ferramentas/arte/fonte_v01.py`) | própria; sem terceiros |

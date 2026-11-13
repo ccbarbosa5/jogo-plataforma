@@ -8,6 +8,7 @@ import math, os, random, sys, unicodedata
 AQUI = os.path.dirname(os.path.abspath(__file__)); sys.path.insert(0, AQUI)
 from prancha_estilo import rgb, hx, outline
 from sprites_v02 import salvar, folha, camada, icone_arma, disco
+from fonte_v01 import texto as escrever, largura as largura_texto  # fonte própria com acentos (D-046)
 
 T = (0, 0, 0, 0)
 
@@ -263,21 +264,20 @@ def mockup_arvore(fundo_tela):
     tela = fundo_tela.copy().convert('RGBA')
     escuro = Image.new('RGBA', tela.size, (10, 6, 14, 170)); tela.alpha_composite(escuro)  # jogo pausado, escurecido
     painel = nine_patch(moldura_humana(), 400, 236); tela.alpha_composite(painel, (40, 17))
-    d = ImageDraw.Draw(tela); fnt = ImageFont.load_default_imagefont()
-    txt = lambda xy, s, cor='t': d.text(xy, _sem_acento(s).upper(), font=fnt, fill=rgb(cor))
+    txt = lambda xy, t, cor='t': escrever(tela, xy, t, rgb(cor))
     tela.alpha_composite(icone_arma('mordida', 32, 16, 1.9), (60, 34))
-    txt((100, 34), 'Mordida', 'h'); txt((100, 46), 'Embalo: acertar sem levar dano acelera', 'M')
+    txt((100, 32), 'MORDIDA', 'h'); txt((100, 45), 'Embalo: acertar sem levar dano acelera a arma.', 'M')
     pts = ponto_aprimoramento()
-    for i in range(2): tela.alpha_composite(pts, (372 + i * 14, 36))
-    txt((338, 38), 'x2', 'M')
-    ramos = [('Ovacao', ['Plateia Fiel', 'Ritmo de Arena', 'Grande Arena']),
-             ('Rajada', ['Disciplina', 'Tres Golpes', 'Execucao']),
-             ('Corrente', ['Marca do Escravo', 'Cacada', 'Algema Viva'])]
+    for i in range(2): tela.alpha_composite(pts, (366 + i * 14, 36))
+    txt((356, 36), '2', 'M')
+    ramos = [('Ovação', ['Plateia Fiel', 'Ritmo de Arena', 'Grande Arena']),
+             ('Rajada', ['Disciplina', 'Três Golpes', 'Execução']),
+             ('Corrente', ['Marca do Escravo', 'Caçada', 'Algema Viva'])]
     estados = [['comprado', 'comprado', 'disponivel'], ['comprado', 'disponivel', 'trancado'], ['disponivel', 'trancado', 'trancado']]
     pips = pips_custo(); con = conector()
     for r, (nome, nos) in enumerate(ramos):
         cx = 120 + r * 120
-        txt((cx - len(nome) * 3, 66), nome, 'M')
+        txt((cx - largura_texto(nome) // 2, 64), nome.upper(), 'M')
         for k in range(3):
             ap = k == 2; est = estados[r][k]
             n = no(est, ap); y = 80 + k * 50
@@ -288,10 +288,29 @@ def mockup_arvore(fundo_tela):
             if k < 2:
                 aceso = estados[r][k] == 'comprado'
                 tela.alpha_composite(con.crop((4 if aceso else 0, 0, 8 if aceso else 4, 10)), (cx - 2, y + n.height + 1))
-            rot = _sem_acento(nos[k]).upper()
-            txt((cx - len(rot) * 3, y + n.height + 12 if k < 2 else y + n.height + 3),
+            rot = nos[k]
+            txt((cx - largura_texto(rot) // 2, y + n.height + 12 if k < 2 else y + n.height + 3),
                 nos[k], 'h' if est == 'comprado' else ('t' if est == 'disponivel' else 'K'))
-    txt((60, 232), 'Apice: so 1 por run. Escolher um tranca os outros.', 'M')
+    txt((60, 230), 'Ápice: só 1 por run. Escolher um tranca os outros.', 'M')
+    return tela
+
+
+def mockup_dialogo(fundo_tela):
+    """Caixa de diálogo (D-032, D-046): retratos grandes, moldura da ECO, placa SÓ com o nome, acentos."""
+    raiz = os.path.join(AQUI, '..', '..', 'assets', 'sprites', 'retratos')
+    tela = fundo_tela.copy().convert('RGBA'); tela.alpha_composite(Image.new('RGBA', tela.size, (10, 6, 14, 150)))
+    R = Image.open(os.path.join(raiz, 'ryker', 'ryker_retratos.png')); E = Image.open(os.path.join(raiz, 'eco', 'eco_retratos.png'))
+    ry = R.crop((144, 0, 288, 208)); ec = E.crop((0, 0, 144, 208)).transpose(Image.FLIP_LEFT_RIGHT)
+    ry.putalpha(ry.getchannel('A').point(lambda v: int(v * 0.55)))  # quem não fala fica apagado
+    tela.alpha_composite(ry, (-6, 62))
+    tela.alpha_composite(nine_patch(moldura_eco(), 268, 80), (84, 186))
+    tela.alpha_composite(ec, (342, 62))
+    nome = 'ECO'; w = largura_texto(nome, 2) + 28
+    tela.alpha_composite(nine_patch(moldura_eco(), max(48, w), 38), (338 - max(48, w), 154))
+    escrever(tela, (338 - max(48, w) + 14, 160), nome, rgb('a'), 2)
+    for i, l in enumerate(['Tem uma peça minha lá embaixo. E...', 'faz muito tempo que ninguém fica', 'aqui comigo. Eu ganho companhia.']):
+        escrever(tela, (98, 199 + i * 12), l, rgb('t'))
+    tela.alpha_composite(seta_continuar().crop((0, 0, 9, 7)), (334, 252))
     return tela
 
 
@@ -315,6 +334,7 @@ def main():
         salvar(f_, *H, f'barra_{nome}_fundo.png'); salvar(p_, *H, f'barra_{nome}_cheia.png'); salvar(c_, *H, f'barra_{nome}_completa.png')
     fundo = Image.open(os.path.join(AQUI, '..', '..', 'assets', 'sprites', 'conceito', 'mockup_v02_varrek.png'))
     salvar(mockup_arvore(fundo), 'conceito', 'mockup_v03_arvore.png')
+    salvar(mockup_dialogo(fundo), 'conceito', 'mockup_v04_dialogo.png')
     print('ok')
 
 

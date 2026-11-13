@@ -68,6 +68,18 @@ O tronco foi redesenhado por código seguindo a referência aprovada: cabelo ras
 ## Folha de referência aprovada (IA + tratamento, D-039)
 `ryker_referencia.png`: 2 quadros 48×48 (frente, perfil), origem nos pés. É o **Ryker campeão** do pacote 01 v2 (pedido do dono): ombreira de osso no ombro direito, faixas de luta, cinto de campeão, colar de dente, marca de ferro no ombro esquerdo. **Não é animação:** é a referência que os sprites provisórios vão seguir na próxima entrega da ART, e a base dos próximos prompts.
 
+## Grilhão e dano (v0.5, por código, seguindo as poses-chave 6 e 7)
+Corpo inteiro, quadro 48×48, origem (24, 48), substitui pernas + tronco enquanto toca. Desenhadas com a Mordida; servem também para o Bramido (a arma fica junto ao corpo).
+
+| Arquivo | Quadros | Estado do Grilhão (`grilhao.gd`) | Notas |
+|---|---|---|---|
+| `ryker_grilhao_lancar.png` | 3, 20 qps, para no último | `LANCANDO` | preparo · arremesso · braço esticado |
+| `ryker_grilhao_puxar_se.png` | 2 | `PUXANDO_JOGADOR` | quadro 0 durante a puxada; quadro 1 na chegada (Golpe de Arena) |
+| `ryker_grilhao_puxar_inimigo.png` | 3, 15 qps | `PUXANDO_INIMIGO` | braço recolhendo a corrente |
+| `ryker_dano.png` | 2, 12 qps | ao levar dano | jogado para trás · recompondo (junto com o piscar de `modulate`) |
+
+**A corrente** entre a mão e o alvo é desenhada pelo jogo: `corrente_elo.png` (4×3, repete na horizontal; use num `Line2D` com `texture_mode = TILE` ou sprites em fila, girando pela direção) e `corrente_ponta.png` (6×6, a manilha quebrada na ponta). Ela sai da mão do braço de trás, que está a ~(+9, -16) da origem no quadro 2 do lançamento.
+
 ## Projéteis e ícones
 Em `assets/sprites/armas/` (ver o LEIAME de lá).
 

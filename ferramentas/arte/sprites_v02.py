@@ -645,6 +645,13 @@ def main():
     salvar(icone_arma('bramido', 48, 24, 1.9), 'armas', 'icones', 'icone_bramido.png')
     salvar(folha(dash_ryker(pern, tron)), *R, 'ryker_dash.png')
     salvar(folha(morte_ryker(pern, tron)), *R, 'ryker_morte.png')
+    lancar, puxar_se, puxar_inimigo = grilhao_ryker()
+    salvar(folha(lancar), *R, 'ryker_grilhao_lancar.png')
+    salvar(folha(puxar_se), *R, 'ryker_grilhao_puxar_se.png')
+    salvar(folha(puxar_inimigo), *R, 'ryker_grilhao_puxar_inimigo.png')
+    salvar(folha(dano_ryker()), *R, 'ryker_dano.png')
+    elo, ponta = corrente_pecas()
+    salvar(elo, *R, 'corrente_elo.png'); salvar(ponta, *R, 'corrente_ponta.png')
     for nome, (_, ds) in pern.items():  # deslocamento do tronco por quadro (copiar para o LEIAME se mudar)
         print(f'pernas {nome}: {ds}')
 
@@ -661,6 +668,73 @@ def main():
         salvar(im, 'cenarios', 'varrek', f'varrek_parallax_{nome}.png')
     salvar(mockup_v02(), 'conceito', 'mockup_v02_varrek.png')
     print('ok')
+
+
+
+# =====================================================================
+# GRILHÃO E DANO (v0.4) — corpo inteiro 48×48, origem (24, 48). Seguem as poses-chave 6 e 7 da IA.
+# =====================================================================
+def tronco_pose(alvo_tras, dir_arma=(1, 0.7), dx=0, dy=0, elos=0, lado=48):
+    """Tronco com o braço ESQUERDO (o da algema, o de trás) livre para o Grilhão; a Mordida fica junto ao corpo."""
+    ox, oy = (lado - 32) // 2 + dx, lado - 32 + dy
+    sh = lambda p: (p[0] + ox, p[1] + oy)
+    n = math.hypot(*dir_arma); u = (dir_arma[0] / n, dir_arma[1] / n)
+    centro = sh((16.0, 15.5)); emp = (centro[0] + u[0] * 3, centro[1] + u[1] * 3)
+    ombro_t = sh(OMBRO_TRAS); mao = (ombro_t[0] + alvo_tras[0], ombro_t[1] + alvo_tras[1])
+    bt = camada(lado, lado); braco(bt, ombro_t, mao, rgb('S'), rgb('m'), 1, rgb('m'))
+    mx, my = int(round(mao[0])), int(round(mao[1]))
+    if 0 <= mx < lado and 0 <= my < lado: bt.putpixel((mx, my), rgb('M'))
+    if elos:  # corrente saindo da algema na direção do braço
+        vx, vy = alvo_tras; m = math.hypot(vx, vy) or 1; vx, vy = vx / m, vy / m
+        for i in range(1, elos * 2 + 1):
+            px_, py_ = int(round(mx + vx * i)), int(round(my + vy * i))
+            if 0 <= px_ < lado and 0 <= py_ < lado: bt.putpixel((px_, py_), rgb('M' if i % 2 else 'm'))
+    else:
+        for i in range(1, 4):
+            if 0 <= my + i < lado and 0 <= mx - (i // 2) < lado: bt.putpixel((mx - (i // 2), my + i), rgb('m'))
+    bt = outline(bt)
+    corpo = camada(lado, lado); ascii_em(corpo, TRONCO_ASCII, ox, 4 + oy); corpo = outline(corpo)
+    camada_arma = camada(lado, lado); desenhar_arma(camada_arma, emp, u, 0, 'mordida')
+    bf = camada(lado, lado); braco(bf, sh(OMBRO_FRENTE), emp, rgb('s'), rgb('M'), -1, rgb('M')); bf = outline(bf)
+    omb = camada(lado, lado); ascii_em(omb, OMBREIRA_ASCII, ox, 11 + oy)
+    return compor(corpo, camada_arma, bf, omb, bt)  # o braço da corrente vem por cima: é ele que age
+
+
+def _corpo(pernas, tronco, dy_pernas=0):
+    q = camada(48, 48); q.alpha_composite(pernas, (8, 16 + dy_pernas)); q.alpha_composite(tronco); return q
+
+
+def grilhao_ryker():
+    firme, _ = pernas_quadro((25, 10), (-25, 10))
+    lancar = [_corpo(firme, tronco_pose((-3, 3), dx=-1)),
+              _corpo(firme, tronco_pose((8, -1), dx=1, elos=2)),
+              _corpo(firme, tronco_pose((9, -1), dx=1, elos=4))]
+    voando, _ = pernas_quadro((-30, 40), (-55, 30), apoiar=False)
+    topo, _ = pernas_quadro((45, 95), (5, 70), apoiar=False)
+    puxar_se = [_corpo(voando, tronco_pose((7, -6), dx=2, elos=4), -2),
+                _corpo(topo, tronco_pose((5, -7), dx=1, elos=2), -4)]
+    firme_tras, _ = pernas_quadro((35, 15), (-15, 25))
+    puxar_inimigo = [_corpo(firme_tras, tronco_pose((8, 0), dx=-1, elos=4)),
+                     _corpo(firme_tras, tronco_pose((4, 2), dx=-2, elos=3)),
+                     _corpo(firme_tras, tronco_pose((-2, 3), dx=-2, elos=2))]
+    return lancar, puxar_se, puxar_inimigo
+
+
+def dano_ryker():
+    """Atingido (pose-chave 7): jogado para trás, depois se recompõe."""
+    jogado, _ = pernas_quadro((30, 40), (-10, 10))
+    q0 = _corpo(jogado, tronco_pose((-4, -3), dir_arma=(1, -0.6), dx=-3, dy=-1))
+    pern = pernas_ryker(); tr = tronco_ryker()
+    q1 = ryker_inteiro(pern['parado'][0][0], tr['frente'][2], 0, 0)
+    q1b = camada(48, 48); q1b.alpha_composite(q1, (-1, 0))
+    return [q0, q1b]
+
+
+def corrente_pecas():
+    """Para o DEV montar a corrente de qualquer tamanho (Line2D com textura em TILE, ou sprites repetidos)."""
+    elo = camada(4, 3); ascii_em(elo, "MM..\nm.mM\n.MM.")
+    ponta = camada(6, 6); ascii_em(ponta, ".MM...\nM..M..\nM..MMm\nM..M..\n.MM...\n......")
+    return outline(elo), outline(ponta)
 
 
 if __name__ == '__main__':
