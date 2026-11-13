@@ -1,0 +1,17 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/armas/projetil.gd" id="1"]
+
+[sub_resource type="RectangleShape2D" id="forma"]
+size = Vector2(6, 6)
+
+[node name="ProjetilInimigo" type="Area2D"]
+collision_layer = 16
+collision_mask = 3
+monitorable = false
+script = ExtResource("1")
+cor = Color(1, 0.25, 0.45, 1)
+tamanho = Vector2(6, 6)
+
+[node name="Forma" type="CollisionShape2D" parent="."]
+shape = SubResource("forma")

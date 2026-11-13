@@ -1,0 +1,140 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/salas/sala.gd" id="1"]
+[ext_resource type="Script" path="res://scripts/salas/bloco.gd" id="2"]
+[ext_resource type="Script" path="res://scripts/salas/ponto_gancho.gd" id="3"]
+[ext_resource type="PackedScene" path="res://scenes/inimigos/soldado.tscn" id="4"]
+[ext_resource type="PackedScene" path="res://scenes/jogador/ryker.tscn" id="5"]
+[ext_resource type="Script" path="res://scripts/salas/camera_jogo.gd" id="6"]
+[ext_resource type="PackedScene" path="res://scenes/ui/hud.tscn" id="7"]
+
+[sub_resource type="RectangleShape2D" id="gatilho"]
+size = Vector2(16, 270)
+
+[node name="SalaTeste" type="Node2D"]
+script = ExtResource("1")
+cena_inimigo = ExtResource("4")
+
+[node name="Mundo" type="Node2D" parent="."]
+[node name="Chao" type="StaticBody2D" parent="Mundo"]
+position = Vector2(0, 240)
+script = ExtResource("2")
+tamanho = Vector2(1440, 32)
+
+[node name="ParedeEsq" type="StaticBody2D" parent="Mundo"]
+position = Vector2(-16, -64)
+script = ExtResource("2")
+tamanho = Vector2(16, 336)
+
+[node name="ParedeDir" type="StaticBody2D" parent="Mundo"]
+position = Vector2(1440, -64)
+script = ExtResource("2")
+tamanho = Vector2(16, 336)
+
+[node name="Plataforma1" type="StaticBody2D" parent="Mundo"]
+position = Vector2(160, 192)
+script = ExtResource("2")
+tamanho = Vector2(96, 8)
+uma_via = true
+cor = Color(0.36, 0.4, 0.48, 1)
+
+[node name="Plataforma2" type="StaticBody2D" parent="Mundo"]
+position = Vector2(320, 160)
+script = ExtResource("2")
+tamanho = Vector2(80, 8)
+uma_via = true
+cor = Color(0.36, 0.4, 0.48, 1)
+
+[node name="Plataforma3" type="StaticBody2D" parent="Mundo"]
+position = Vector2(500, 192)
+script = ExtResource("2")
+tamanho = Vector2(128, 8)
+uma_via = true
+cor = Color(0.36, 0.4, 0.48, 1)
+
+[node name="Caixa" type="StaticBody2D" parent="Mundo"]
+position = Vector2(700, 208)
+script = ExtResource("2")
+tamanho = Vector2(48, 32)
+
+[node name="Plataforma4" type="StaticBody2D" parent="Mundo"]
+position = Vector2(820, 176)
+script = ExtResource("2")
+tamanho = Vector2(96, 8)
+uma_via = true
+cor = Color(0.36, 0.4, 0.48, 1)
+
+[node name="Plataforma5" type="StaticBody2D" parent="Mundo"]
+position = Vector2(1040, 184)
+script = ExtResource("2")
+tamanho = Vector2(96, 8)
+uma_via = true
+cor = Color(0.36, 0.4, 0.48, 1)
+
+[node name="Plataforma6" type="StaticBody2D" parent="Mundo"]
+position = Vector2(1280, 184)
+script = ExtResource("2")
+tamanho = Vector2(96, 8)
+uma_via = true
+cor = Color(0.36, 0.4, 0.48, 1)
+
+[node name="Gancho1" type="Area2D" parent="Mundo"]
+position = Vector2(420, 96)
+script = ExtResource("3")
+
+[node name="Gancho2" type="Area2D" parent="Mundo"]
+position = Vector2(1200, 110)
+script = ExtResource("3")
+
+[node name="Inimigos" type="Node2D" parent="."]
+
+[node name="Soldado1" parent="Inimigos" instance=ExtResource("4")]
+position = Vector2(440, 240)
+
+[node name="Soldado2" parent="Inimigos" instance=ExtResource("4")]
+position = Vector2(560, 192)
+
+[node name="SoldadoPesado" parent="Inimigos" instance=ExtResource("4")]
+position = Vector2(880, 240)
+pesado = true
+
+[node name="Ryker" parent="." instance=ExtResource("5")]
+position = Vector2(48, 240)
+
+[node name="Projeteis" type="Node2D" parent="."]
+
+[node name="GatilhoArena" type="Area2D" parent="."]
+position = Vector2(1000, 0)
+collision_layer = 0
+collision_mask = 2
+monitorable = false
+
+[node name="Forma" type="CollisionShape2D" parent="GatilhoArena"]
+position = Vector2(8, 135)
+shape = SubResource("gatilho")
+
+[node name="ParedesArena" type="Node2D" parent="."]
+
+[node name="ParedeArenaEsq" type="StaticBody2D" parent="ParedesArena"]
+position = Vector2(944, -64)
+script = ExtResource("2")
+tamanho = Vector2(16, 304)
+ativo = false
+cor = Color(0.75, 0.3, 0.3, 1)
+
+[node name="PontosOnda" type="Node2D" parent="."]
+
+[node name="Onda1" type="Marker2D" parent="PontosOnda"]
+position = Vector2(1100, 240)
+
+[node name="Onda2" type="Marker2D" parent="PontosOnda"]
+position = Vector2(1380, 240)
+
+[node name="Onda3" type="Marker2D" parent="PontosOnda"]
+position = Vector2(1328, 184)
+
+[node name="Camera" type="Camera2D" parent="."]
+position = Vector2(240, 135)
+script = ExtResource("6")
+
+[node name="Hud" parent="." instance=ExtResource("7")]

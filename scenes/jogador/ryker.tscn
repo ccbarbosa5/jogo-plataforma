@@ -1,0 +1,30 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/jogador/jogador.gd" id="1"]
+[ext_resource type="Resource" path="res://scenes/jogador/parametros_ryker.tres" id="2"]
+[ext_resource type="Resource" path="res://scenes/armas/fuzil_de_servico.tres" id="3"]
+[ext_resource type="Resource" path="res://scenes/jogador/assistencias_padrao.tres" id="4"]
+[ext_resource type="Script" path="res://scripts/comum/vida.gd" id="5"]
+[ext_resource type="Script" path="res://scripts/jogador/grilhao.gd" id="6"]
+
+[sub_resource type="RectangleShape2D" id="forma"]
+size = Vector2(12, 22)
+
+[node name="Ryker" type="CharacterBody2D"]
+collision_layer = 2
+collision_mask = 33
+script = ExtResource("1")
+parametros = ExtResource("2")
+arma = ExtResource("3")
+assistencias = ExtResource("4")
+
+[node name="Forma" type="CollisionShape2D" parent="."]
+position = Vector2(0, -11)
+shape = SubResource("forma")
+
+[node name="Vida" type="Node" parent="."]
+script = ExtResource("5")
+maxima = 4
+
+[node name="Grilhao" type="Node2D" parent="."]
+script = ExtResource("6")
