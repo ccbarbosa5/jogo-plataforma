@@ -12,3 +12,5 @@ Geradas pelo dono no ChatGPT a partir dos prompts da ART (`ART/prompts/` no proj
 | `assets/sprites/personagens/ryker/ryker_referencia.png` | `01_ryker_referencia_v2.png` | 01 v2 — Ryker, folha de referência | 2026-11-13 |
 | `assets/sprites/armas/arsenal/mordida_arsenal.png` | `04_armas_mordida_bramido_v1.png` (metade esquerda) | 04 — Mordida e Bramido | 2026-11-13 |
 | `assets/sprites/armas/arsenal/bramido_arsenal.png` | `04_armas_mordida_bramido_v1.png` (metade direita) | 04 — Mordida e Bramido | 2026-11-13 |
+| `assets/sprites/retratos/ryker/ryker_retratos.png` | `02_ryker_retratos_v1.png` | 02 v2 — Ryker, retrato 4 expressões | 2026-11-13 |
+| `assets/sprites/retratos/eco/eco_retratos.png` | `03B_eco_retratos_v1.png` | 03B v2 — ECO, retrato 4 expressões | 2026-11-13 |
