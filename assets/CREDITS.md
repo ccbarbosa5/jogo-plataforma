@@ -8,6 +8,7 @@ Geradas pelo dono no ChatGPT a partir dos prompts da ART (`ART/prompts/` no proj
 
 | Asset no jogo | Original | Pacote de prompt | Data |
 |---|---|---|---|
-| `assets/sprites/personagens/eco/eco_referencia.png` (provisória) | `03A_eco_referencia_v1.png` | 03A v1 — ECO, folha de referência | 2026-11-13 |
+| `assets/sprites/personagens/eco/eco_referencia.png` | `03A_eco_referencia_v2.png` (a v1 foi descartada a pedido do dono) | 03A v2 — ECO, folha de referência | 2026-11-13 |
+| `assets/sprites/personagens/ryker/ryker_referencia.png` | `01_ryker_referencia_v2.png` | 01 v2 — Ryker, folha de referência | 2026-11-13 |
 | `assets/sprites/armas/arsenal/mordida_arsenal.png` | `04_armas_mordida_bramido_v1.png` (metade esquerda) | 04 — Mordida e Bramido | 2026-11-13 |
 | `assets/sprites/armas/arsenal/bramido_arsenal.png` | `04_armas_mordida_bramido_v1.png` (metade direita) | 04 — Mordida e Bramido | 2026-11-13 |

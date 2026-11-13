@@ -59,6 +59,9 @@ Na folha `bramido_baixo`, a boca passa um pouco do quadro, mas essa direção s�
 | `ryker_dash.png` | 4, 20 qps | Rastro de luz âmbar atrás (a âncora). Desenhado com a Mordida; serve para as duas armas. |
 | `ryker_morte.png` | 8, 12 qps | O corpo vira poeira âmbar subindo: a âncora puxando para a Eco. O último quadro fica quase vazio. |
 
+## Folha de referência aprovada (IA + tratamento, D-039)
+`ryker_referencia.png`: 2 quadros 48×48 (frente, perfil), origem nos pés. É o **Ryker campeão** do pacote 01 v2 (pedido do dono): ombreira de osso no ombro direito, faixas de luta, cinto de campeão, colar de dente, marca de ferro no ombro esquerdo. **Não é animação:** é a referência que os sprites provisórios vão seguir na próxima entrega da ART, e a base dos próximos prompts.
+
 ## Projéteis e ícones
 Em `assets/sprites/armas/` (ver o LEIAME de lá).
 
