@@ -1,0 +1,71 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/run/run_ato.gd" id="1"]
+[ext_resource type="Resource" path="res://scenes/upgrades/kharn.tres" id="2"]
+[ext_resource type="Resource" path="res://scenes/upgrades/vesh.tres" id="3"]
+[ext_resource type="PackedScene" path="res://scenes/jogador/ryker.tscn" id="4"]
+[ext_resource type="Script" path="res://scripts/salas/camera_jogo.gd" id="5"]
+[ext_resource type="PackedScene" path="res://scenes/ui/hud.tscn" id="6"]
+[ext_resource type="PackedScene" path="res://scenes/ui/caixa_dialogo.tscn" id="7"]
+[ext_resource type="Texture2D" path="res://assets/sprites/cenarios/varrek/varrek_parallax_0_ceu_anel.png" id="8"]
+[ext_resource type="Texture2D" path="res://assets/sprites/cenarios/varrek/varrek_parallax_1_cascos_longe.png" id="9"]
+[ext_resource type="Texture2D" path="res://assets/sprites/cenarios/varrek/varrek_parallax_2_cascos_meio.png" id="10"]
+[ext_resource type="Texture2D" path="res://assets/sprites/cenarios/varrek/varrek_parallax_3_primeiro_plano.png" id="11"]
+
+[node name="RunAto1" type="Node2D"]
+script = ExtResource("1")
+catalogo_kharn = ExtResource("2")
+catalogo_vesh = ExtResource("3")
+
+[node name="FundoParallax" type="Node2D" parent="."]
+z_index = -10
+
+[node name="Camada0_ceu_anel" type="Parallax2D" parent="FundoParallax"]
+scroll_scale = Vector2(0, 0)
+
+[node name="Imagem" type="Sprite2D" parent="FundoParallax/Camada0_ceu_anel"]
+texture = ExtResource("8")
+centered = false
+
+[node name="Camada1_cascos_longe" type="Parallax2D" parent="FundoParallax"]
+scroll_scale = Vector2(0.2, 0)
+repeat_size = Vector2(480, 0)
+repeat_times = 10
+
+[node name="Imagem" type="Sprite2D" parent="FundoParallax/Camada1_cascos_longe"]
+texture = ExtResource("9")
+centered = false
+
+[node name="Camada2_cascos_meio" type="Parallax2D" parent="FundoParallax"]
+scroll_scale = Vector2(0.5, 0)
+repeat_size = Vector2(480, 0)
+repeat_times = 10
+
+[node name="Imagem" type="Sprite2D" parent="FundoParallax/Camada2_cascos_meio"]
+texture = ExtResource("10")
+centered = false
+
+[node name="Ryker" parent="." instance=ExtResource("4")]
+position = Vector2(48, 224)
+
+[node name="Projeteis" type="Node2D" parent="."]
+
+[node name="Camera" type="Camera2D" parent="."]
+position = Vector2(240, 135)
+script = ExtResource("5")
+
+[node name="Hud" parent="." instance=ExtResource("6")]
+
+[node name="CaixaDialogo" parent="." instance=ExtResource("7")]
+
+[node name="FrenteParallax" type="Node2D" parent="."]
+z_index = 20
+
+[node name="Camada3_primeiro_plano" type="Parallax2D" parent="FrenteParallax"]
+scroll_scale = Vector2(1.3, 0)
+repeat_size = Vector2(480, 0)
+repeat_times = 10
+
+[node name="Imagem" type="Sprite2D" parent="FrenteParallax/Camada3_primeiro_plano"]
+texture = ExtResource("11")
+centered = false

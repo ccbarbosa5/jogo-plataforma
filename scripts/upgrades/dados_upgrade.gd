@@ -53,7 +53,9 @@ func extra(chave: String, padrao: float = 0.0) -> float:
 
 
 func liberado(progresso: DadosProgresso) -> bool:
-	return not bloqueado_no_inicio or (progresso != null and progresso.tem_flag("arquivo_" + String(id)))
+	# Arquivo Kharn/Vesh (GD-03 §3.3) libera os 3 da facção; "arquivo_<id>" libera um só.
+	return not bloqueado_no_inicio or (progresso != null and (progresso.tem_flag("arquivo_" + String(faccao))
+			or progresso.tem_flag("arquivo_" + String(id))))
 
 
 ## Descrição com o valor da raridade no lugar de {v}.

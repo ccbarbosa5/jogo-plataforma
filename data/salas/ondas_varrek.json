@@ -1,0 +1,179 @@
+{
+ "fonte": "GD-03 §2.4 — banco de ondas feito à mão. Até a tarefa 4, só Guerreiro, Soldado (provisório) e a elite provisória.",
+ "custos": {
+  "zangao": 1,
+  "cuspidor": 2,
+  "soldado": 2,
+  "guerreiro": 4,
+  "artilheiro": 4,
+  "muralha": 5,
+  "ninho": 6,
+  "elite": 12
+ },
+ "ondas": [
+  {
+   "id": "soldados_2",
+   "faccao": "kharn",
+   "biomas": [
+    "*"
+   ],
+   "elite": false,
+   "inimigos": [
+    {
+     "tipo": "soldado",
+     "ponto": "L"
+    },
+    {
+     "tipo": "soldado",
+     "ponto": "R"
+    }
+   ]
+  },
+  {
+   "id": "guerreiro_1",
+   "faccao": "kharn",
+   "biomas": [
+    "*"
+   ],
+   "elite": false,
+   "inimigos": [
+    {
+     "tipo": "guerreiro",
+     "ponto": "R"
+    }
+   ]
+  },
+  {
+   "id": "guerreiro_esq",
+   "faccao": "kharn",
+   "biomas": [
+    "*"
+   ],
+   "elite": false,
+   "inimigos": [
+    {
+     "tipo": "guerreiro",
+     "ponto": "L"
+    }
+   ]
+  },
+  {
+   "id": "guerreiro_soldado",
+   "faccao": "kharn",
+   "biomas": [
+    "*"
+   ],
+   "elite": false,
+   "inimigos": [
+    {
+     "tipo": "guerreiro",
+     "ponto": "R"
+    },
+    {
+     "tipo": "soldado",
+     "ponto": "L"
+    }
+   ]
+  },
+  {
+   "id": "soldados_3",
+   "faccao": "kharn",
+   "biomas": [
+    "*"
+   ],
+   "elite": false,
+   "inimigos": [
+    {
+     "tipo": "soldado",
+     "ponto": "L"
+    },
+    {
+     "tipo": "soldado",
+     "ponto": "R"
+    },
+    {
+     "tipo": "soldado",
+     "ponto": "R"
+    }
+   ]
+  },
+  {
+   "id": "guerreiros_2",
+   "faccao": "kharn",
+   "biomas": [
+    "*"
+   ],
+   "elite": false,
+   "inimigos": [
+    {
+     "tipo": "guerreiro",
+     "ponto": "L"
+    },
+    {
+     "tipo": "guerreiro",
+     "ponto": "R"
+    }
+   ]
+  },
+  {
+   "id": "patrulha",
+   "faccao": "kharn",
+   "biomas": [
+    "*"
+   ],
+   "elite": false,
+   "inimigos": [
+    {
+     "tipo": "guerreiro",
+     "ponto": "R"
+    },
+    {
+     "tipo": "soldado",
+     "ponto": "L"
+    },
+    {
+     "tipo": "soldado",
+     "ponto": "R"
+    }
+   ]
+  },
+  {
+   "id": "cerco",
+   "faccao": "kharn",
+   "biomas": [
+    "linha_kharn",
+    "zona_guerra",
+    "chefe"
+   ],
+   "elite": false,
+   "inimigos": [
+    {
+     "tipo": "guerreiro",
+     "ponto": "R"
+    },
+    {
+     "tipo": "guerreiro",
+     "ponto": "R"
+    },
+    {
+     "tipo": "soldado",
+     "ponto": "L"
+    }
+   ]
+  },
+  {
+   "id": "elite_guerreiro",
+   "faccao": "kharn",
+   "biomas": [
+    "*"
+   ],
+   "elite": true,
+   "inimigos": [
+    {
+     "tipo": "elite",
+     "ponto": "R"
+    }
+   ]
+  }
+ ]
+}
