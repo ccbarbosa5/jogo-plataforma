@@ -17,6 +17,10 @@ func _initialize() -> void:
 	_coletar(TESTS_DIR, arquivos)
 	arquivos.sort()
 
+	# Nos testes, a run e a nave nunca trocam de cena sozinhas.
+	var ciclo: Node = root.get_node_or_null("Ciclo")
+	if ciclo != null:
+		ciclo.trocar_cena = false
 	print("== Testes do Jogo Plataforma ==")
 	for caminho in arquivos:
 		await _rodar_arquivo(caminho)

@@ -41,6 +41,13 @@ var arvore: ArvoreRun
 var controle_arma: ControleArma
 ## Moeda da run (loja Ilo).
 var creditos: int = 0
+## Rerolls de recompensa nesta run (melhoria Recalibrar).
+var rerolls: int = 0
+## Voltas nesta run (melhoria Sinal de Emergência).
+var retornos: int = 0
+
+## A ECO puxa o Ryker de volta uma vez (Sinal de Emergência), em vez de morrer.
+signal voltou(jogador: Jogador)
 var granadas: int = 0
 ## 0 a 100 (Combate.regras.chamado_maximo).
 var barra_chamado: float = 0.0
@@ -277,6 +284,7 @@ func fim_da_run() -> void:
 ## +1 Ponto de Aprimoramento (porta, chefe ou loja). A sala abre a tela da árvore.
 func ganhar_aprimoramento(pontos: int = 1) -> void:
 	arvore.ganhar_pontos(pontos)
+	Progresso.definir_flag("1o_aprimoramento_pego")  # Garrak comenta no Arsenal (NAR-03)
 	ganhou_aprimoramento.emit(self)
 
 
@@ -570,6 +578,14 @@ func _ao_levar_dano(_quantidade: int) -> void:
 
 
 func _ao_morrer() -> void:
+	if retornos > 0:
+		# Sinal de Emergência (GD-01 §9.2): volta com metade da vida, na última posição segura.
+		retornos -= 1
+		vida.reviver(ceili(vida.maxima / 2.0))
+		vida.tornar_invulneravel(2.0)
+		_timer_pisca = 2.0
+		voltou.emit(self)
+		return
 	_morto = true
 	_dash_restante_px = 0.0
 	_timer_puxao = 0.0

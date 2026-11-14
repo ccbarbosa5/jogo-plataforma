@@ -115,6 +115,7 @@ func comprar_selecionado() -> bool:
 	var arvore: ArvoreRun = jogador.arvore
 	if arvore.comprar(ramo, nivel):
 		mensagem = ""
+		Progresso.definir_run("usou_arvore")  # a ECO comenta na reconstrução (CAMP_A3)
 		if nivel < DadosArvore.NOS_POR_RAMO - 1:
 			nivel += 1  # já aponta para o próximo do ramo
 		_atualizar_descricao()

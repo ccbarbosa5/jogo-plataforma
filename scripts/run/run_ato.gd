@@ -33,6 +33,10 @@ func _ready() -> void:
 	Progresso.limpar_run()
 	gerador = GeradorAto.new(Progresso, semente)
 	jogador.container_projeteis = projeteis
+	# Arma do Arsenal e melhorias da Vossa Margem (GD-01 §9).
+	jogador.equipar(Ciclo.dados_da_arma())
+	MelhoriasPermanentes.aplicar(jogador, Progresso)
+	jogador.voltou.connect(func(_j: Jogador) -> void: hud.mostrar_mensagem("SINAL DE EMERGÊNCIA: A ECO TE PUXOU DE VOLTA", 1.5))
 	jogador.morreu.connect(_ao_jogador_morrer)
 	var grilhao := jogador.ferramenta as Grilhao
 	if grilhao != null:
@@ -131,7 +135,14 @@ func _fim_do_ato() -> void:
 	var texto: String = "VITÓRIA SOBRE UR-KESH\n+50 Núcleos · +%d Dados" % (25 if primeira else 10)
 	if primeira:
 		texto += "\nBramido liberado no Arsenal"
-	hud.mostrar_mensagem(texto + "\nContinua no Ato 2 · R: nova run")
+	hud.mostrar_mensagem(texto + "\nContinua no Ato 2")
+	if not Ciclo.trocar_cena:
+		return  # testes: fica na run
+	await get_tree().create_timer(4.0).timeout
+	var caixa := get_tree().get_first_node_in_group("caixa_dialogo") as CaixaDialogo
+	while caixa != null and caixa.esta_ativa():
+		await caixa.terminou
+	Ciclo.voltar_para_nave("vitoria")
 
 
 func _ao_escolher_porta(porta: PortaSaida) -> void:
@@ -204,4 +215,4 @@ func _ao_jogador_morrer(_j: Jogador) -> void:
 	Progresso.salvar()  # Núcleos e Dados ficam (GD-01 §8)
 	hud.mostrar_mensagem("ECO: RECONSTRUINDO...")
 	await get_tree().create_timer(tempo_teleporte).timeout
-	get_tree().reload_current_scene()
+	Ciclo.voltar_para_nave("morte")

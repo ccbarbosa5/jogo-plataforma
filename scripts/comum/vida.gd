@@ -53,6 +53,12 @@ func receber_dano(quantidade: int, ignorar_invulnerabilidade: bool = false) -> b
 	return true
 
 
+## Volta da morte com `quantidade` de vida (Sinal de Emergência).
+func reviver(quantidade: int) -> void:
+	atual = clampi(quantidade, 1, maxima)
+	mudou.emit(atual, maxima)
+
+
 func curar(quantidade: int) -> void:
 	if not esta_vivo():
 		return
