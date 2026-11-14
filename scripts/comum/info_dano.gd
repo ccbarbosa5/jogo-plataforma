@@ -16,6 +16,10 @@ var acidos: int = 0
 var empurrao: Vector2 = Vector2.ZERO
 var multiplicador: float = 1.0
 var ponto_fraco: bool = false
+## Multiplica chance e acúmulo dos efeitos "ao acertar" (GD-05 §2.3; Bramido: 0,35 por balim).
+var fator_efeito: float = 1.0
+## Crítico (Mordida, ramo Rajada).
+var critico: bool = false
 
 
 static func criar(valor_: int, autor_: Node = null, direcao_: Vector2 = Vector2.ZERO) -> InfoDano:
@@ -38,4 +42,6 @@ func copiar() -> InfoDano:
 	c.empurrao = empurrao
 	c.multiplicador = multiplicador
 	c.ponto_fraco = ponto_fraco
+	c.fator_efeito = fator_efeito
+	c.critico = critico
 	return c

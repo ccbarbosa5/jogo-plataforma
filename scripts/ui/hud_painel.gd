@@ -20,6 +20,10 @@ var _elo: Texture2D = FolhaSprite.carregar(PASTA_HUD + "elo_vida.png")
 var _chamado_fundo: Texture2D = FolhaSprite.carregar(PASTA_HUD + "barra_chamado_fundo.png")
 var _chamado_cheia: Texture2D = FolhaSprite.carregar(PASTA_HUD + "barra_chamado_cheia.png")
 var _chamado_completa: Texture2D = FolhaSprite.carregar(PASTA_HUD + "barra_chamado_completa.png")
+var _embalo_fundo: Texture2D = FolhaSprite.carregar(PASTA_HUD + "barra_embalo_fundo.png")
+var _embalo_cheia: Texture2D = FolhaSprite.carregar(PASTA_HUD + "barra_embalo_cheia.png")
+var _embalo_completa: Texture2D = FolhaSprite.carregar(PASTA_HUD + "barra_embalo_completa.png")
+var _ponto: Texture2D = FolhaSprite.carregar("res://assets/sprites/ui/arvore/ponto_aprimoramento.png")
 
 
 ## Elo da corrente (folha da ART: 2 quadros de 11×8, cheio / quebrado).
@@ -57,7 +61,14 @@ func _draw() -> void:
 	for i in vida.maxima:
 		_desenhar_elo(Vector2(i * 13.0, 0.0), i < vida.atual)
 	var y: float = 11.0
-	# (A barra de Embalo da Mordida entra aqui, logo abaixo dos elos, junto com as armas.)
+	# Embalo da Mordida (D-043): barrinha laranja logo abaixo dos elos.
+	var controle: ControleArma = jogador.controle_arma
+	if controle != null and controle.assinatura() == &"embalo":
+		_desenhar_barra(Vector2(0.0, y), controle.fracao_embalo(), _embalo_fundo, _embalo_cheia, _embalo_completa, Color("e8742c"))
+		y += 7.0
+	elif controle != null and controle.carregando():
+		_desenhar_barra(Vector2(0.0, y), controle.fracao_carga(), _embalo_fundo, _embalo_cheia, _embalo_completa, Color("e8742c"))
+		y += 7.0
 	for i in jogador.parametros.cargas_dash:
 		draw_rect(Rect2(Vector2(i * 13.0, y), Vector2(11.0, 2.0)), COR_DASH if i < jogador.cargas_dash else COR_VAZIO)
 	var grilhao := jogador.ferramenta as Grilhao
@@ -76,3 +87,11 @@ func _draw() -> void:
 	y += 15.0
 	if jogador.arma != null:
 		draw_string(Fontes.pequena(), Vector2(0.0, y), jogador.arma_equipada.nome(), HORIZONTAL_ALIGNMENT_LEFT, -1, Fontes.TAMANHO_PEQUENA)
+		# Pontos de Aprimoramento guardados e Créditos da run.
+		var x: float = Fontes.pequena().get_string_size(jogador.arma_equipada.nome(), HORIZONTAL_ALIGNMENT_LEFT, -1, Fontes.TAMANHO_PEQUENA).x + 6.0
+		if jogador.arvore != null and jogador.arvore.pontos > 0:
+			if _ponto != null:
+				draw_texture(_ponto, Vector2(x, y - 10.0))
+			draw_string(Fontes.pequena(), Vector2(x + 14.0, y), str(jogador.arvore.pontos), HORIZONTAL_ALIGNMENT_LEFT, -1, Fontes.TAMANHO_PEQUENA)
+		y += 10.0
+		draw_string(Fontes.pequena(), Vector2(0.0, y), "%d Créditos" % jogador.creditos, HORIZONTAL_ALIGNMENT_LEFT, -1, Fontes.TAMANHO_PEQUENA, Color("d9b26a"))

@@ -8,6 +8,10 @@ extends Node2D
 @export var limites_arena: Rect2 = Rect2(960, 0, 480, 270)
 @export var cena_inimigo: PackedScene
 @export var tempo_teleporte: float = 1.5
+## Créditos para testar a loja Ilo enquanto os inimigos não dão Créditos (proposta à GD).
+@export var creditos_iniciais: int = 100
+## Armas do Arsenal provisório (F7 troca).
+@export var armas_arsenal: Array[DadosArma] = []
 
 @onready var jogador: Jogador = $Ryker
 @onready var camera: CameraJogo = $Camera
@@ -22,6 +26,7 @@ var arena_ativa: bool = false
 var arena_concluida: bool = false
 var _onda: Array[Inimigo] = []
 var _cena_revisao: int = -1
+var tela_arvore: TelaArvore
 
 
 func _ready() -> void:
@@ -40,6 +45,11 @@ func _ready() -> void:
 	camera.posicionar_imediato()
 	hud.conectar(jogador)
 	($CaixaDialogo as CaixaDialogo).entrada = jogador.entrada
+	tela_arvore = TelaArvore.new()
+	add_child(tela_arvore)
+	tela_arvore.entrada = jogador.entrada
+	jogador.ganhou_aprimoramento.connect(func(j: Jogador) -> void: tela_arvore.abrir.call_deferred(j))
+	jogador.creditos = creditos_iniciais
 	gatilho_arena.collision_layer = 0
 	gatilho_arena.collision_mask = Camadas.JOGADOR
 	gatilho_arena.body_entered.connect(_ao_entrar_arena)
@@ -66,6 +76,23 @@ func _unhandled_input(evento: InputEvent) -> void:
 		_cena_revisao = (_cena_revisao + 1) % cenas.size()
 		hud.mostrar_mensagem("Cena %d/%d: %s" % [_cena_revisao + 1, cenas.size(), cenas[_cena_revisao]], 2.0)
 		Dialogos.previsualizar(cenas[_cena_revisao])
+	if evento.is_action_pressed("arvore") and not tela_arvore.esta_aberta():
+		# Fora de combate a árvore abre a qualquer hora (GD-05 §2.2).
+		if arena_ativa:
+			hud.mostrar_mensagem("A árvore só abre fora de combate", 1.0)
+		else:
+			tela_arvore.abrir(jogador)
+	if evento.is_action_pressed("debug_trocar_arma") and not armas_arsenal.is_empty():
+		# Arsenal provisório: troca a arma e zera a árvore (D-038: na run de verdade não se troca).
+		var i: int = (armas_arsenal.find(jogador.arma) + 1) % armas_arsenal.size()
+		jogador.equipar(armas_arsenal[i])
+		hud.mostrar_mensagem("Arsenal: %s" % armas_arsenal[i].nome, 1.2)
+		if armas_arsenal[i].id == &"bramido":
+			Dialogos.tocar("arsenal_escolha_bramido")
+		else:
+			Dialogos.tocar("arsenal_escolha_mordida")
+	if evento.is_action_pressed("debug_aprimoramento"):
+		jogador.ganhar_aprimoramento(1)
 	if evento.is_action_pressed("debug_apagar_progresso"):
 		Progresso.apagar()
 		hud.mostrar_mensagem("Progresso apagado (falas de \"1ª vez\" voltam a tocar)", 1.5)
@@ -114,7 +141,11 @@ func _concluir_arena() -> void:
 	arena_ativa = false
 	arena_concluida = true
 	_ativar_paredes(false)
-	hud.mostrar_mensagem("SALA LIMPA!\n(as portas com recompensa entram na Fase 2)")
+	hud.mostrar_mensagem("SALA LIMPA!")
+	# Recompensa da sala: porta "Aprimoramento de Arma" no meio da arena.
+	var porta := PortaAprimoramento.new()
+	porta.position = Vector2(limites_arena.get_center().x, 240.0)
+	add_child.call_deferred(porta)
 
 
 func _ativar_paredes(ativas: bool) -> void:

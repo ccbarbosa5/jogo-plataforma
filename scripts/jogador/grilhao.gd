@@ -54,6 +54,11 @@ func esta_pronto() -> bool:
 	return estado == Estado.PRONTO and _timer_recarga <= 0.0
 
 
+## Caçada (Mordida C2): devolve parte da recarga.
+func reduzir_recarga(segundos: float) -> void:
+	_timer_recarga = maxf(_timer_recarga - segundos, 0.0)
+
+
 func recarga_restante() -> float:
 	return maxf(_timer_recarga, 0.0)
 

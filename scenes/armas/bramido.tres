@@ -1,0 +1,106 @@
+[gd_resource type="Resource" script_class="DadosArma" load_steps=17 format=3]
+
+[ext_resource type="Script" path="res://scripts/armas/dados_arma.gd" id="1"]
+[ext_resource type="PackedScene" path="res://scenes/armas/projetil_jogador.tscn" id="2"]
+[ext_resource type="Script" path="res://scripts/armas/dados_arvore.gd" id="3"]
+[ext_resource type="Script" path="res://scripts/armas/modificador_arma.gd" id="4"]
+[ext_resource type="Texture2D" path="res://assets/sprites/armas/projeteis/balim.png" id="5"]
+[ext_resource type="Texture2D" path="res://assets/sprites/armas/icones/icone_bramido.png" id="6"]
+
+[sub_resource type="Resource" id="no0"]
+script = ExtResource("4")
+id = &"bala_de_cerco"
+nome = "Bala de Cerco"
+descricao = "Troca os 6 balins por 1 projétil de 50 de dano que cruza a tela, sem dispersão."
+mult_velocidade_projetil = 1.5
+mult_duracao_projetil = 5.0
+soma_dano = 41
+soma_projeteis_por_tiro = -5
+soma_espalhamento_graus = -15.0
+marcadores = Array[StringName]([&"bala_unica"])
+
+[sub_resource type="Resource" id="no1"]
+script = ExtResource("4")
+id = &"perfurador"
+nome = "Perfurador"
+descricao = "O projétil único atravessa todos os inimigos leves."
+marcadores = Array[StringName]([&"perfura_leves"])
+
+[sub_resource type="Resource" id="no2"]
+script = ExtResource("4")
+id = &"artilharia"
+nome = "Artilharia"
+descricao = "Segurar o tiro carrega por 1 s. O disparo carregado explode (raio de 40 px, 90 de dano)."
+marcadores = Array[StringName]([&"carga_explosiva"])
+
+[sub_resource type="Resource" id="no3"]
+script = ExtResource("4")
+id = &"boca_larga"
+nome = "Boca Larga"
+descricao = "+2 balins, dispersão de 20° para cada lado e +30% de dano a menos de 32 px."
+soma_projeteis_por_tiro = 2
+soma_espalhamento_graus = 5.0
+marcadores = Array[StringName]([&"bonus_perto"])
+
+[sub_resource type="Resource" id="no4"]
+script = ExtResource("4")
+id = &"abre_couraca"
+nome = "Abre-Couraça"
+descricao = "Acertar à queima-roupa quebra a armadura frontal por 3 s."
+marcadores = Array[StringName]([&"quebra_armadura_perto"])
+
+[sub_resource type="Resource" id="no5"]
+script = ExtResource("4")
+id = &"recuo_de_gladiador"
+nome = "Recuo de Gladiador"
+descricao = "O disparo empurra Ryker 24 px para trás. No ar, dá um pequeno impulso para cima (1 vez por pulo)."
+marcadores = Array[StringName]([&"recuo_jogador"])
+
+[sub_resource type="Resource" id="no6"]
+script = ExtResource("4")
+id = &"cano_duplo"
+nome = "Cano Duplo"
+descricao = "Carregador de 2: dois disparos rápidos, depois 0,9 s de recarga."
+marcadores = Array[StringName]([&"carregador_2"])
+
+[sub_resource type="Resource" id="no7"]
+script = ExtResource("4")
+id = &"recarga_de_combate"
+nome = "Recarga de Combate"
+descricao = "Dar um dash recarrega o Bramido na hora."
+marcadores = Array[StringName]([&"recarga_no_dash"])
+
+[sub_resource type="Resource" id="no8"]
+script = ExtResource("4")
+id = &"fogo_continuo"
+nome = "Fogo Contínuo"
+descricao = "Matar um inimigo devolve 1 disparo na hora."
+marcadores = Array[StringName]([&"devolve_disparo_ao_matar"])
+
+[sub_resource type="Resource" id="arvore"]
+script = ExtResource("3")
+ramos = Array[String](["Cerco", "Brecha", "Fornalha"])
+nos = Array[Resource]([SubResource("no0"), SubResource("no1"), SubResource("no2"), SubResource("no3"), SubResource("no4"), SubResource("no5"), SubResource("no6"), SubResource("no7"), SubResource("no8")])
+
+[resource]
+script = ExtResource("1")
+id = &"bramido"
+visual = &"bramido"
+assinatura = &"coice"
+nome = "Bramido"
+assinatura_nome = "Coice"
+assinatura_descricao = "Coice: acertar empurra inimigos leves e médios."
+cadencia = 1.5
+dano = 9
+velocidade_projetil = 25.0
+duracao_projetil = 0.2
+espalhamento_graus = 15.0
+projeteis_por_tiro = 6
+peso_disparo = 2.5
+fator_efeito = 0.35
+queda_dano_px = 48.0
+mult_queda_dano = 0.5
+cena_projetil = ExtResource("2")
+textura_projetil = ExtResource("5")
+icone = ExtResource("6")
+arvore = SubResource("arvore")

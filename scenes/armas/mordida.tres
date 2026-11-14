@@ -1,0 +1,100 @@
+[gd_resource type="Resource" script_class="DadosArma" load_steps=17 format=3]
+
+[ext_resource type="Script" path="res://scripts/armas/dados_arma.gd" id="1"]
+[ext_resource type="PackedScene" path="res://scenes/armas/projetil_jogador.tscn" id="2"]
+[ext_resource type="Script" path="res://scripts/armas/dados_arvore.gd" id="3"]
+[ext_resource type="Script" path="res://scripts/armas/modificador_arma.gd" id="4"]
+[ext_resource type="Texture2D" path="res://assets/sprites/armas/projeteis/rebite.png" id="5"]
+[ext_resource type="Texture2D" path="res://assets/sprites/armas/icones/icone_mordida.png" id="6"]
+
+[sub_resource type="Resource" id="no0"]
+script = ExtResource("4")
+id = &"plateia_fiel"
+nome = "Plateia Fiel"
+descricao = "Embalo máximo sobe para 30. Levar dano tira só metade do Embalo."
+marcadores = Array[StringName]([&"embalo_estendido"])
+
+[sub_resource type="Resource" id="no1"]
+script = ExtResource("4")
+id = &"ritmo_de_arena"
+nome = "Ritmo de Arena"
+descricao = "Com o Embalo cheio, os tiros atravessam 1 inimigo."
+marcadores = Array[StringName]([&"perfura_com_embalo_cheio"])
+
+[sub_resource type="Resource" id="no2"]
+script = ExtResource("4")
+id = &"grande_arena"
+nome = "Grande Arena"
+descricao = "Com o Embalo cheio, cada 10º tiro é um Golpe do Campeão: 40 de dano, dobrado contra elites e chefes."
+marcadores = Array[StringName]([&"golpe_do_campeao"])
+
+[sub_resource type="Resource" id="no3"]
+script = ExtResource("4")
+id = &"disciplina"
+nome = "Disciplina"
+descricao = "Rajadas de 3 tiros, +20% de dano por bala."
+mult_dano = 1.2
+marcadores = Array[StringName]([&"rajada_3"])
+
+[sub_resource type="Resource" id="no4"]
+script = ExtResource("4")
+id = &"tres_golpes"
+nome = "Três Golpes"
+descricao = "Se as 3 balas da rajada acertam o mesmo alvo, a 3ª é crítica (×2)."
+marcadores = Array[StringName]([&"rajada_critico_3"])
+
+[sub_resource type="Resource" id="no5"]
+script = ExtResource("4")
+id = &"execucao"
+nome = "Execução"
+descricao = "Crítico em inimigo comum com menos de 25% de vida mata na hora. Em elites e chefes, o crítico causa ×3."
+marcadores = Array[StringName]([&"execucao"])
+
+[sub_resource type="Resource" id="no6"]
+script = ExtResource("4")
+id = &"marca_do_escravo"
+nome = "Marca do Escravo"
+descricao = "O alvo do Grilhão fica marcado por 4 s e leva +25% de dano da Mordida."
+marcadores = Array[StringName]([&"marca_grilhao"])
+
+[sub_resource type="Resource" id="no7"]
+script = ExtResource("4")
+id = &"cacada"
+nome = "Caçada"
+descricao = "Matar um alvo marcado devolve 2 s da recarga do Grilhão."
+marcadores = Array[StringName]([&"marca_devolve_grilhao"])
+
+[sub_resource type="Resource" id="no8"]
+script = ExtResource("4")
+id = &"algema_viva"
+nome = "Algema Viva"
+descricao = "Tiros num alvo marcado têm 30% de chance de prendê-lo no lugar (não funciona em elites e chefes)."
+marcadores = Array[StringName]([&"algema_viva"])
+
+[sub_resource type="Resource" id="arvore"]
+script = ExtResource("3")
+ramos = Array[String](["Ovação", "Rajada", "Corrente"])
+nos = Array[Resource]([SubResource("no0"), SubResource("no1"), SubResource("no2"), SubResource("no3"), SubResource("no4"), SubResource("no5"), SubResource("no6"), SubResource("no7"), SubResource("no8")])
+
+[resource]
+script = ExtResource("1")
+id = &"mordida"
+visual = &"mordida"
+assinatura = &"embalo"
+nome = "Mordida"
+assinatura_nome = "Embalo"
+assinatura_descricao = "Embalo: acertar sem levar dano acelera a arma."
+cadencia = 8.0
+dano = 10
+velocidade_projetil = 37.5
+duracao_projetil = 1.0
+espalhamento_graus = 0.0
+projeteis_por_tiro = 1
+peso_disparo = 1.0
+fator_efeito = 1.0
+queda_dano_px = 0.0
+mult_queda_dano = 1.0
+cena_projetil = ExtResource("2")
+textura_projetil = ExtResource("5")
+icone = ExtResource("6")
+arvore = SubResource("arvore")

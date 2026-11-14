@@ -163,7 +163,7 @@ func test_modificador_de_arma_muda_cadencia_e_projeteis() -> void:
 
 
 func test_arma_equipada_soma_e_multiplica_e_zera_na_run_nova() -> void:
-	var dados: DadosArma = load("res://scenes/armas/fuzil_de_servico.tres")
+	var dados: DadosArma = load("res://scenes/armas/mordida.tres")
 	var a := ArmaEquipada.new(dados)
 	afirmar_igual(a.dano(), 10, "dano-base do fuzil")
 	var m1 := ModificadorArma.new()
