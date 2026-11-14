@@ -12,6 +12,12 @@ signal terminou(id_cena: String)
 
 const COR_TEXTO: Color = Color("eceff4")
 const COR_DIRECAO: Color = Color("a7adba")
+## Placa de nome legível (D-057): texto claro sobre fundo escuro e liso. A cor de quem fala
+## aparece só na faixa da esquerda e no filete de baixo, nunca no texto.
+const COR_TEXTO_PLACA: Color = Color("f6f3ec")
+const COR_FUNDO_PLACA: Color = Color("0b0a10")
+const FAIXA_PLACA: int = 3
+const RESPIRO_PLACA: Vector2 = Vector2(8, 3)
 
 ## Segundos por caractere no modo rápido (com um mínimo).
 @export var segundos_por_caractere: float = 0.05
@@ -26,7 +32,7 @@ var escurecer: ColorRect
 var retrato_esquerda: RetratoDialogo
 var retrato_direita: RetratoDialogo
 var caixa: MolduraDialogo
-var placa: MolduraDialogo
+var placa: Panel
 var nome: Label
 var texto: Label
 var direcao: Label
@@ -43,6 +49,7 @@ var _timer: float = 0.0
 var _trava: float = 0.0
 var _pausou: bool = false
 var _ativa: bool = false
+var _estilo_placa: StyleBoxFlat
 
 
 func _ready() -> void:
@@ -138,18 +145,17 @@ func _exibir() -> void:
 	outro.ativo = false
 	# Placa só com o NOME (D-046), encostada no lado de quem fala.
 	placa.visible = true
-	placa.moldura = moldura
 	nome.text = nome_falante.to_upper()
-	nome.add_theme_color_override("font_color", cor)
-	var largura_nome: float = Fontes.texto().get_string_size(nome.text, HORIZONTAL_ALIGNMENT_LEFT, -1, Fontes.TAMANHO_TEXTO).x
-	placa.size = Vector2(maxf(largura_nome + 28.0, 64.0), 24.0)
-	nome.position = Vector2(14.0, 4.0)
-	nome.size = Vector2(placa.size.x - 28.0, 16.0)
-	var y_placa: float = caixa.position.y - placa.size.y + 4.0
+	_estilo_placa.border_color = cor
+	var tamanho_nome: Vector2 = Fontes.placa().get_string_size(nome.text, HORIZONTAL_ALIGNMENT_LEFT, -1, Fontes.TAMANHO_PLACA)
+	placa.size = Vector2(maxf(tamanho_nome.x + FAIXA_PLACA + RESPIRO_PLACA.x * 2.0, 56.0), tamanho_nome.y + RESPIRO_PLACA.y * 2.0)
+	nome.position = Vector2(FAIXA_PLACA + RESPIRO_PLACA.x, RESPIRO_PLACA.y)
+	nome.size = Vector2(tamanho_nome.x + 1.0, tamanho_nome.y)
+	var y_placa: float = caixa.position.y - placa.size.y + 2.0
 	if lado == "direita":
-		placa.position = Vector2(caixa.position.x + caixa.size.x - placa.size.x - 8.0, y_placa)
+		placa.position = Vector2(caixa.position.x + caixa.size.x - placa.size.x - 10.0, y_placa)
 	else:
-		placa.position = Vector2(caixa.position.x + 8.0, y_placa)
+		placa.position = Vector2(caixa.position.x + 10.0, y_placa)
 
 
 func _process(delta: float) -> void:
@@ -235,17 +241,22 @@ func _montar() -> void:
 	direcao.size = Vector2(caixa.size.x - 44, 12)
 	direcao.clip_text = true
 
-	placa = MolduraDialogo.new()
-	placa.mostrar_seta = false
+	placa = Panel.new()
+	placa.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_estilo_placa = StyleBoxFlat.new()
+	_estilo_placa.bg_color = COR_FUNDO_PLACA
+	_estilo_placa.border_width_left = FAIXA_PLACA
+	_estilo_placa.border_width_bottom = 1
+	placa.add_theme_stylebox_override("panel", _estilo_placa)
 	add_child(placa)
-	nome = _rotulo(placa, Fontes.texto(), Fontes.TAMANHO_TEXTO, Color.WHITE)
+	nome = _rotulo(placa, Fontes.placa(), Fontes.TAMANHO_PLACA, COR_TEXTO_PLACA)
 
 	rapida = MolduraDialogo.new()
 	rapida.mostrar_seta = false
 	rapida.position = Vector2(132, 4)
 	rapida.size = Vector2(tela.x - 136, 44)
 	add_child(rapida)
-	rapida_nome = _rotulo(rapida, Fontes.pequena(), Fontes.TAMANHO_PEQUENA, Color.WHITE)
+	rapida_nome = _rotulo(rapida, Fontes.placa(), Fontes.TAMANHO_PEQUENA, Color.WHITE)
 	rapida_nome.position = Vector2(12, 5)
 	rapida_nome.size = Vector2(rapida.size.x - 24, 10)
 	rapida_texto = _rotulo(rapida, Fontes.texto(), Fontes.TAMANHO_TEXTO, COR_TEXTO)
