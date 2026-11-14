@@ -180,6 +180,21 @@ func _caixa() -> CaixaDialogo:
 	return get_tree().get_first_node_in_group("caixa_dialogo") as CaixaDialogo
 
 
+## Recalibrar (GD-01 §9.2): sorteia as 3 opções de novo, gastando 1 reroll da run.
+func recalibrar() -> bool:
+	if not _escolhendo or jogador.rerolls <= 0:
+		return false
+	var novas: Array[DadosUpgrade] = GeradorOfertas.gerar(catalogo, jogador.upgrades, rng, Progresso)
+	if novas.is_empty():
+		return false
+	jogador.rerolls -= 1
+	ofertas = novas
+	selecionada = 0
+	_mostrar(true)
+	_atualizar_textos()
+	return true
+
+
 ## Upgrade que esta opção substituiria (mesmo slot; Passivos acumulam).
 func substituiria(u: DadosUpgrade) -> DadosUpgrade:
 	if u.slot == DadosUpgrade.Slot.PASSIVO:
@@ -210,10 +225,12 @@ func _process(delta: float) -> void:
 	desenho.queue_redraw()
 	var direcao: Vector2i
 	var pegar: bool
+	var reroll: bool = false
 	if entrada != null:
 		entrada.atualizar()
 		direcao = entrada.direcao
 		pegar = entrada.atirar_pressionado or entrada.interagir_pressionado
+		reroll = entrada.pular_pressionado
 		entrada.fim_do_frame()
 	else:
 		direcao = Vector2i(0, roundi(Input.get_axis("mirar_cima", "mirar_baixo")))
@@ -224,7 +241,9 @@ func _process(delta: float) -> void:
 		return
 	if novo != 0:
 		selecionada = wrapi(selecionada + novo, 0, ofertas.size())
-	if pegar:
+	if reroll:
+		recalibrar()
+	elif pegar:
 		escolher(selecionada)
 
 
@@ -256,4 +275,5 @@ func _desenhar() -> void:
 			c.draw_string(pequena, Vector2(r.position.x + 8.0, r.end.y - 3.0), "Substitui: " + antigo.nome,
 					HORIZONTAL_ALIGNMENT_LEFT, -1, Fontes.TAMANHO_PEQUENA, COR_SUBSTITUI)
 	c.draw_string(pequena, Vector2(PAINEL.position.x + 14.0, PAINEL.end.y - 15.0),
-			"Setas: escolher · Atirar ou E: pegar a dádiva", HORIZONTAL_ALIGNMENT_LEFT, -1, Fontes.TAMANHO_PEQUENA, COR_APAGADO)
+			"Setas: escolher · Atirar ou E: pegar a dádiva" + ("  ·  Pular: recalibrar (%d)" % jogador.rerolls if jogador.rerolls > 0 else ""),
+			HORIZONTAL_ALIGNMENT_LEFT, -1, Fontes.TAMANHO_PEQUENA, COR_APAGADO)

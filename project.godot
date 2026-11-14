@@ -11,7 +11,7 @@ config_version=5
 [application]
 
 config/name="No Rest"
-run/main_scene="res://scenes/run/run_ato1.tscn"
+run/main_scene="res://scenes/nave/nave_eco.tscn"
 config/features=PackedStringArray("4.5", "GL Compatibility")
 
 [autoload]
@@ -19,6 +19,7 @@ config/features=PackedStringArray("4.5", "GL Compatibility")
 Combate="*res://scripts/comum/combate.gd"
 Progresso="*res://scripts/dialogo/dados_progresso.gd"
 Dialogos="*res://scripts/dialogo/dialogos.gd"
+Ciclo="*res://scripts/nave/ciclo.gd"
 
 [display]
 

@@ -1,0 +1,137 @@
+{
+ "fonte": "GD-01 §9.2 (melhorias com Núcleos, Vossa Margem) e GD-03 §3.3 (desbloqueios com Dados, Ponte e Arsenal)",
+ "melhorias": [
+  {
+   "id": "blindagem",
+   "nome": "Blindagem",
+   "descricao": "+1 bloco de vida máximo.",
+   "custos": [
+    40,
+    90
+   ],
+   "moeda": "nucleos",
+   "onde": "vossa"
+  },
+  {
+   "id": "sinal_emergencia",
+   "nome": "Sinal de Emergência",
+   "descricao": "Volta 1 vez por run, com metade da vida.",
+   "custos": [
+    120
+   ],
+   "moeda": "nucleos",
+   "onde": "vossa"
+  },
+  {
+   "id": "cinto_granadas",
+   "nome": "Cinto de Granadas",
+   "descricao": "+1 granada por sala.",
+   "custos": [
+    30,
+    70
+   ],
+   "moeda": "nucleos",
+   "onde": "vossa"
+  },
+  {
+   "id": "propulsores",
+   "nome": "Propulsores",
+   "descricao": "+1 carga de dash.",
+   "custos": [
+    80
+   ],
+   "moeda": "nucleos",
+   "onde": "vossa"
+  },
+  {
+   "id": "contato_mercado",
+   "nome": "Contato no Mercado",
+   "descricao": "Começa a run com 30 Créditos por nível.",
+   "custos": [
+    20,
+    40,
+    60
+   ],
+   "moeda": "nucleos",
+   "onde": "vossa"
+  },
+  {
+   "id": "recalibrar",
+   "nome": "Recalibrar",
+   "descricao": "1 reroll de recompensa por run por nível.",
+   "custos": [
+    50,
+    100
+   ],
+   "moeda": "nucleos",
+   "onde": "vossa"
+  },
+  {
+   "id": "treino_garrak",
+   "nome": "Treino com Garrak",
+   "descricao": "Começa toda run com 1 Ponto de Aprimoramento.",
+   "custos": [
+    30
+   ],
+   "moeda": "dados",
+   "onde": "arsenal",
+   "flag": "treino_garrak"
+  },
+  {
+   "id": "arquivo_kharn",
+   "nome": "Arquivo Kharn",
+   "descricao": "+3 upgrades Kharn no sorteio (de 7 para 10).",
+   "custos": [
+    25
+   ],
+   "moeda": "dados",
+   "onde": "ponte",
+   "flag": "arquivo_kharn"
+  },
+  {
+   "id": "arquivo_vesh",
+   "nome": "Arquivo Vesh",
+   "descricao": "+3 upgrades Vesh no sorteio (de 7 para 10).",
+   "custos": [
+    25
+   ],
+   "moeda": "dados",
+   "onde": "ponte",
+   "flag": "arquivo_vesh"
+  },
+  {
+   "id": "rotas_varrek_1",
+   "nome": "Rotas de Varrek I",
+   "descricao": "+1 trecho e +1 arena em cada bioma.",
+   "custos": [
+    20
+   ],
+   "moeda": "dados",
+   "onde": "ponte",
+   "flag": "rotas_varrek_1"
+  },
+  {
+   "id": "rotas_varrek_2",
+   "nome": "Rotas de Varrek II",
+   "descricao": "Mais +1 trecho e +1 arena em cada bioma.",
+   "custos": [
+    35
+   ],
+   "moeda": "dados",
+   "onde": "ponte",
+   "flag": "rotas_varrek_2",
+   "requer": "rotas_varrek_1"
+  },
+  {
+   "id": "leitura_sinal",
+   "nome": "Leitura de Sinal",
+   "descricao": "Mostra a recompensa da sala seguinte à porta escolhida.",
+   "custos": [
+    40
+   ],
+   "moeda": "dados",
+   "onde": "ponte",
+   "flag": "leitura_sinal"
+  }
+ ]
+}
