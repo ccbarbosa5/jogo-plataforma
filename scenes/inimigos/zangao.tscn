@@ -1,0 +1,25 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/inimigos/zangao.gd" id="1"]
+[ext_resource type="Script" path="res://scripts/comum/vida.gd" id="2"]
+
+[sub_resource type="RectangleShape2D" id="corpo"]
+size = Vector2(12, 12)
+
+[node name="Zangao" type="CharacterBody2D"]
+collision_layer = 4
+collision_mask = 33
+script = ExtResource("1")
+peso = 0
+faccao = &"vesh"
+voa = true
+creditos = Vector2i(1, 2)
+tamanho = Vector2(12, 12)
+
+[node name="Forma" type="CollisionShape2D" parent="."]
+position = Vector2(0, -6)
+shape = SubResource("corpo")
+
+[node name="Vida" type="Node" parent="."]
+script = ExtResource("2")
+maxima = 10

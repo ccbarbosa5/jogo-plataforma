@@ -1,0 +1,25 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/inimigos/muralha.gd" id="1"]
+[ext_resource type="Script" path="res://scripts/comum/vida.gd" id="2"]
+
+[sub_resource type="RectangleShape2D" id="corpo"]
+size = Vector2(40, 64)
+
+[node name="Muralha" type="CharacterBody2D"]
+collision_layer = 4
+collision_mask = 33
+script = ExtResource("1")
+peso = 1
+faccao = &"kharn"
+armadura_frontal = true
+reducao_frontal = 1.0
+tamanho = Vector2(40, 64)
+
+[node name="Forma" type="CollisionShape2D" parent="."]
+position = Vector2(0, -32)
+shape = SubResource("corpo")
+
+[node name="Vida" type="Node" parent="."]
+script = ExtResource("2")
+maxima = 150

@@ -1,0 +1,23 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/inimigos/artilheiro_kharn.gd" id="1"]
+[ext_resource type="Script" path="res://scripts/comum/vida.gd" id="2"]
+
+[sub_resource type="RectangleShape2D" id="corpo"]
+size = Vector2(32, 56)
+
+[node name="ArtilheiroKharn" type="CharacterBody2D"]
+collision_layer = 4
+collision_mask = 33
+script = ExtResource("1")
+peso = 1
+faccao = &"kharn"
+tamanho = Vector2(32, 56)
+
+[node name="Forma" type="CollisionShape2D" parent="."]
+position = Vector2(0, -28)
+shape = SubResource("corpo")
+
+[node name="Vida" type="Node" parent="."]
+script = ExtResource("2")
+maxima = 80

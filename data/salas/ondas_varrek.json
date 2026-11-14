@@ -1,31 +1,159 @@
 {
- "fonte": "GD-03 §2.4 — banco de ondas feito à mão. Até a tarefa 4, só Guerreiro, Soldado (provisório) e a elite provisória.",
+ "fonte": "GD-03 §2.4 — banco de ondas feito à mão com os inimigos do GD-02 §4 (exemplos do §4.5).",
  "custos": {
   "zangao": 1,
   "cuspidor": 2,
-  "soldado": 2,
   "guerreiro": 4,
   "artilheiro": 4,
   "muralha": 5,
   "ninho": 6,
-  "elite": 12
+  "elite": 12,
+  "brutamontes": 12,
+  "ceifadora": 12,
+  "soldado": 2
  },
  "ondas": [
   {
-   "id": "soldados_2",
-   "faccao": "kharn",
+   "id": "queda_mini_arena",
+   "faccao": "misto",
    "biomas": [
-    "*"
+    "queda"
    ],
    "elite": false,
    "inimigos": [
     {
-     "tipo": "soldado",
+     "tipo": "guerreiro",
+     "ponto": "R"
+    },
+    {
+     "tipo": "zangao",
+     "ponto": "A"
+    },
+    {
+     "tipo": "zangao",
+     "ponto": "A"
+    },
+    {
+     "tipo": "zangao",
+     "ponto": "A"
+    },
+    {
+     "tipo": "zangao",
+     "ponto": "A"
+    }
+   ]
+  },
+  {
+   "id": "zangoes_4",
+   "faccao": "vesh",
+   "biomas": [
+    "queda",
+    "carcaca",
+    "ninhos_vesh",
+    "zona_guerra",
+    "elite",
+    "chefe"
+   ],
+   "elite": false,
+   "inimigos": [
+    {
+     "tipo": "zangao",
+     "ponto": "A"
+    },
+    {
+     "tipo": "zangao",
+     "ponto": "A"
+    },
+    {
+     "tipo": "zangao",
+     "ponto": "A"
+    },
+    {
+     "tipo": "zangao",
+     "ponto": "A"
+    }
+   ]
+  },
+  {
+   "id": "zangoes_6",
+   "faccao": "vesh",
+   "biomas": [
+    "carcaca",
+    "ninhos_vesh"
+   ],
+   "elite": false,
+   "inimigos": [
+    {
+     "tipo": "zangao",
+     "ponto": "A"
+    },
+    {
+     "tipo": "zangao",
+     "ponto": "A"
+    },
+    {
+     "tipo": "zangao",
+     "ponto": "A"
+    },
+    {
+     "tipo": "zangao",
+     "ponto": "A"
+    },
+    {
+     "tipo": "zangao",
+     "ponto": "A"
+    },
+    {
+     "tipo": "zangao",
+     "ponto": "A"
+    }
+   ]
+  },
+  {
+   "id": "cuspidores_2",
+   "faccao": "vesh",
+   "biomas": [
+    "carcaca",
+    "ninhos_vesh",
+    "queda",
+    "elite"
+   ],
+   "elite": false,
+   "inimigos": [
+    {
+     "tipo": "cuspidor",
      "ponto": "L"
     },
     {
-     "tipo": "soldado",
+     "tipo": "cuspidor",
      "ponto": "R"
+    }
+   ]
+  },
+  {
+   "id": "cuspidores_zangoes",
+   "faccao": "vesh",
+   "biomas": [
+    "carcaca",
+    "ninhos_vesh"
+   ],
+   "elite": false,
+   "inimigos": [
+    {
+     "tipo": "cuspidor",
+     "ponto": "L"
+    },
+    {
+     "tipo": "cuspidor",
+     "ponto": "R"
+    },
+    {
+     "tipo": "zangao",
+     "ponto": "A"
+    },
+    {
+     "tipo": "zangao",
+     "ponto": "A"
     }
    ]
   },
@@ -33,66 +161,15 @@
    "id": "guerreiro_1",
    "faccao": "kharn",
    "biomas": [
-    "*"
+    "linha_kharn",
+    "zona_guerra",
+    "elite",
+    "chefe"
    ],
    "elite": false,
    "inimigos": [
     {
      "tipo": "guerreiro",
-     "ponto": "R"
-    }
-   ]
-  },
-  {
-   "id": "guerreiro_esq",
-   "faccao": "kharn",
-   "biomas": [
-    "*"
-   ],
-   "elite": false,
-   "inimigos": [
-    {
-     "tipo": "guerreiro",
-     "ponto": "L"
-    }
-   ]
-  },
-  {
-   "id": "guerreiro_soldado",
-   "faccao": "kharn",
-   "biomas": [
-    "*"
-   ],
-   "elite": false,
-   "inimigos": [
-    {
-     "tipo": "guerreiro",
-     "ponto": "R"
-    },
-    {
-     "tipo": "soldado",
-     "ponto": "L"
-    }
-   ]
-  },
-  {
-   "id": "soldados_3",
-   "faccao": "kharn",
-   "biomas": [
-    "*"
-   ],
-   "elite": false,
-   "inimigos": [
-    {
-     "tipo": "soldado",
-     "ponto": "L"
-    },
-    {
-     "tipo": "soldado",
-     "ponto": "R"
-    },
-    {
-     "tipo": "soldado",
      "ponto": "R"
     }
    ]
@@ -101,7 +178,10 @@
    "id": "guerreiros_2",
    "faccao": "kharn",
    "biomas": [
-    "*"
+    "linha_kharn",
+    "zona_guerra",
+    "elite",
+    "chefe"
    ],
    "elite": false,
    "inimigos": [
@@ -116,29 +196,40 @@
    ]
   },
   {
-   "id": "patrulha",
+   "id": "artilheiro_guerreiro",
    "faccao": "kharn",
    "biomas": [
-    "*"
+    "linha_kharn",
+    "zona_guerra"
    ],
    "elite": false,
    "inimigos": [
     {
+     "tipo": "artilheiro",
+     "ponto": "F"
+    },
+    {
      "tipo": "guerreiro",
-     "ponto": "R"
-    },
-    {
-     "tipo": "soldado",
      "ponto": "L"
-    },
-    {
-     "tipo": "soldado",
-     "ponto": "R"
     }
    ]
   },
   {
-   "id": "cerco",
+   "id": "artilheiro_1",
+   "faccao": "kharn",
+   "biomas": [
+    "linha_kharn"
+   ],
+   "elite": false,
+   "inimigos": [
+    {
+     "tipo": "artilheiro",
+     "ponto": "F"
+    }
+   ]
+  },
+  {
+   "id": "muralha_1",
    "faccao": "kharn",
    "biomas": [
     "linha_kharn",
@@ -148,21 +239,151 @@
    "elite": false,
    "inimigos": [
     {
-     "tipo": "guerreiro",
+     "tipo": "muralha",
+     "ponto": "R"
+    }
+   ]
+  },
+  {
+   "id": "ninho_1",
+   "faccao": "vesh",
+   "biomas": [
+    "ninhos_vesh"
+   ],
+   "elite": false,
+   "inimigos": [
+    {
+     "tipo": "ninho",
+     "ponto": "F"
+    }
+   ]
+  },
+  {
+   "id": "ninho_cuspidores",
+   "faccao": "vesh",
+   "biomas": [
+    "ninhos_vesh",
+    "zona_guerra"
+   ],
+   "elite": false,
+   "inimigos": [
+    {
+     "tipo": "ninho",
+     "ponto": "F"
+    },
+    {
+     "tipo": "cuspidor",
+     "ponto": "L"
+    },
+    {
+     "tipo": "cuspidor",
+     "ponto": "R"
+    }
+   ]
+  },
+  {
+   "id": "cuspidores_3",
+   "faccao": "vesh",
+   "biomas": [
+    "ninhos_vesh",
+    "carcaca"
+   ],
+   "elite": false,
+   "inimigos": [
+    {
+     "tipo": "cuspidor",
+     "ponto": "L"
+    },
+    {
+     "tipo": "cuspidor",
      "ponto": "R"
     },
     {
-     "tipo": "guerreiro",
+     "tipo": "cuspidor",
      "ponto": "R"
+    }
+   ]
+  },
+  {
+   "id": "guerra_kharn",
+   "faccao": "kharn",
+   "biomas": [
+    "zona_guerra"
+   ],
+   "elite": false,
+   "inimigos": [
+    {
+     "tipo": "guerreiro",
+     "ponto": "L"
     },
     {
-     "tipo": "soldado",
+     "tipo": "guerreiro",
+     "ponto": "L"
+    },
+    {
+     "tipo": "muralha",
      "ponto": "L"
     }
    ]
   },
   {
-   "id": "elite_guerreiro",
+   "id": "guerra_vesh",
+   "faccao": "vesh",
+   "biomas": [
+    "zona_guerra"
+   ],
+   "elite": false,
+   "inimigos": [
+    {
+     "tipo": "ninho",
+     "ponto": "F"
+    },
+    {
+     "tipo": "cuspidor",
+     "ponto": "R"
+    },
+    {
+     "tipo": "zangao",
+     "ponto": "A"
+    },
+    {
+     "tipo": "zangao",
+     "ponto": "A"
+    }
+   ]
+  },
+  {
+   "id": "guerra_mista",
+   "faccao": "misto",
+   "biomas": [
+    "zona_guerra"
+   ],
+   "elite": false,
+   "inimigos": [
+    {
+     "tipo": "guerreiro",
+     "ponto": "L"
+    },
+    {
+     "tipo": "cuspidor",
+     "ponto": "R"
+    },
+    {
+     "tipo": "zangao",
+     "ponto": "A"
+    },
+    {
+     "tipo": "zangao",
+     "ponto": "A"
+    },
+    {
+     "tipo": "zangao",
+     "ponto": "A"
+    }
+   ]
+  },
+  {
+   "id": "elite_brutamontes",
    "faccao": "kharn",
    "biomas": [
     "*"
@@ -170,7 +391,21 @@
    "elite": true,
    "inimigos": [
     {
-     "tipo": "elite",
+     "tipo": "brutamontes",
+     "ponto": "R"
+    }
+   ]
+  },
+  {
+   "id": "elite_ceifadora",
+   "faccao": "vesh",
+   "biomas": [
+    "*"
+   ],
+   "elite": true,
+   "inimigos": [
+    {
+     "tipo": "ceifadora",
      "ponto": "R"
     }
    ]

@@ -304,3 +304,14 @@ func test_run_aplica_recompensa_e_passa_de_sala() -> void:
 	await esperar_frames(2)
 	afirmar_igual(run.numero_sala, 1, "sala 1")
 	afirmar_proximo(run.jogador.global_position.x, run.sala.inicio.x, 1.0, "Ryker no início da sala nova")
+
+
+func test_inimigo_morto_da_creditos() -> void:
+	var run: RunAto = instanciar(CENA_RUN)
+	await esperar_frames(3)
+	var antes: int = run.jogador.creditos
+	var z: Inimigo = run.sala._criar_inimigo("zangao", Vector2(300, 100), false)
+	await esperar_frames(2)
+	z.receber_ataque(InfoDano.criar(999, run.jogador))
+	await esperar_frames(2)
+	afirmar(run.jogador.creditos >= antes + 1, "Créditos pelo inimigo (GD-02 §6.5)")

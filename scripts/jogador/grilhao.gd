@@ -152,7 +152,7 @@ func _ao_acertar(colisor: Object) -> void:
 			inimigo.arrancar_protecao()
 			inimigo.receber_ataque(info)
 			if inimigo.esta_vivo():
-				inimigo.atordoar(cambaleio_medio)
+				inimigo.atordoar(inimigo.atordoamento_grilhao if inimigo.atordoamento_grilhao >= 0.0 else cambaleio_medio)
 			estado = Estado.RECOLHENDO
 		Inimigo.Peso.LEVE:
 			inimigo.receber_ataque(info)

@@ -30,6 +30,14 @@ enum Categoria { COMUM, ELITE, CHEFE }
 @export var dano_contato: int = 1
 ## Sala 5 (zona de guerra): também ataca a facção rival (GD-02, 4.4).
 @export var ataca_faccao_rival: bool = false
+## Redução do dano pela frente com armadura (−1 = a das regras, 50%; a Muralha usa 1,0 = 100%).
+@export var reducao_frontal: float = -1.0
+## Atordoamento quando o Grilhão acerta (−1 = o cambaleio padrão; a Ceifadora usa 1,0 s).
+@export var atordoamento_grilhao: float = -1.0
+## Voa: sem gravidade (Zangão).
+@export var voa: bool = false
+## Créditos que dá ao morrer (GD-02 §6.5: 2 a 5 por comum, 25 por elite).
+@export var creditos: Vector2i = Vector2i(2, 5)
 
 @onready var vida: Vida = $Vida
 @onready var forma: CollisionShape2D = $Forma
@@ -78,7 +86,7 @@ func _physics_process(delta: float) -> void:
 			terminar_puxao()
 		move_and_slide()
 	else:
-		if not is_on_floor():
+		if not is_on_floor() and not voa:
 			velocity.y += _gravidade() * delta
 		if esta_entrando():
 			_timer_entrada -= delta
@@ -142,7 +150,10 @@ func receber_ataque(info: InfoDano) -> bool:
 	var r: RegrasCombate = Combate.regras
 	var mult: float = info.multiplicador
 	if armadura_frontal and not info.explosao and not info.corpo_a_corpo and _veio_pela_frente(info.direcao):
-		var reducao: float = r.reducao_armadura_frontal * maxf(0.0, 1.0 - r.acido_reducao_armadura * acidos)
+		var base_reducao: float = reducao_frontal if reducao_frontal >= 0.0 else r.reducao_armadura_frontal
+		if base_reducao >= 1.0 and acidos == 0:
+			return false  # escudo-torre (Muralha): bloqueia tudo pela frente
+		var reducao: float = base_reducao * maxf(0.0, 1.0 - r.acido_reducao_armadura * acidos)
 		mult *= 1.0 - reducao
 	var autor: Node = info.autor if info.autor != null and is_instance_valid(info.autor) else null
 	if esta_atordoado() and _atordoado_por_abalo:
@@ -158,6 +169,8 @@ func receber_ataque(info: InfoDano) -> bool:
 	if not vida.receber_dano(dano):
 		return false
 	_timer_flash = 0.08
+	if info.autor != null and is_instance_valid(info.autor):
+		set_meta("ultimo_golpe_de", info.autor)
 	_timer_sem_golpe = 0.0
 	if info.autor != null and is_instance_valid(info.autor) and info.autor.has_method("registrar_dano_causado"):
 		info.autor.registrar_dano_causado(dano)
@@ -373,6 +386,27 @@ func _ao_morrer() -> void:
 	_criar_efeito_morte()
 	morreu.emit(self)
 	queue_free()
+
+
+## Flash do aviso (D-043): brasa durante o aviso e a cor AVISO só nos últimos 0,2 s.
+const COR_BRASA: Color = Color("ff5a2e")
+
+
+static func cor_do_aviso(restante: float) -> Color:
+	return COR_AVISO if restante <= DURACAO_AVISO_FINAL else COR_BRASA
+
+
+## Máscara dos ataques deste inimigo: jogadores e, na zona de guerra, a facção rival.
+func mascara_ataque() -> int:
+	return Camadas.MUNDO | Camadas.JOGADOR | (Camadas.INIMIGOS if ataca_faccao_rival else 0)
+
+
+## Acerta um alvo de ataque (jogador, ou inimigo da facção rival na zona de guerra).
+func pode_ferir(alvo: Node) -> bool:
+	if alvo is Jogador:
+		return true
+	var outro := alvo as Inimigo
+	return ataca_faccao_rival and outro != null and outro != self and outro.faccao != faccao and outro.esta_vivo()
 
 
 ## Subclasses com sprite criam aqui a animação de morte (ela continua depois que o inimigo some).
