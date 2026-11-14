@@ -1,7 +1,8 @@
 extends Node
-## Autoload "Ciclo": o caminho nave → cápsula → run → (morte ou vitória) → nave (GD-01 §9).
+## Autoload "Ciclo": o caminho menu inicial → nave → cápsula → run → (morte ou vitória) → nave (GD-01 §9).
 ## Guarda o que passa de uma cena para a outra: a arma escolhida no Arsenal e o resultado da run.
 
+const CENA_TITULO: String = "res://scenes/ui/tela_titulo.tscn"
 const CENA_NAVE: String = "res://scenes/nave/nave_eco.tscn"
 const CENA_RUN: String = "res://scenes/run/run_ato1.tscn"
 const ARMAS: Dictionary = {
@@ -17,6 +18,8 @@ var resultado: String = ""
 var ultima_run: Dictionary = {}
 ## Os testes desligam a troca de cena.
 var trocar_cena: bool = true
+## Última cena pedida (os testes conferem sem trocar de verdade).
+var ultima_cena_pedida: String = ""
 
 
 func dados_da_arma() -> DadosArma:
@@ -36,8 +39,24 @@ func escolher_arma(id: StringName) -> bool:
 
 func ir_para_run() -> void:
 	resultado = ""
+	_trocar(CENA_RUN)
+
+
+## Menu inicial (D-053) → nave. "Novo jogo" apaga o progresso antes.
+func ir_para_nave_do_titulo() -> void:
+	resultado = ""
+	_trocar(CENA_NAVE)
+
+
+## Pausa da nave → menu inicial.
+func ir_para_titulo() -> void:
+	_trocar(CENA_TITULO)
+
+
+func _trocar(cena: String) -> void:
+	ultima_cena_pedida = cena
 	if trocar_cena:
-		get_tree().change_scene_to_file.call_deferred(CENA_RUN)
+		get_tree().change_scene_to_file.call_deferred(cena)
 
 
 ## Fim da run: o que vale guardar da run vira flag salva, e a ECO reconstrói o Ryker na nave.
@@ -47,5 +66,4 @@ func voltar_para_nave(resultado_: String) -> void:
 	if Progresso.estado_run.get("pegou_vesh_na_run", false):
 		Progresso.definir_flag("pegou_vesh_na_run")  # o Sete chega na Ponte (NAR-01)
 	Progresso.salvar()
-	if trocar_cena:
-		get_tree().change_scene_to_file.call_deferred(CENA_NAVE)
+	_trocar(CENA_NAVE)
