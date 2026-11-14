@@ -101,7 +101,7 @@ func cancelar() -> void:
 
 
 func _lancar() -> void:
-	_direcao = Vector2(jogador.mira).normalized()
+	_direcao = jogador.direcao_mira()  # D-052: mesma direção exata do tiro
 	ponta = jogador.ponto_de_tiro()
 	_percorrido = 0.0
 	_errou = false

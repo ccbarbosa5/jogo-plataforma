@@ -18,6 +18,13 @@ var chamado_pressionado: bool = false
 ## Habilidade própria do personagem (Ryker: Grilhão).
 var ferramenta_pressionada: bool = false
 var interagir_pressionado: bool = false
+## Mira livre em 360° (D-052). O Jogador usa, nesta ordem:
+##  1. mira_analogica (analógico direito), se não for zero;
+##  2. ponto_mira (posição do mouse no mundo), se mira_por_ponto;
+##  3. as 8 direções de `direcao` (teclado sem mouse, testes antigos).
+var mira_analogica: Vector2 = Vector2.ZERO
+var mira_por_ponto: bool = false
+var ponto_mira: Vector2 = Vector2.ZERO
 
 
 ## Chamado pelo Jogador no começo de cada frame de física.

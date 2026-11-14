@@ -216,7 +216,7 @@ func _depois_do_disparo(delta: float) -> void:
 func _disparar(especial: StringName, disparo: Disparo, ordem_rajada: int = 0) -> void:
 	var a: ArmaEquipada = arma()
 	var base: DadosArma = a.base
-	var direcao: Vector2 = Vector2(jogador.mira).normalized()
+	var direcao: Vector2 = jogador.direcao_mira()
 	var origem: Vector2 = jogador.ponto_de_tiro() + direcao * 10.0
 	var destino: Node = jogador.container_projeteis if jogador.container_projeteis != null else jogador.get_parent()
 	var unica: bool = tem(&"bala_unica")
