@@ -17,6 +17,12 @@ Geradas pelo dono no ChatGPT a partir dos prompts da ART (`ART/prompts/` no proj
 | `assets/sprites/retratos/ryker/ryker_retratos.png` | `02_ryker_retratos_v1.png` | 02 v2 — Ryker, retrato 4 expressões | 2026-11-13 |
 | `assets/sprites/retratos/eco/eco_retratos.png` | `03B_eco_retratos_v1.png` | 03B v2 — ECO, retrato 4 expressões | 2026-11-13 |
 | `assets/sprites/personagens/ryker/ryker_poses_chave.png` (referência, não é sprite de jogo) | `05_ryker_poses_v1.png` | 05 — Ryker com a Mordida, 8 poses-chave | 2026-11-13 |
+| `assets/sprites/personagens/garrak/garrak_referencia.png` | `06A_garrak_referencia_v1.png` | 06A — Garrak, folha de referência | 2026-11-13 |
+| `assets/sprites/retratos/garrak/garrak_retratos.png` | `06B_garrak_retratos_v1.png` | 06B — Garrak, retrato 4 expressões | 2026-11-13 |
+| `assets/sprites/personagens/sete/sete_referencia.png` | `07A_sete_referencia_v1.png` | 07A — Sete, folha de referência | 2026-11-13 |
+| `assets/sprites/retratos/sete/sete_retratos.png` | `07B_sete_retratos_v1.png` | 07B — Sete, retrato 4 expressões | 2026-11-13 |
+| `assets/sprites/personagens/vossa/vossa_referencia.png` | `08A_vossa_referencia_v1.png` | 08A — Vossa Margem, folha de referência | 2026-11-13 |
+| `assets/sprites/retratos/vossa/vossa_retratos.png` | `08B_vossa_retratos_v1.png` | 08B — Vossa Margem, retrato 3 expressões | 2026-11-13 |
 
 ## Fontes
 | Asset | Autor | Licença |
