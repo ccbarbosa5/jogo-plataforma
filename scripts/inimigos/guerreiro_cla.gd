@@ -24,6 +24,8 @@ enum Estado { AVANCAR, AVISO, RAJADA, DESCANSO }
 ## Segundos de descanso depois da rajada.
 @export var descanso: float = 1.6
 @export var cena_projetil: PackedScene
+## Cor do sprite (variantes provisórias: Soldado, Elite).
+@export var tinta: Color = Color.WHITE
 
 const PASTA_SPRITES: String = "res://assets/sprites/inimigos/kharn/guerreiro_cla/"
 
@@ -154,7 +156,7 @@ func _atualizar_sprite() -> void:
 		return
 	var sufixo: String = "" if armadura_frontal else "_sem_armadura"
 	sprite.flip_h = olhando < 0
-	sprite.modulate = Color(1.8, 1.8, 1.8) if _timer_flash > 0.0 else Color.WHITE
+	sprite.modulate = Color(1.8, 1.8, 1.8) if _timer_flash > 0.0 else tinta
 	match estado:
 		Estado.AVISO:
 			# D-043: brasa durante o aviso (quadro 0) e flash AVISO só nos últimos 0,2 s (quadro 1).

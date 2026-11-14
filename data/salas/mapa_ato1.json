@@ -1,0 +1,93 @@
+{
+ "fonte": "GD-01 §7.3 — mapa do Ato 1 (Varrek, o Cemitério); orçamentos do GD-03 §2.4",
+ "salas": [
+  {
+   "numero": 0,
+   "tipo": "queda",
+   "bioma": "queda",
+   "nome": "Campo de queda",
+   "orcamento": 4
+  },
+  {
+   "numero": 1,
+   "tipo": "combate",
+   "bioma": "carcaca",
+   "nome": "Carcaça de cruzador",
+   "orcamento": 8
+  },
+  {
+   "numero": 2,
+   "tipo": "combate",
+   "bioma": "linha_kharn",
+   "nome": "Linha de frente Kharn",
+   "orcamento": 10
+  },
+  {
+   "numero": 3,
+   "tipo": "combate",
+   "bioma": "ninhos_vesh",
+   "nome": "Ninhos Vesh",
+   "orcamento": 12,
+   "chance_elite": 0.3
+  },
+  {
+   "numero": 4,
+   "tipo": "loja_ou_reparo",
+   "bioma": "fixa",
+   "nome": "Acampamento"
+  },
+  {
+   "numero": 5,
+   "tipo": "combate",
+   "bioma": "zona_guerra",
+   "nome": "Zona de guerra",
+   "orcamento": 16
+  },
+  {
+   "numero": 6,
+   "tipo": "elite",
+   "bioma": "elite",
+   "nome": "Elite",
+   "orcamento": 12,
+   "bioma_trechos": "zona_guerra"
+  },
+  {
+   "numero": 7,
+   "tipo": "reparo",
+   "bioma": "reliquia",
+   "nome": "Aproximação da relíquia"
+  },
+  {
+   "numero": 8,
+   "tipo": "chefe",
+   "bioma": "chefe",
+   "nome": "Ur-Kesh",
+   "orcamento": 16
+  }
+ ],
+ "recompensas": {
+  "_nota": "GD-03 §2.6. Pesos do sorteio das portas e valores provisórios do DEV (D-037).",
+  "pesos": {
+   "kharn": 30,
+   "vesh": 30,
+   "aprimoramento": 12,
+   "creditos": 14,
+   "nucleos": 14,
+   "dados": 14,
+   "vida_maxima": 6
+  },
+  "creditos": [
+   40,
+   60
+  ],
+  "nucleos": [
+   10,
+   15
+  ],
+  "dados": [
+   8,
+   12
+  ],
+  "vida_maxima_a_partir_da_sala": 3
+ }
+}

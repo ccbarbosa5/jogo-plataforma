@@ -33,7 +33,8 @@ static func criar(valor_: int, autor_: Node = null, direcao_: Vector2 = Vector2.
 func copiar() -> InfoDano:
 	var c := InfoDano.new()
 	c.valor = valor
-	c.autor = autor
+	# O autor pode ter morrido com o tiro ainda no ar.
+	c.autor = autor if is_instance_valid(autor) else null
 	c.direcao = direcao
 	c.explosao = explosao
 	c.corpo_a_corpo = corpo_a_corpo
