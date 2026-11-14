@@ -144,8 +144,14 @@ func receber_ataque(info: InfoDano) -> bool:
 	if armadura_frontal and not info.explosao and not info.corpo_a_corpo and _veio_pela_frente(info.direcao):
 		var reducao: float = r.reducao_armadura_frontal * maxf(0.0, 1.0 - r.acido_reducao_armadura * acidos)
 		mult *= 1.0 - reducao
+	var autor: Node = info.autor if info.autor != null and is_instance_valid(info.autor) else null
 	if esta_atordoado() and _atordoado_por_abalo:
-		mult *= 1.0 + r.bonus_dano_atordoado
+		var bonus: float = r.bonus_dano_atordoado
+		if autor != null and autor.has_method("bonus_atordoado_extra"):
+			bonus += autor.bonus_atordoado_extra()  # Inabalável soma ao bônus base
+		mult *= 1.0 + bonus
+	if autor != null and autor.has_method("mult_dano_contra"):
+		mult *= autor.mult_dano_contra(self)  # Passivos do jogador (Honra, Carne Mole...)
 	var dano: int = roundi(info.valor * mult)
 	if info.valor > 0:
 		dano = maxi(dano, 1)

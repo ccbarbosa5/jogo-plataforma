@@ -1,0 +1,113 @@
+[gd_resource type="Resource" script_class="CatalogoFaccao" load_steps=13 format=3]
+
+[ext_resource type="Script" path="res://scripts/upgrades/catalogo_faccao.gd" id="1"]
+[ext_resource type="Script" path="res://scripts/upgrades/dados_upgrade.gd" id="2"]
+
+[sub_resource type="Resource" id="u0"]
+script = ExtResource("2")
+id = &"ferrao_partido"
+nome = "Ferrão Partido"
+faccao = &"vesh"
+slot = 0
+descricao = "Ao acertar, o projétil se divide em 2 fragmentos com {v}% do dano."
+valores = Array[float]([0.35, 0.5, 0.65])
+extras = {"fragmentos": 2, "angulo": 25}
+
+[sub_resource type="Resource" id="u1"]
+script = ExtResource("2")
+id = &"ferrao_acido"
+nome = "Ferrão Ácido"
+faccao = &"vesh"
+slot = 0
+descricao = "{v}% de chance por acerto de aplicar 1 acúmulo de Ácido."
+valores = Array[float]([0.2, 0.3, 0.4])
+bloqueado_no_inicio = true
+
+[sub_resource type="Resource" id="u2"]
+script = ExtResource("2")
+id = &"ovo_de_ninhada"
+nome = "Ovo de Ninhada"
+faccao = &"vesh"
+slot = 1
+descricao = "A granada libera {v} larvas que perseguem inimigos (10 de dano e 2 de Ácido cada)."
+valores = Array[float]([3.0, 4.0, 5.0])
+extras = {"dano": 10, "acidos": 2, "duracao": 6}
+
+[sub_resource type="Resource" id="u3"]
+script = ExtResource("2")
+id = &"rastro_de_enxame"
+nome = "Rastro de Enxame"
+faccao = &"vesh"
+slot = 2
+descricao = "O dash deixa uma trilha de ácido por 2 s: {v} de dano por segundo e Ácido."
+valores = Array[float]([15.0, 22.0, 30.0])
+extras = {"duracao": 2, "intervalo": 0.5}
+
+[sub_resource type="Resource" id="u4"]
+script = ExtResource("2")
+id = &"corrente_infestada"
+nome = "Corrente Infestada"
+faccao = &"vesh"
+slot = 3
+descricao = "O alvo acertado pela Ferramenta recebe {v} acúmulos de Ácido."
+valores = Array[float]([3.0, 4.0, 5.0])
+
+[sub_resource type="Resource" id="u5"]
+script = ExtResource("2")
+id = &"nuvem_de_zangoes"
+nome = "Nuvem de Zangões"
+faccao = &"vesh"
+slot = 4
+descricao = "{v} zangões aliados por 8 s, 8 de dano por mordida."
+valores = Array[float]([4.0, 6.0, 8.0])
+extras = {"duracao": 8, "dano": 8}
+
+[sub_resource type="Resource" id="u6"]
+script = ExtResource("2")
+id = &"corpo_solto"
+nome = "Corpo Solto"
+faccao = &"vesh"
+slot = 5
+descricao = "Ao matar, {v}% de chance de surgir um zangão aliado (dura 10 s, até 3)."
+valores = Array[float]([0.1, 0.15, 0.2])
+extras = {"duracao": 10, "maximo": 3, "dano": 8}
+
+[sub_resource type="Resource" id="u7"]
+script = ExtResource("2")
+id = &"carne_mole"
+nome = "Carne Mole"
+faccao = &"vesh"
+slot = 5
+descricao = "Inimigos com 5 acúmulos de Ácido levam +{v}% de dano."
+valores = Array[float]([0.25, 0.35, 0.5])
+extras = {"acidos": 5}
+
+[sub_resource type="Resource" id="u8"]
+script = ExtResource("2")
+id = &"colmeia_faminta"
+nome = "Colmeia Faminta"
+faccao = &"vesh"
+slot = 5
+descricao = "Inimigo que morre com Ácido vira uma poça que passa {v} acúmulos para quem estiver perto."
+valores = Array[float]([2.0, 3.0, 4.0])
+extras = {"raio": 24, "duracao": 3}
+bloqueado_no_inicio = true
+
+[sub_resource type="Resource" id="u9"]
+script = ExtResource("2")
+id = &"nos_somos_muitos"
+nome = "Nós Somos Muitos"
+faccao = &"vesh"
+slot = 5
+descricao = "+{v}% de dano para cada aliado invocado ativo (zangões, larvas)."
+valores = Array[float]([0.04, 0.06, 0.08])
+bloqueado_no_inicio = true
+
+[resource]
+script = ExtResource("1")
+faccao = &"vesh"
+nome = "Enxame Vesh"
+moldura = "vesh"
+cor = Color(0.639216, 0.886275, 0.235294, 1)
+cena_falas = "vesh"
+upgrades = Array[Resource]([SubResource("u0"), SubResource("u1"), SubResource("u2"), SubResource("u3"), SubResource("u4"), SubResource("u5"), SubResource("u6"), SubResource("u7"), SubResource("u8"), SubResource("u9")])

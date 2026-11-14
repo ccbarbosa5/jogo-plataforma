@@ -33,6 +33,10 @@ var disparo: Disparo
 var ordem_rajada: int = 0
 ## &"" normal, &"campeao" (Golpe do Campeão) ou &"carregado" (Artilharia).
 var especial: StringName = &""
+## Fragmento do Ferrão Partido (não se divide de novo).
+var fragmento: bool = false
+## Abalo da explosão (Munição de Clã).
+var abalo_explosao: float = 0.0
 var origem: Vector2 = Vector2.ZERO
 var _ativo: bool = true
 var _ja_acertados: Array[Node] = []
@@ -61,6 +65,11 @@ func _physics_process(delta: float) -> void:
 	tempo_restante -= delta
 	if tempo_restante <= 0.0:
 		queue_free()
+
+
+## Não acerta este inimigo (fragmentos nascem dentro do alvo que dividiu o tiro).
+func ignorar(inimigo: Node) -> void:
+	_ja_acertados.append(inimigo)
 
 
 func distancia_percorrida() -> float:
@@ -127,6 +136,7 @@ func _explodir() -> void:
 		if inimigo.centro().distance_to(global_position) <= raio + inimigo.tamanho.x * 0.5:
 			var golpe := InfoDano.criar(dano_explosao, info.autor, inimigo.centro() - global_position)
 			golpe.explosao = true
+			golpe.abalo = abalo_explosao
 			if inimigo.receber_ataque(golpe) and controle != null:
 				controle.depois_do_acerto(self, inimigo, golpe, not inimigo.esta_vivo())
 

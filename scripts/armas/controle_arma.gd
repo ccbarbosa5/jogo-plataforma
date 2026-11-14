@@ -81,7 +81,7 @@ func fracao_embalo() -> float:
 
 ## Cadência efetiva: base × modificadores × Embalo (+1,25% por ponto).
 func cadencia() -> float:
-	var c: float = arma().cadencia()
+	var c: float = arma().cadencia() * jogador.efeitos.mult_cadencia()
 	if assinatura() == &"embalo":
 		c *= 1.0 + embalo * p.embalo_cadencia_por_ponto
 	return c
@@ -245,6 +245,7 @@ func _disparar(especial: StringName, disparo: Disparo, ordem_rajada: int = 0) ->
 		if especial == &"carregado":
 			projetil.raio_explosao = p.explosao_raio
 			projetil.dano_explosao = p.explosao_dano
+		jogador.efeitos.ao_criar_projetil(projetil, i)
 		jogador.atirou.emit(projetil)
 	disparou.emit(base.peso_disparo)
 	if tem(&"recuo_jogador"):
@@ -340,4 +341,5 @@ func depois_do_acerto(projetil: Projetil, inimigo: Inimigo, golpe: InfoDano, mat
 		if tem(&"devolve_disparo_ao_matar"):
 			_devolver_disparo()
 		marcas.erase(inimigo)
+	jogador.efeitos.ao_acertar(projetil, inimigo, golpe, matou)
 	acertou.emit(inimigo, golpe, matou)

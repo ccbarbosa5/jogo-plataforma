@@ -12,6 +12,8 @@ extends Node2D
 @export var creditos_iniciais: int = 100
 ## Armas do Arsenal provisório (F7 troca).
 @export var armas_arsenal: Array[DadosArma] = []
+## Facções das portas de recompensa (Kharn e Vesh no VS).
+@export var catalogos_faccoes: Array[CatalogoFaccao] = []
 
 @onready var jogador: Jogador = $Ryker
 @onready var camera: CameraJogo = $Camera
@@ -27,6 +29,8 @@ var arena_concluida: bool = false
 var _onda: Array[Inimigo] = []
 var _cena_revisao: int = -1
 var tela_arvore: TelaArvore
+var tela_recompensa: TelaRecompensa
+var _oferta_debug: int = 0
 
 
 func _ready() -> void:
@@ -50,6 +54,9 @@ func _ready() -> void:
 	tela_arvore.entrada = jogador.entrada
 	jogador.ganhou_aprimoramento.connect(func(j: Jogador) -> void: tela_arvore.abrir.call_deferred(j))
 	jogador.creditos = creditos_iniciais
+	tela_recompensa = TelaRecompensa.new()
+	add_child(tela_recompensa)
+	tela_recompensa.entrada = jogador.entrada
 	gatilho_arena.collision_layer = 0
 	gatilho_arena.collision_mask = Camadas.JOGADOR
 	gatilho_arena.body_entered.connect(_ao_entrar_arena)
@@ -91,6 +98,10 @@ func _unhandled_input(evento: InputEvent) -> void:
 			Dialogos.tocar("arsenal_escolha_bramido")
 		else:
 			Dialogos.tocar("arsenal_escolha_mordida")
+	if evento.is_action_pressed("debug_oferta") and not catalogos_faccoes.is_empty() and not tela_recompensa.esta_aberta():
+		# Abre uma oferta de dádiva, alternando as facções.
+		tela_recompensa.abrir(jogador, catalogos_faccoes[_oferta_debug % catalogos_faccoes.size()])
+		_oferta_debug += 1
 	if evento.is_action_pressed("debug_aprimoramento"):
 		jogador.ganhar_aprimoramento(1)
 	if evento.is_action_pressed("debug_apagar_progresso"):
@@ -142,10 +153,17 @@ func _concluir_arena() -> void:
 	arena_concluida = true
 	_ativar_paredes(false)
 	hud.mostrar_mensagem("SALA LIMPA!")
-	# Recompensa da sala: porta "Aprimoramento de Arma" no meio da arena.
+	# Saídas da sala (GD-01 §7.1): dádiva Kharn, Aprimoramento de Arma e dádiva Vesh.
+	# O jogador pega 1; as outras somem.
+	var centro: float = limites_arena.get_center().x
 	var porta := PortaAprimoramento.new()
-	porta.position = Vector2(limites_arena.get_center().x, 240.0)
+	porta.position = Vector2(centro, 240.0)
 	add_child.call_deferred(porta)
+	for i in catalogos_faccoes.size():
+		var pf := PortaFaccao.new()
+		pf.catalogo = catalogos_faccoes[i]
+		pf.position = Vector2(centro + (-56.0 if i == 0 else 56.0 * i), 240.0)
+		add_child.call_deferred(pf)
 
 
 func _ativar_paredes(ativas: bool) -> void:

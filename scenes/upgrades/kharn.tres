@@ -1,0 +1,113 @@
+[gd_resource type="Resource" script_class="CatalogoFaccao" load_steps=13 format=3]
+
+[ext_resource type="Script" path="res://scripts/upgrades/catalogo_faccao.gd" id="1"]
+[ext_resource type="Script" path="res://scripts/upgrades/dados_upgrade.gd" id="2"]
+
+[sub_resource type="Resource" id="u0"]
+script = ExtResource("2")
+id = &"municao_de_cla"
+nome = "Munição de Clã"
+faccao = &"kharn"
+slot = 0
+descricao = "A cada 5 tiros, o próximo disparo explode: {v} de dano e 25 de Abalo."
+valores = Array[float]([30.0, 40.0, 55.0])
+extras = {"a_cada": 5, "raio": 24, "abalo": 25}
+
+[sub_resource type="Resource" id="u1"]
+script = ExtResource("2")
+id = &"calibre_pesado"
+nome = "Calibre Pesado"
+faccao = &"kharn"
+slot = 0
+descricao = "+{v}% de dano, −15% de cadência. Acertos empurram e causam Abalo."
+valores = Array[float]([0.3, 0.45, 0.6])
+extras = {"cadencia": -0.15, "abalo": 10, "empurrao": 6}
+bloqueado_no_inicio = true
+
+[sub_resource type="Resource" id="u2"]
+script = ExtResource("2")
+id = &"carga_de_cerco"
+nome = "Carga de Cerco"
+faccao = &"kharn"
+slot = 1
+descricao = "Raio +50% e +{v}% de dano. A explosão atordoa direto (100 de Abalo)."
+valores = Array[float]([0.4, 0.7, 1.0])
+extras = {"raio": 0.5, "abalo": 100}
+
+[sub_resource type="Resource" id="u3"]
+script = ExtResource("2")
+id = &"investida_do_cla"
+nome = "Investida do Clã"
+faccao = &"kharn"
+slot = 2
+descricao = "O dash causa {v} de dano, empurra e causa 50 de Abalo."
+valores = Array[float]([20.0, 30.0, 45.0])
+extras = {"abalo": 50, "empurrao": 10}
+
+[sub_resource type="Resource" id="u4"]
+script = ExtResource("2")
+id = &"corrente_rubra"
+nome = "Corrente Rubra"
+faccao = &"kharn"
+slot = 3
+descricao = "Ao acertar com a Ferramenta: explosão de {v} de dano em volta do alvo."
+valores = Array[float]([30.0, 45.0, 60.0])
+extras = {"raio": 32}
+
+[sub_resource type="Resource" id="u5"]
+script = ExtResource("2")
+id = &"bombardeio_de_artilharia"
+nome = "Bombardeio de Artilharia"
+faccao = &"kharn"
+slot = 4
+descricao = "Caem {v} projéteis sobre os inimigos na tela, 60 de dano cada."
+valores = Array[float]([6.0, 8.0, 10.0])
+extras = {"dano": 60, "raio": 16, "intervalo": 0.12}
+
+[sub_resource type="Resource" id="u6"]
+script = ExtResource("2")
+id = &"couro_de_arena"
+nome = "Couro de Arena"
+faccao = &"kharn"
+slot = 5
+descricao = "Anula o 1º acerto recebido em cada sala."
+valores = Array[float]([0.0, 40.0, 25.0])
+extras = {"complemento": 1}
+
+[sub_resource type="Resource" id="u7"]
+script = ExtResource("2")
+id = &"honra_do_campeao"
+nome = "Honra do Campeão"
+faccao = &"kharn"
+slot = 5
+descricao = "+{v}% de dano contra elites e chefes."
+valores = Array[float]([0.15, 0.25, 0.35])
+
+[sub_resource type="Resource" id="u8"]
+script = ExtResource("2")
+id = &"inabalavel"
+nome = "Inabalável"
+faccao = &"kharn"
+slot = 5
+descricao = "Inimigos atordoados levam +{v}% de dano a mais."
+valores = Array[float]([0.2, 0.3, 0.45])
+bloqueado_no_inicio = true
+
+[sub_resource type="Resource" id="u9"]
+script = ExtResource("2")
+id = &"grito_de_guerra"
+nome = "Grito de Guerra"
+faccao = &"kharn"
+slot = 5
+descricao = "Ao entrar em uma sala, os inimigos começam com {v} de Abalo."
+valores = Array[float]([30.0, 50.0, 70.0])
+bloqueado_no_inicio = true
+
+[resource]
+script = ExtResource("1")
+faccao = &"kharn"
+nome = "Domínio Kharn"
+moldura = "kharn"
+cor = Color(1, 0.352941, 0.180392, 1)
+cena_falas = "kharn"
+upgrades = Array[Resource]([SubResource("u0"), SubResource("u1"), SubResource("u2"), SubResource("u3"), SubResource("u4"), SubResource("u5"), SubResource("u6"), SubResource("u7"), SubResource("u8"), SubResource("u9")])

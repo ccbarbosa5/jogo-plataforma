@@ -19,6 +19,7 @@ func _ready() -> void:
 	_icone = FolhaSprite.carregar(ICONE)
 	if Engine.is_editor_hint():
 		return
+	add_to_group(PortaFaccao.GRUPO)
 	collision_layer = 0
 	collision_mask = Camadas.JOGADOR
 	if get_child_count() == 0:
@@ -40,6 +41,7 @@ func _ao_entrar(corpo: Node2D) -> void:
 	if _usada or jogador == null or jogador.esta_morto():
 		return
 	_usada = true
+	PortaFaccao.fechar_outras_portas(self)
 	jogador.ganhar_aprimoramento.call_deferred(pontos)
 	pega.emit(jogador)
 	if not Dialogos.tocar("campo_aprimoramento_primeiro"):
