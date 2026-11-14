@@ -4,13 +4,17 @@ extends CanvasLayer
 
 @onready var painel: HudPainel = $Painel
 @onready var mensagem: Label = $Mensagem
+@onready var ajuda: Label = $Ajuda
 
 var _timer_mensagem: float = 0.0
 
 
 func _ready() -> void:
-	# Fonte das falas também nas mensagens (vale mesmo se o HUD nascer antes do autoload).
-	mensagem.add_theme_font_override("font", Fontes.texto())
+	# Texto nítido (D-056); vale mesmo se o HUD nascer antes do autoload.
+	mensagem.add_theme_font_override("font", Fontes.placa())
+	mensagem.add_theme_font_size_override("font_size", Fontes.TAMANHO_PLACA)
+	ajuda.add_theme_font_override("font", Fontes.pequena())
+	ajuda.add_theme_font_size_override("font_size", Fontes.TAMANHO_PEQUENA)
 
 
 func conectar(jogador: Jogador) -> void:
