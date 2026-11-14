@@ -39,3 +39,4 @@ func test_windows_exe_unico_e_testes_fora_do_jogo() -> void:
 		afirmar(excluir.contains("tests/*"), "testes fora do jogo (%s)" % plataforma)
 		var incluir: String = cfg.get_value(secao, "include_filter", "")
 		afirmar(incluir.contains("data/*.json"), "dados JSON no jogo (%s)" % plataforma)
+		afirmar(incluir.contains("data/*.txt"), "textos (créditos) no jogo (%s)" % plataforma)

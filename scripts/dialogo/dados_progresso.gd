@@ -117,6 +117,14 @@ func carregar() -> void:
 			contadores[nome] = arquivo.get_value("contadores", nome)
 
 
+## Há um jogo salvo para "Continuar" no menu inicial (D-053).
+func tem_jogo_salvo() -> bool:
+	if not FileAccess.file_exists(caminho):
+		return false
+	var arquivo := ConfigFile.new()
+	return arquivo.load(caminho) == OK and (arquivo.has_section("flags") or arquivo.has_section("contadores"))
+
+
 ## Apaga tudo (novo jogo / atalho de depuração).
 func apagar() -> void:
 	flags.clear()

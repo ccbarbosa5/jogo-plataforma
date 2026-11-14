@@ -1,5 +1,6 @@
 extends CanvasLayer
 ## Autoload "Pausa": menu de pausa (D-054), aberto com Esc ou Start durante o jogo.
+## O menu inicial (D-053) também usa as telas de Opções e Controles daqui.
 ## Telas: principal (Continuar, Controles, Opções, Voltar à nave, Sair do jogo), Controles (ver e
 ## trocar as teclas; salvo pelo Config), Opções (volume, tela cheia, acessibilidade) e a
 ## confirmação de abandonar a run. Visual da ART (assets/sprites/ui/menus/, mockups v06 e v07):
@@ -11,11 +12,10 @@ signal fechou
 
 enum Tela { FECHADA, PRINCIPAL, CONTROLES, OPCOES, CONFIRMAR_SAIDA }
 
-const PASTA: String = "res://assets/sprites/ui/menus/"
-const COR_TEXTO: Color = Color("fff6ea")
-const COR_FOCO: Color = Color("ffe0b8")
-const COR_DESATIVADO: Color = Color("7d7886")
-const COR_DICA: Color = Color("a7a1ae")
+const COR_TEXTO: Color = EstiloMenu.COR_TEXTO
+const COR_FOCO: Color = EstiloMenu.COR_FOCO
+const COR_DESATIVADO: Color = EstiloMenu.COR_DESATIVADO
+const COR_DICA: Color = EstiloMenu.COR_DICA
 const COR_ESCURECER: Color = Color(0.03, 0.02, 0.05, 0.62)
 const TELA_JOGO: Vector2 = Vector2(480, 270)
 ## Passo do volume nas Opções.
@@ -31,38 +31,26 @@ var _fundo: ColorRect
 var _painel: NinePatchRect
 var _conteudo: Control
 var _seletor: TextureRect
-var _seletor_atlas: AtlasTexture
-var _tema: Theme
 var _botoes: Array[Button] = []
 var _botoes_teclas: Dictionary = {}
+## Aberto pelo menu inicial (só Opções e Controles, sem pausar nada).
+var _no_titulo: bool = false
 
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	layer = 50
-	_tema = _criar_tema()
 	_fundo = ColorRect.new()
 	_fundo.color = COR_ESCURECER
 	_fundo.size = TELA_JOGO
 	_fundo.mouse_filter = Control.MOUSE_FILTER_STOP
 	add_child(_fundo)
-	_painel = NinePatchRect.new()
-	_painel.texture = FolhaSprite.carregar(PASTA + "painel.png")
-	for lado in [SIDE_LEFT, SIDE_TOP, SIDE_RIGHT, SIDE_BOTTOM]:
-		_painel.set_patch_margin(lado, 8)
-	_painel.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
-	_painel.theme = _tema
+	_painel = EstiloMenu.painel()
 	add_child(_painel)
 	_conteudo = Control.new()
 	_conteudo.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_painel.add_child(_conteudo)
-	_seletor_atlas = AtlasTexture.new()
-	_seletor_atlas.atlas = FolhaSprite.carregar(PASTA + "seletor.png")
-	_seletor_atlas.region = Rect2(0, 0, 6, 9)
-	_seletor = TextureRect.new()
-	_seletor.texture = _seletor_atlas
-	_seletor.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
-	_seletor.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_seletor = EstiloMenu.seletor()
 	add_child(_seletor)
 	visible = false
 
@@ -88,6 +76,17 @@ func abrir() -> bool:
 	return true
 
 
+## Menu inicial (D-053): abre direto nas Opções, com o botão de Controles; não pausa nada.
+func abrir_opcoes_do_titulo() -> void:
+	if esta_aberto():
+		return
+	_no_titulo = true
+	visible = true
+	Input.set_default_cursor_shape(Input.CURSOR_ARROW)
+	_mostrar(Tela.OPCOES)
+	abriu.emit()
+
+
 func fechar() -> void:
 	if not esta_aberto():
 		return
@@ -95,9 +94,12 @@ func fechar() -> void:
 	tela = Tela.FECHADA
 	visible = false
 	_limpar()
-	get_tree().paused = false
-	if not get_tree().get_nodes_in_group("jogadores").is_empty():
-		Input.set_default_cursor_shape(Input.CURSOR_CROSS)  # mira com o mouse (D-052)
+	if _no_titulo:
+		_no_titulo = false
+	else:
+		get_tree().paused = false
+		if not get_tree().get_nodes_in_group("jogadores").is_empty():
+			Input.set_default_cursor_shape(Input.CURSOR_CROSS)  # mira com o mouse (D-052)
 	fechou.emit()
 
 
@@ -106,7 +108,14 @@ func voltar() -> void:
 	match tela:
 		Tela.PRINCIPAL:
 			fechar()
-		Tela.CONTROLES, Tela.OPCOES, Tela.CONFIRMAR_SAIDA:
+		Tela.CONTROLES:
+			_mostrar(Tela.OPCOES if _no_titulo else Tela.PRINCIPAL)
+		Tela.OPCOES:
+			if _no_titulo:
+				fechar()
+			else:
+				_mostrar(Tela.PRINCIPAL)
+		Tela.CONFIRMAR_SAIDA:
 			_mostrar(Tela.PRINCIPAL)
 
 
@@ -138,6 +147,11 @@ func botao_da_acao(acao: StringName) -> Button:
 func pode_voltar_a_nave() -> bool:
 	var cena: Node = get_tree().current_scene
 	return cena != null and not (cena is NaveEco)
+
+
+## Na nave a pausa leva de volta ao menu inicial (D-054).
+func pode_voltar_ao_menu() -> bool:
+	return get_tree().current_scene is NaveEco
 
 
 func pode_sair_do_jogo() -> bool:
@@ -194,10 +208,8 @@ func _process(_delta: float) -> void:
 	if not esta_aberto():
 		return
 	var foco := get_viewport().gui_get_focus_owner() as Button
-	_seletor.visible = foco != null and _botoes.has(foco) and tela != Tela.CONTROLES
-	if _seletor.visible:
-		_seletor.position = foco.global_position + Vector2(-10.0, (foco.size.y - 9.0) * 0.5)
-		_seletor_atlas.region = Rect2(6 * (int(Time.get_ticks_msec() / 250) % 2), 0, 6, 9)
+	var mostrar: bool = foco != null and _botoes.has(foco) and tela != Tela.CONTROLES
+	EstiloMenu.posicionar_seletor(_seletor, foco if mostrar else null)
 
 
 # --- Telas ---
@@ -233,6 +245,8 @@ func _montar_principal() -> void:
 			["Opções", _mostrar.bind(Tela.OPCOES)]]
 	if pode_voltar_a_nave():
 		itens.append(["Voltar à nave", _mostrar.bind(Tela.CONFIRMAR_SAIDA)])
+	elif pode_voltar_ao_menu():
+		itens.append(["Voltar ao menu", _voltar_ao_menu])
 	if pode_sair_do_jogo():
 		itens.append(["Sair do jogo", func() -> void: get_tree().quit()])
 	var largura: float = 158.0
@@ -265,7 +279,7 @@ func _montar_controles() -> void:
 		y += 14.0
 	y += 4.0
 	_botao("Restaurar padrão", Rect2(52.0, y, 94.0, 12.0), _restaurar_teclas, Fontes.TAMANHO_TEXTO)
-	_botao("Voltar", Rect2(152.0, y, 94.0, 12.0), _mostrar.bind(Tela.PRINCIPAL), Fontes.TAMANHO_TEXTO)
+	_botao("Voltar", Rect2(152.0, y, 94.0, 12.0), voltar, Fontes.TAMANHO_TEXTO)
 	var dica: Label = _rotulo("Enter ou clique: trocar · Esc: voltar", Rect2(0.0, y + 16.0, largura, 9.0),
 			Fontes.TAMANHO_PEQUENA, COR_DICA, true)
 	dica.name = "Dica"
@@ -273,7 +287,8 @@ func _montar_controles() -> void:
 
 func _montar_opcoes() -> void:
 	var largura: float = 240.0
-	_posicionar_painel(Vector2(largura, 34.0 + 5 * 20.0))
+	var linhas: int = 6 if _no_titulo else 5
+	_posicionar_painel(Vector2(largura, 34.0 + linhas * 20.0))
 	_titulo("OPÇÕES", largura, 8.0)
 	var itens: Array = [[_texto_volume(), _ajustar_volume], [_texto_tela_cheia(), _ajustar_tela_cheia],
 			[_texto_mira(), _ajustar_mira], [_texto_tiro(), _ajustar_tiro]]
@@ -282,7 +297,10 @@ func _montar_opcoes() -> void:
 		var b: Button = _botao(item[0], Rect2(20.0, y, largura - 40.0, 15.0), (item[1] as Callable).bind(1))
 		b.set_meta("ajuste", item[1])  # setas esquerda/direita mudam o valor
 		y += 20.0
-	_botao("Voltar", Rect2(20.0, y, largura - 40.0, 15.0), _mostrar.bind(Tela.PRINCIPAL))
+	if _no_titulo:  # no menu inicial não existe a tela principal da pausa
+		_botao("Controles", Rect2(20.0, y, largura - 40.0, 15.0), _mostrar.bind(Tela.CONTROLES))
+		y += 20.0
+	_botao("Voltar", Rect2(20.0, y, largura - 40.0, 15.0), voltar)
 
 
 func _montar_confirmacao() -> void:
@@ -383,6 +401,12 @@ func _texto_tiro() -> String:
 	return "Tiro automático: %s" % ("Ligado" if Config.tiro_automatico else "Desligado")
 
 
+func _voltar_ao_menu() -> void:
+	fechar()
+	Progresso.salvar()
+	Ciclo.ir_para_titulo()
+
+
 func _abandonar_run() -> void:
 	fechar()
 	Progresso.salvar()  # Núcleos e Dados ficam (GD-01 §8)
@@ -398,73 +422,14 @@ func _posicionar_painel(tamanho: Vector2) -> void:
 
 
 func _titulo(texto: String, largura: float, y: float) -> void:
-	var r: Label = _rotulo(texto, Rect2(0.0, y, largura, 16.0), Fontes.TAMANHO_TITULO, COR_FOCO, true)
-	r.add_theme_font_override("font", Fontes.placa())
+	EstiloMenu.titulo(_conteudo, texto, largura, y)
 
 
 func _rotulo(texto: String, ret: Rect2, tamanho: int, cor: Color, centro: bool = false) -> Label:
-	var r := Label.new()
-	r.text = texto
-	r.position = ret.position
-	r.size = ret.size
-	r.add_theme_font_override("font", Fontes.texto())
-	r.add_theme_font_size_override("font_size", tamanho)
-	r.add_theme_color_override("font_color", cor)
-	r.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-	if centro:
-		r.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	r.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	_conteudo.add_child(r)
-	r.size = ret.size
-	return r
+	return EstiloMenu.rotulo(_conteudo, texto, ret, tamanho, cor, centro)
 
 
 func _botao(texto: String, ret: Rect2, acao: Callable, tamanho: int = Fontes.TAMANHO_BOTAO) -> Button:
-	var b := Button.new()
-	b.text = texto
-	b.position = ret.position
-	b.size = ret.size
-	b.custom_minimum_size = ret.size
-	b.add_theme_font_size_override("font_size", tamanho)
-	b.clip_text = true
-	b.focus_mode = Control.FOCUS_ALL
-	b.pressed.connect(acao)
-	b.mouse_entered.connect(b.grab_focus)
-	_conteudo.add_child(b)
-	b.size = ret.size  # depois de entrar na árvore, com o tema já aplicado
+	var b: Button = EstiloMenu.botao(_conteudo, texto, ret, acao, tamanho)
 	_botoes.append(b)
 	return b
-
-
-func _criar_tema() -> Theme:
-	var t := Theme.new()
-	var folha: Texture2D = FolhaSprite.carregar(PASTA + "botao.png")
-	var estados: Dictionary = {"normal": 0, "hover": 1, "focus": 1, "pressed": 2, "disabled": 3}
-	for estado: String in estados:
-		var estilo := StyleBoxTexture.new()
-		if folha != null:
-			var quadro := AtlasTexture.new()
-			quadro.atlas = folha
-			quadro.region = Rect2(16 * estados[estado], 0, 16, 16)
-			estilo.texture = quadro
-		estilo.texture_margin_left = 4
-		estilo.texture_margin_top = 4
-		estilo.texture_margin_right = 4
-		estilo.texture_margin_bottom = 4
-		# Margem interna pequena: o texto nítido é menor que a moldura em pixels.
-		estilo.content_margin_left = 3
-		estilo.content_margin_right = 3
-		estilo.content_margin_top = 0
-		estilo.content_margin_bottom = 0
-		estilo.axis_stretch_horizontal = StyleBoxTexture.AXIS_STRETCH_MODE_TILE_FIT
-		estilo.axis_stretch_vertical = StyleBoxTexture.AXIS_STRETCH_MODE_TILE_FIT
-		t.set_stylebox(estado, "Button", estilo)
-	t.set_font("font", "Button", Fontes.placa())
-	t.set_font_size("font_size", "Button", Fontes.TAMANHO_BOTAO)
-	t.set_color("font_color", "Button", COR_TEXTO)
-	t.set_color("font_hover_color", "Button", COR_FOCO)
-	t.set_color("font_focus_color", "Button", COR_FOCO)
-	t.set_color("font_pressed_color", "Button", COR_FOCO)
-	t.set_color("font_hover_pressed_color", "Button", COR_FOCO)
-	t.set_color("font_disabled_color", "Button", COR_DESATIVADO)
-	return t
