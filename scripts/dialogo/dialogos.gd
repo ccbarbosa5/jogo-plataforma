@@ -11,6 +11,9 @@ var diretor: DiretorDialogo
 
 
 func _ready() -> void:
+	# Fonte padrão do jogo (D-046). Fica no código, não no tema do projeto,
+	# porque numa importação limpa o tema carregaria antes da fonte.
+	Fontes.aplicar_padrao()
 	var erro: Error = banco.carregar(ARQUIVO_VS)
 	if erro != OK:
 		push_error("Diálogos: não foi possível carregar %s (%s)" % [ARQUIVO_VS, error_string(erro)])

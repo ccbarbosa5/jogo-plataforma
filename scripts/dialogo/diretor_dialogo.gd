@@ -48,6 +48,8 @@ func preparar(id_cena: String) -> Array[Dictionary]:
 	if resultado.is_empty():
 		return resultado
 	var duvida: int = int(c.get("duvida", 0)) + int(escolhida.get("duvida", 0))
+	for fala: Dictionary in resultado:
+		duvida += int(fala.get("duvida", 0))  # pistas marcadas fala a fala (NAR-01 v0.3)
 	if duvida > 0:
 		progresso.incrementar("duvida", duvida)
 	for flag: String in [c.get("uma_vez", ""), escolhida.get("uma_vez", "")]:

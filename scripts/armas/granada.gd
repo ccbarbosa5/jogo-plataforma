@@ -27,7 +27,7 @@ func _ready() -> void:
 	collision_layer = 0
 	collision_mask = Camadas.MUNDO | Camadas.INIMIGOS | Camadas.PLATAFORMAS
 	monitorable = false
-	body_entered.connect(_ao_tocar)
+	body_shape_entered.connect(_ao_tocar)
 
 
 func _physics_process(delta: float) -> void:
@@ -45,11 +45,12 @@ func _physics_process(delta: float) -> void:
 	queue_redraw()
 
 
-func _ao_tocar(corpo: Node2D) -> void:
+func _ao_tocar(rid_corpo: RID, _corpo: Node2D, _forma_corpo: int, _forma_local: int) -> void:
 	if _explodiu:
 		return
-	var objeto := corpo as CollisionObject2D
-	if objeto != null and (objeto.collision_layer & Camadas.PLATAFORMAS) != 0 and velocidade.y < 0.0:
+	# Pelo RID: funciona com StaticBody2D e com o TileMapLayer.
+	var camada: int = PhysicsServer2D.body_get_collision_layer(rid_corpo)
+	if (camada & Camadas.PLATAFORMAS) != 0 and velocidade.y < 0.0:
 		return  # subindo por baixo da plataforma de mão única
 	explodir.call_deferred()
 

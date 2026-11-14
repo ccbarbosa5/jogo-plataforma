@@ -337,8 +337,14 @@ func _gravidade() -> float:
 
 func _ao_morrer() -> void:
 	Combate.devolver_ficha(self)
+	_criar_efeito_morte()
 	morreu.emit(self)
 	queue_free()
+
+
+## Subclasses com sprite criam aqui a animação de morte (ela continua depois que o inimigo some).
+func _criar_efeito_morte() -> void:
+	pass
 
 
 # --- Desenho provisório (status visíveis, pedido de GD a ART) ---

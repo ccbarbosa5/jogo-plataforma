@@ -58,7 +58,7 @@ func test_falas_condicionais_da_primeira_morte() -> void:
 	progresso.incrementar("mortes_total")
 	var sem_urkesh := _ids(diretor.preparar("morte_primeira"))
 	afirmar(not "MORT_U1" in sem_urkesh, "sem as falas de Ur-Kesh")
-	afirmar_igual(sem_urkesh.size(), 8, "8 falas")
+	afirmar_igual(sem_urkesh.size(), 9, "9 falas (v0.3 tem a MORT_09)")
 	progresso.apagar()
 	progresso.incrementar("mortes_total")
 	progresso.definir_flag("1a_morte_urkesh")
@@ -116,7 +116,7 @@ func test_caixa_de_dialogo_mostra_e_avanca() -> void:
 	caixa.mostrar("dual", falas, "conversa", banco)
 	afirmar(caixa.esta_ativa(), "aparece")
 	afirmar(tree.paused, "conversa pausa o jogo")
-	afirmar_igual(caixa.nome_atual(), "Ryker Vale", "nome do falante")
+	afirmar_igual(caixa.nome_atual(), "RYKER", "nome do falante (D-046: só o nome, em maiúsculas)")
 	caixa.avancar()
 	afirmar_igual(caixa.nome_atual(), "ECO", "segunda fala")
 	caixa.avancar()
@@ -186,8 +186,10 @@ func test_pista_da_loja_na_4a_visita() -> void:
 
 func test_falantes_tem_placa_moldura_e_lado() -> void:
 	_preparar()
-	afirmar_igual(banco.nome_do_falante("RYKER"), "Ryker Vale", "nome na placa")
-	afirmar(not banco.titulo_do_falante("RYKER").is_empty(), "título embaixo do nome")
+	afirmar_igual(banco.nome_do_falante("RYKER"), "RYKER", "nome na placa")
+	afirmar_igual(banco.nome_do_falante("VOSSA"), "VOSSA MARGEM", "nome na placa")
+	afirmar_igual(banco.moldura_do_falante("SINAL"), "humano_danificada", "sinal usa a moldura danificada")
+	afirmar_igual(banco.retrato_do_falante("SINAL"), "estatica", "sinal sem rosto")
 	afirmar_igual(banco.lado_do_falante("RYKER"), "esquerda", "jogável à esquerda")
 	afirmar_igual(banco.lado_do_falante("ECO"), "direita", "interlocutor à direita")
 	afirmar_igual(banco.moldura_do_falante("TOR-AMA"), "kharn", "moldura Kharn")
@@ -209,11 +211,11 @@ func test_caixa_estilo_hades_lados_placa_e_moldura() -> void:
 	caixa.mostrar("morte_primeira", diretor.preparar("morte_primeira"), "conversa", banco)
 	afirmar(caixa.escurecer.visible, "cenário escurecido atrás")
 	afirmar(caixa.retrato_esquerda.visible and caixa.retrato_esquerda.ativo, "Ryker à esquerda")
-	afirmar_igual(caixa.titulo.text, banco.titulo_do_falante("RYKER"), "título na placa")
+	afirmar_igual(caixa.nome.text, "RYKER", "placa só com o nome")
 	afirmar_igual(caixa.caixa.moldura, "humano", "moldura do Ryker")
 	caixa.avancar()
 	afirmar(caixa.retrato_direita.visible and caixa.retrato_direita.ativo, "ECO à direita")
-	afirmar(not caixa.retrato_esquerda.visible, "só o retrato de quem fala aparece (não cobre o texto)")
+	afirmar(caixa.retrato_esquerda.visible and not caixa.retrato_esquerda.ativo, "Ryker continua, escurecido (mockup ART v04)")
 	afirmar_igual(caixa.caixa.moldura, "eco", "moldura da ECO")
 	afirmar(caixa.texto.position.x < caixa.caixa.size.x * 0.5, "texto longe do retrato da direita")
 	while caixa.esta_ativa():
@@ -240,9 +242,43 @@ func test_caixa_avanca_pela_entrada_do_jogador() -> void:
 	tree.paused = false
 
 
-func test_retrato_sem_arquivo_usa_provisorio() -> void:
-	afirmar(RetratoDialogo.carregar_textura("RYKER", "neutro") == null, "ART ainda não entregou (provisório)")
-	afirmar_igual(RetratoDialogo.caminho("UR-KESH", "bravo"), "res://assets/sprites/retratos/ur_kesh_bravo.png", "caminho esperado para ART")
+func test_retratos_da_art_por_expressao() -> void:
+	_preparar()
+	var exp_ryker := banco.expressoes_do_falante("RYKER")
+	var deboche := RetratoDialogo.carregar_textura("RYKER", "deboche", exp_ryker) as AtlasTexture
+	afirmar(deboche != null, "retrato do Ryker entregue pela ART")
+	afirmar_igual(deboche.region.position.x, RetratoDialogo.TAMANHO.x * exp_ryker.find("deboche"), "quadro da expressão")
+	var padrao := RetratoDialogo.carregar_textura("RYKER", "inexistente", exp_ryker) as AtlasTexture
+	afirmar_igual(padrao.region.position.x, 0.0, "expressão desconhecida usa a primeira")
+	afirmar(RetratoDialogo.carregar_textura("UR-KESH", "fúria", banco.expressoes_do_falante("UR-KESH")) == null, "sem arquivo: provisório")
+	afirmar_igual(RetratoDialogo.caminho("UR-KESH"), "res://assets/sprites/retratos/ur_kesh/ur_kesh_retratos.png", "caminho esperado para ART")
+
+
+func test_expressoes_das_falas_existem() -> void:
+	_preparar()
+	for id_cena: String in banco.cenas:
+		for fala in banco.todas_as_falas(id_cena):
+			var e: String = fala.get("expressao", "")
+			if not e.is_empty():
+				afirmar(e in banco.expressoes_do_falante(fala["falante"]), "%s: expressão %s" % [fala["id"], e])
+
+
+func test_placa_so_com_o_nome() -> void:
+	# D-046: a placa mostra só o nome, em maiúsculas; sem título.
+	_preparar()
+	for codigo: String in banco.falantes:
+		var n := banco.nome_do_falante(codigo)
+		afirmar_igual(n, n.to_upper(), "%s em maiúsculas" % codigo)
+		afirmar(not banco.falantes[codigo].has("titulo"), "%s sem título" % codigo)
+
+
+func test_bramido_muda_a_entrada_de_urkesh() -> void:
+	_preparar()
+	progresso.definir_flag("urkesh_visto")
+	progresso.definir_run("tem_dadiva_kharn")
+	progresso.definir_run("arma_atual", "bramido")
+	afirmar_igual(_ids(diretor.preparar("urkesh_entrada")), ["UREK_BR", "UREK_BR2"] as Array[String], "vê o próprio Bramido")
+	afirmar_igual(_ids(diretor.preparar("urkesh_entrada")), ["UREK_K"] as Array[String], "só uma vez")
 
 
 ## Espera quadros de processo (a caixa roda com o jogo pausado).

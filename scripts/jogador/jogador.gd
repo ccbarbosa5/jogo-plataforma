@@ -359,8 +359,9 @@ func _tentar_pular(no_chao: bool) -> void:
 func _sobre_plataforma() -> bool:
 	for i in get_slide_collision_count():
 		var colisao: KinematicCollision2D = get_slide_collision(i)
-		var outro := colisao.get_collider() as CollisionObject2D
-		if outro != null and (outro.collision_layer & Camadas.PLATAFORMAS) != 0 and colisao.get_normal().y < -0.5:
+		# Pelo RID: funciona com StaticBody2D e com as camadas de física do TileMapLayer.
+		var camada: int = PhysicsServer2D.body_get_collision_layer(colisao.get_collider_rid())
+		if (camada & Camadas.PLATAFORMAS) != 0 and colisao.get_normal().y < -0.5:
 			return true
 	return false
 
@@ -525,7 +526,18 @@ func _ao_morrer() -> void:
 # --- Visual provisório (sem arte final) ---
 
 func _draw() -> void:
-	if _timer_pisca > 0.0 and int(_timer_pisca * 20.0) % 2 == 0:
+	var piscando: bool = _timer_pisca > 0.0 and int(_timer_pisca * 20.0) % 2 == 0
+	var visual := get_node_or_null("Visual") as CanvasItem
+	if visual != null:
+		# Sprites da ART (VisualRyker): aqui só os efeitos por cima.
+		visual.visible = not piscando
+		visual.modulate = Color(1.0, 0.85, 0.6) if golpe_de_arena_ativo() else Color.WHITE
+		if _timer_golpe_visual > 0.0:
+			var c: Vector2 = Vector2(olhando * 14.0, -_altura_atual * 0.6)
+			var ini: float = -PI * 0.5 if olhando > 0 else PI * 0.5
+			draw_arc(c, 10.0, ini, ini + PI, 8, Color("a7adba"), 2.0)
+		return
+	if piscando:
 		return
 	var h: float = _altura_atual
 	var cor: Color = Color("c8b273")

@@ -25,13 +25,21 @@ enum Estado { AVANCAR, AVISO, RAJADA, DESCANSO }
 @export var descanso: float = 1.6
 @export var cena_projetil: PackedScene
 
+const PASTA_SPRITES: String = "res://assets/sprites/inimigos/kharn/guerreiro_cla/"
+
 var estado: Estado = Estado.AVANCAR
+var sprite: FolhaSprite
 
 var _timer_estado: float = 0.0
 var _tiros_restantes: int = 0
 var _direcao_tiro: Vector2 = Vector2.LEFT
 var _alvo: Node2D
 var _aviso_final_emitido: bool = false
+
+
+func _ready() -> void:
+	super()
+	_criar_sprite()
 
 
 func _comportamento(delta: float) -> void:
@@ -129,28 +137,59 @@ func _atirar() -> void:
 			Camadas.PROJETEIS_INIMIGO, mascara)
 
 
+# --- Visual (folhas da ART: assets/sprites/inimigos/kharn/guerreiro_cla/) ---
+
+func _criar_sprite() -> void:
+	sprite = FolhaSprite.new()
+	sprite.name = "Sprite"
+	add_child(sprite)
+	for sufixo: String in ["", "_sem_armadura"]:
+		sprite.registrar(StringName("andar" + sufixo), FolhaSprite.carregar(PASTA_SPRITES + "guerreiro_andar%s.png" % sufixo), 6, 8.0)
+		sprite.registrar(StringName("aviso" + sufixo), FolhaSprite.carregar(PASTA_SPRITES + "guerreiro_aviso%s.png" % sufixo), 2)
+		sprite.registrar(StringName("tiro" + sufixo), FolhaSprite.carregar(PASTA_SPRITES + "guerreiro_tiro%s.png" % sufixo), 2)
+
+
+func _atualizar_sprite() -> void:
+	if sprite == null:
+		return
+	var sufixo: String = "" if armadura_frontal else "_sem_armadura"
+	sprite.flip_h = olhando < 0
+	sprite.modulate = Color(1.8, 1.8, 1.8) if _timer_flash > 0.0 else Color.WHITE
+	match estado:
+		Estado.AVISO:
+			# D-043: brasa durante o aviso (quadro 0) e flash AVISO só nos últimos 0,2 s (quadro 1).
+			sprite.tocar(StringName("aviso" + sufixo))
+			sprite.definir_quadro(1 if _timer_estado <= DURACAO_AVISO_FINAL else 0)
+		Estado.RAJADA:
+			sprite.tocar(StringName("tiro" + sufixo))
+			sprite.definir_quadro(0 if _timer_estado > intervalo_rajada - 0.05 else 1)
+		Estado.AVANCAR:
+			sprite.tocar(StringName("andar" + sufixo))
+			if absf(velocity.x) < 1.0 or esta_atordoado():
+				sprite.definir_quadro(0)
+		_:
+			sprite.tocar(StringName("andar" + sufixo))
+			sprite.definir_quadro(0)
+
+
+func arrancar_protecao() -> bool:
+	if not super():
+		return false
+	var placa: Texture2D = FolhaSprite.carregar(PASTA_SPRITES + "guerreiro_placa_caida.png")
+	if placa != null and get_parent() != null:
+		var e := EfeitoFolha.new()
+		e.iniciar(get_parent(), centro(), placa, 1, 0.0, olhando < 0, true)
+		e.soltar_no_chao(Camadas.MUNDO | Camadas.PLATAFORMAS)
+	return true
+
+
+func _criar_efeito_morte() -> void:
+	var sufixo: String = "" if armadura_frontal else "_sem_armadura"
+	var folha: Texture2D = FolhaSprite.carregar(PASTA_SPRITES + "guerreiro_morte%s.png" % sufixo)
+	if folha != null and get_parent() != null:
+		EfeitoFolha.new().iniciar(get_parent(), global_position, folha, 6, 10.0, olhando < 0)
+
+
 func _draw() -> void:
-	var cor: Color = Color("8a4b3a")
-	if _timer_flash > 0.0:
-		cor = Color.WHITE
-	var corpo := Rect2(Vector2(-tamanho.x * 0.5, -tamanho.y), tamanho)
-	draw_rect(corpo, cor)
-	draw_rect(Rect2(Vector2(olhando * 6.0 - 4.0, -tamanho.y + 6.0), Vector2(8, 5)), Color("ffd43b"))  # olhos
-	if armadura_frontal:
-		var x_placa: float = tamanho.x * 0.5 - 5.0 if olhando > 0 else -tamanho.x * 0.5
-		draw_rect(Rect2(Vector2(x_placa, -tamanho.y + 14.0), Vector2(5.0, tamanho.y - 22.0)), Color("c0c5ce"))
-	# Canhão no braço.
-	var canhao: Vector2 = Vector2(olhando * (tamanho.x * 0.5), -tamanho.y * 0.6)
-	var cor_canhao: Color = Color("3b4252")
-	if estado == Estado.AVISO:
-		# Pose de preparo: canhão em brasa. Últimos 0,2 s: flash na cor AVISO (D-033).
-		cor_canhao = Color("ff5a2e")
-		var final: bool = _timer_estado <= DURACAO_AVISO_FINAL
-		if final or int(_timer_estado * 16.0) % 2 == 0:
-			var cor_aviso: Color = COR_AVISO if not final or int(_timer_estado * 40.0) % 2 == 0 else Color.WHITE
-			draw_rect(Rect2(Vector2(-2.0, -tamanho.y - 16.0), Vector2(4, 9)), cor_aviso)
-			draw_rect(Rect2(Vector2(-2.0, -tamanho.y - 5.0), Vector2(4, 2)), cor_aviso)
-			if final:
-				cor_canhao = cor_aviso
-	draw_rect(Rect2(canhao + Vector2(minf(olhando * 10.0, 0.0), -3.0), Vector2(10, 6)), cor_canhao)
+	_atualizar_sprite()
 	_desenhar_status()
