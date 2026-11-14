@@ -1,6 +1,6 @@
 class_name Jogador
 extends CharacterBody2D
-## Personagem jogável: corre, pula, dá dash, mira em 8 direções, atira, golpeia de perto e lança granadas.
+## Personagem jogável: corre, pula, dá dash, mira em 360° (D-052; pose em 8 direções), atira, golpeia de perto e lança granadas.
 ## A habilidade própria fica num filho do tipo Ferramenta (Ryker: Grilhão).
 ## Balanceamento em ParametrosJogador, DadosArma, DadosGranada e Assistencias (.tres).
 ## Os comandos vêm de um EntradaJogador; o Jogador nunca lê o Input direto
@@ -55,7 +55,13 @@ var upgrades: UpgradesJogador = UpgradesJogador.new()
 ## O que os upgrades fazem (GD-02 §6).
 var efeitos: EfeitosUpgrades
 var olhando: int = 1
+## Pose da mira: a mais próxima das 8 direções (o tronco do Ryker usa esta).
 var mira: Vector2i = Vector2i(1, 0)
+## Direção exata dos tiros e do Grilhão (D-052: mira livre em 360°). Sem mira livre, é a
+## própria `mira` normalizada.
+var direcao_tiro: Vector2 = Vector2.RIGHT
+## true quando a mira veio do mouse ou do analógico direito neste frame.
+var mira_livre: bool = false
 var agachado: bool = false
 var mira_travada: bool = false
 var cargas_dash: int = 0
@@ -92,6 +98,8 @@ func _ready() -> void:
 		parametros = ParametrosJogador.new()
 	if entrada == null:
 		entrada = EntradaLocal.new()
+		# Mira com o mouse (D-052): cursor em cruz.
+		Input.set_default_cursor_shape(Input.CURSOR_CROSS)
 	if assistencias == null:
 		assistencias = Assistencias.new()
 	for filho in get_children():
@@ -184,6 +192,11 @@ func golpe_de_arena_ativo() -> bool:
 
 
 ## Ponto de onde saem os tiros e o Grilhão (altura do peito).
+## Direção exata em que os tiros e o Grilhão saem.
+func direcao_mira() -> Vector2:
+	return direcao_tiro
+
+
 func ponto_de_tiro() -> Vector2:
 	return global_position + Vector2(0.0, -_altura_atual * 0.6)
 
@@ -332,8 +345,8 @@ func lancar_granada() -> Granada:
 	destino.add_child(g)
 	var lancamento: Vector2 = Vector2(olhando * Unidades.px(granada.velocidade_lancamento.x),
 			-Unidades.px(granada.velocidade_lancamento.y))
-	if mira.y < 0 and mira.x == 0:
-		lancamento = Vector2(olhando * lancamento.x * 0.3, lancamento.y * 1.3)  # mais para cima
+	if direcao_tiro.y < -0.92:  # mirando quase reto para cima: lança mais alto
+		lancamento = Vector2(olhando * lancamento.x * 0.3, lancamento.y * 1.3)
 	g.lancar(ponto_de_tiro(), lancamento + Vector2(velocity.x * 0.5, 0.0), efeitos.dados_da_granada(granada), self)
 	lancou_granada.emit(g)
 	return g
@@ -361,20 +374,53 @@ func _atualizar_timers(delta: float) -> void:
 func _atualizar_mira(no_chao: bool) -> void:
 	var d: Vector2i = entrada.direcao
 	mira_travada = entrada.travar_mira_segurado
-	if d.x != 0 and not esta_em_dash():
-		olhando = d.x
 	agachado = no_chao and d.y > 0 and not mira_travada
-	if agachado:
-		mira = Vector2i(olhando, 0)
-	elif d.y < 0:
-		mira = Vector2i(d.x, -1)  # cima ou diagonal para cima
-	elif d.y > 0 and (not no_chao or d.x != 0):
-		mira = Vector2i(d.x, 1)  # no ar: baixo ou diagonal; travado no chão: só diagonal
+	var livre: Vector2 = _direcao_mira_livre()
+	mira_livre = livre != Vector2.ZERO
+	if mira_livre:
+		# D-052: o tiro sai no ângulo exato; o Ryker vira para onde mira.
+		direcao_tiro = livre
+		if not esta_em_dash() and absf(livre.x) > 0.01:
+			olhando = 1 if livre.x > 0.0 else -1
+		mira = _pose_da_mira(livre, no_chao)
 	else:
-		mira = Vector2i(olhando, 0)
+		if d.x != 0 and not esta_em_dash():
+			olhando = d.x
+		if agachado:
+			mira = Vector2i(olhando, 0)
+		elif d.y < 0:
+			mira = Vector2i(d.x, -1)  # cima ou diagonal para cima
+		elif d.y > 0 and (not no_chao or d.x != 0):
+			mira = Vector2i(d.x, 1)  # no ar: baixo ou diagonal; travado no chão: só diagonal
+		else:
+			mira = Vector2i(olhando, 0)
 	_aplicar_altura(ALTURA_AGACHADO if agachado else ALTURA_EM_PE)
 	if not mira_travada:  # travar a mira sempre vence a assistência
 		_aplicar_mira_automatica(no_chao)
+	if not mira_livre:
+		direcao_tiro = Vector2(mira).normalized()
+
+
+## Direção da mira livre (analógico direito ou mouse), ou zero se não houver.
+func _direcao_mira_livre() -> Vector2:
+	if entrada.mira_analogica.length() > 0.001:
+		return entrada.mira_analogica.normalized()
+	if entrada.mira_por_ponto:
+		var para_o_ponto: Vector2 = entrada.ponto_mira - ponto_de_tiro()
+		if para_o_ponto.length() > 1.0:
+			return para_o_ponto.normalized()
+		return direcao_tiro
+	return Vector2.ZERO
+
+
+## A mais próxima das 8 poses (no chão não existe a pose reta para baixo).
+func _pose_da_mira(direcao: Vector2, no_chao: bool) -> Vector2i:
+	var pose: Vector2i = MiraAutomatica.direcao_8(direcao)
+	if pose == Vector2i.ZERO:
+		return Vector2i(olhando, 0)
+	if no_chao and pose == Vector2i(0, 1):
+		pose.x = olhando
+	return pose
 
 
 func _aplicar_mira_automatica(no_chao: bool) -> void:
@@ -382,6 +428,10 @@ func _aplicar_mira_automatica(no_chao: bool) -> void:
 		Assistencias.ModoMira.TOTAL:
 			var alvo: Node2D = mira_automatica.escolher_alvo(ponto_de_tiro(), assistencias, get_tree())
 			if alvo == null:
+				return
+			if mira_livre:  # mira livre: aponta exatamente no alvo
+				direcao_tiro = (MiraAutomatica.centro_de(alvo) - ponto_de_tiro()).normalized()
+				mira = _pose_da_mira(direcao_tiro, no_chao)
 				return
 			var direcao: Vector2i = MiraAutomatica.direcao_8(MiraAutomatica.centro_de(alvo) - ponto_de_tiro())
 			if agachado:
@@ -391,6 +441,8 @@ func _aplicar_mira_automatica(no_chao: bool) -> void:
 			if direcao != Vector2i.ZERO:
 				mira = direcao
 		Assistencias.ModoMira.ASSISTIDA:
+			if mira_livre:  # quem mira com o mouse ou o analógico já mira em 360°
+				return
 			if mira_automatica.inimigo_na_direcao(ponto_de_tiro(), mira, assistencias, get_tree()) != null:
 				return
 			for passos: int in [1, -1]:
@@ -622,7 +674,7 @@ func _draw() -> void:
 	draw_rect(Rect2(-LARGURA * 0.5, -h, LARGURA, h), cor)
 	draw_rect(Rect2(olhando * 2.0 - 2.0, -h + 4.0, 4.0, 3.0), Color("2e3440"))  # visor
 	var base: Vector2 = Vector2(0.0, -h * 0.6)
-	draw_line(base, base + Vector2(mira).normalized() * 10.0, Color("eceff4"), 2.0)
+	draw_line(base, base + direcao_tiro * 10.0, Color("eceff4"), 2.0)
 	if _timer_golpe_visual > 0.0:
 		var centro_golpe: Vector2 = base + Vector2(olhando * 14.0, 0.0)
 		var inicio: float = -PI * 0.5 if olhando > 0 else PI * 0.5
