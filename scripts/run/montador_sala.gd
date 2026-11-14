@@ -8,11 +8,21 @@ const TILESET: String = "res://scenes/salas/varrek_tileset.tres"
 const T: int = 16
 const CENAS_INIMIGOS: Dictionary = {
 	"guerreiro": "res://scenes/inimigos/guerreiro_cla.tscn",
+	"artilheiro": "res://scenes/inimigos/artilheiro_kharn.tscn",
+	"muralha": "res://scenes/inimigos/muralha.tscn",
+	"zangao": "res://scenes/inimigos/zangao.tscn",
+	"cuspidor": "res://scenes/inimigos/cuspidor.tscn",
+	"ninho": "res://scenes/inimigos/ninho.tscn",
+	"brutamontes": "res://scenes/inimigos/brutamontes.tscn",
+	"ceifadora": "res://scenes/inimigos/ceifadora.tscn",
 	"soldado": "res://scenes/inimigos/soldado_kharn.tscn",
 	"elite": "res://scenes/inimigos/guerreiro_elite.tscn",
 }
-## Inimigos do GD-02 que ainda não existem viram Soldado até a tarefa 4.
-const SUBSTITUTO: String = "soldado"
+## Marcadores dos blocos para inimigos colocados à mão.
+const MARCADORES_INIMIGOS: Dictionary = {
+	"G": "guerreiro", "T": "artilheiro", "W": "muralha", "Z": "zangao", "C": "cuspidor", "N": "ninho", "S": "soldado",
+}
+const SUBSTITUTO: String = "guerreiro"
 const FALAS: Dictionary = {"1": "queda_saida", "2": "queda_inimigo_grande", "4": "reliquia"}
 
 
@@ -62,8 +72,8 @@ static func montar(plano: Dictionary, banco: BancoBlocos) -> SalaRun:
 						sala.inicio = pe
 					"D":
 						sala.pontos_porta.append(pe)
-					"G", "S":
-						sala.inimigos_fixos.append({"tipo": "guerreiro" if c == "G" else "soldado", "posicao": pe})
+					"G", "T", "W", "Z", "C", "N", "S":
+						sala.inimigos_fixos.append({"tipo": MARCADORES_INIMIGOS[c], "posicao": pe})
 					"M":
 						var loja := LojaIlo.new()
 						loja.position = pe

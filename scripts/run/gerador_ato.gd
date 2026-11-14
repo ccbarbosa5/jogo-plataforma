@@ -50,7 +50,7 @@ func planejar_sala(numero: int) -> Dictionary:
 			lista.append("queda_capsula")
 			if estado.primeira_run:
 				lista.append_array(["queda_tutorial_degraus", "queda_tutorial_tiro", "queda_tutorial_grilhao", "queda_tutorial_dash"])
-				plano["ondas"] = [_onda("guerreiro_soldado")]
+				plano["ondas"] = [_onda("queda_mini_arena")]
 			else:
 				lista.append(_sortear_bloco("queda", "trecho"))
 				plano["ondas"] = ondas.planejar(int(info["orcamento"]), "queda", rng, 1, 1)

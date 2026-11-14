@@ -63,6 +63,7 @@ func carregar_sala(n: int) -> SalaRun:
 	sala.iniciar(jogador, camera, projeteis, gerador.ondas)
 	sala.porta_escolhida.connect(_ao_escolher_porta)
 	sala.concluida.connect(_ao_concluir_sala)
+	sala.inimigo_morreu.connect(_ao_inimigo_morrer)
 	sala.arena_comecou.connect(func() -> void: hud.mostrar_mensagem("ALERTA!", 1.0))
 	jogador.global_position = sala.inicio
 	jogador.velocity = Vector2.ZERO
@@ -84,6 +85,14 @@ func _tocar_fala_de_entrada(plano: Dictionary) -> void:
 		"chefe":
 			if not Dialogos.tocar("urkesh_primeiro"):
 				Dialogos.tocar("urkesh_entrada")
+
+
+## Créditos por inimigo (GD-02 §6.5) e +5 quando a facção rival mata (§4.4).
+func _ao_inimigo_morrer(inimigo: Inimigo, pela_rival: bool) -> void:
+	var ganho: int = randi_range(inimigo.creditos.x, inimigo.creditos.y)
+	if pela_rival:
+		ganho += 5
+	jogador.creditos += ganho
 
 
 func _ao_concluir_sala() -> void:

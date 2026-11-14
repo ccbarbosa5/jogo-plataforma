@@ -1,0 +1,26 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/inimigos/ceifadora.gd" id="1"]
+[ext_resource type="Script" path="res://scripts/comum/vida.gd" id="2"]
+
+[sub_resource type="RectangleShape2D" id="corpo"]
+size = Vector2(32, 40)
+
+[node name="Ceifadora" type="CharacterBody2D"]
+collision_layer = 4
+collision_mask = 33
+script = ExtResource("1")
+peso = 1
+categoria = 1
+faccao = &"vesh"
+atordoamento_grilhao = 1.0
+creditos = Vector2i(25, 25)
+tamanho = Vector2(32, 40)
+
+[node name="Forma" type="CollisionShape2D" parent="."]
+position = Vector2(0, -20)
+shape = SubResource("corpo")
+
+[node name="Vida" type="Node" parent="."]
+script = ExtResource("2")
+maxima = 250

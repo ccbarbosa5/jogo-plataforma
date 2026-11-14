@@ -10,6 +10,8 @@ extends Node2D
 signal arena_comecou
 signal concluida
 signal porta_escolhida(porta: PortaSaida)
+## Um inimigo da sala morreu (Créditos: GD-02 §6.5; +5 se a facção rival matou, §4.4).
+signal inimigo_morreu(inimigo: Inimigo, pela_rival: bool)
 
 const ATRASO_PROXIMA_ONDA: float = 20.0
 const FRACAO_PROXIMA_ONDA: float = 0.25
@@ -62,6 +64,7 @@ func iniciar(jogador_: Jogador, camera_: CameraJogo, projeteis_: Node, banco: Ba
 	inimigos = Node2D.new()
 	inimigos.name = "Inimigos"
 	add_child(inimigos)
+	inimigos.child_entered_tree.connect(_vigiar)
 	# Paredes da sala (não deixam sair pelas pontas) e as da arena (só durante o combate).
 	for x: float in [-16.0, largura_px]:
 		_parede(x, true)
@@ -186,8 +189,23 @@ func _criar_inimigo(tipo: String, posicao: Vector2, de_onda: bool) -> Inimigo:
 	inimigo.position = posicao
 	inimigo.container_projeteis = projeteis
 	inimigo.set_meta("de_onda", de_onda)
+	# Zona de guerra (GD-02 §4.4): Kharn e Vesh também atacam a facção rival.
+	inimigo.ataca_faccao_rival = plano.get("bioma", "") == "zona_guerra"
 	inimigos.add_child(inimigo)
 	return inimigo
+
+
+## Todo inimigo que entra na sala (inclusive os Zangões do Ninho) avisa quando morre.
+func _vigiar(no: Node) -> void:
+	var inimigo := no as Inimigo
+	if inimigo != null and not inimigo.morreu.is_connected(_ao_morrer_inimigo):
+		inimigo.morreu.connect(_ao_morrer_inimigo)
+
+
+func _ao_morrer_inimigo(inimigo: Inimigo) -> void:
+	var ultimo: Node = inimigo.get_meta("ultimo_golpe_de", null)
+	var pela_rival: bool = ultimo != null and is_instance_valid(ultimo) and ultimo is Inimigo
+	inimigo_morreu.emit(inimigo, pela_rival)
 
 
 func _concluir_arena() -> void:
