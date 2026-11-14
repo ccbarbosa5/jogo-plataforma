@@ -21,6 +21,11 @@ func _initialize() -> void:
 	var ciclo: Node = root.get_node_or_null("Ciclo")
 	if ciclo != null:
 		ciclo.trocar_cena = false
+	# As opções dos testes nunca vão para o arquivo do jogador.
+	var config: Node = root.get_node_or_null("Config")
+	if config != null:
+		config.caminho = "user://configuracoes_teste.cfg"
+		config.redefinir_sem_salvar()
 	print("== Testes do Jogo Plataforma ==")
 	for caminho in arquivos:
 		await _rodar_arquivo(caminho)

@@ -68,13 +68,13 @@ func _luminancia(c: Color) -> float:
 
 
 func test_placa_tem_contraste_alto() -> void:
-	var claro: float = _luminancia(CaixaDialogo.COR_TEXTO_PLACA)
 	var escuro: float = _luminancia(CaixaDialogo.COR_FUNDO_PLACA)
-	var contraste: float = (claro + 0.05) / (escuro + 0.05)
-	afirmar(contraste >= 7.0, "contraste da placa %.1f:1 (mínimo 7:1)" % contraste)
+	for cor: Color in [CaixaDialogo.COR_TEXTO_PLACA, CaixaDialogo.COR_TEXTO_PLACA_ECO]:
+		var contraste: float = (_luminancia(cor) + 0.05) / (escuro + 0.05)
+		afirmar(contraste >= 7.0, "contraste da placa %.1f:1 (mínimo 7:1)" % contraste)
 
 
-func test_placa_usa_texto_claro_negrito_sobre_fundo_liso() -> void:
+func test_placa_usa_texto_claro_negrito_sobre_fundo_liso_da_arte() -> void:
 	var banco := BancoDialogos.new()
 	afirmar_igual(banco.carregar(ARQUIVO_FALAS), OK, "falas carregaram")
 	var caixa: CaixaDialogo = instanciar("res://scenes/ui/caixa_dialogo.tscn")
@@ -85,10 +85,11 @@ func test_placa_usa_texto_claro_negrito_sobre_fundo_liso() -> void:
 	afirmar_igual(caixa.nome.get_theme_color("font_color"), CaixaDialogo.COR_TEXTO_PLACA, "texto claro, não a cor do falante")
 	afirmar_igual(caixa.nome.get_theme_font_size("font_size"), Fontes.TAMANHO_PLACA, "letra maior")
 	afirmar(caixa.nome.get_theme_font("font") == Fontes.placa(), "fonte negrito da placa")
-	var estilo: StyleBoxFlat = caixa.placa.get_theme_stylebox("panel") as StyleBoxFlat
-	afirmar(estilo != null and estilo.bg_color == CaixaDialogo.COR_FUNDO_PLACA, "fundo escuro e liso")
-	afirmar(estilo != null and estilo.bg_color.a >= 1.0, "fundo opaco")
-	afirmar(estilo != null and estilo.border_color == banco.cor_do_falante("VOSSA"), "cor do falante só na faixa")
+	afirmar(caixa.placa is NinePatchRect, "placa em nine-patch (arte da ART)")
+	afirmar(caixa.placa.texture != null and caixa.placa.texture.resource_path.ends_with("placa_ilo.png"),
+			"placa do grupo de quem fala (filete na cor do grupo)")
+	var miolo: Color = caixa.placa.texture.get_image().get_pixel(8, 8)
+	afirmar(miolo.is_equal_approx(CaixaDialogo.COR_FUNDO_PLACA), "miolo escuro e liso (%s)" % miolo.to_html(false))
 	var largura_nome: float = Fontes.placa().get_string_size(caixa.nome.text, HORIZONTAL_ALIGNMENT_LEFT, -1, Fontes.TAMANHO_PLACA).x
 	afirmar(caixa.placa.size.x >= largura_nome, "o nome cabe na placa")
 	afirmar(caixa.placa.position.y + caixa.placa.size.y <= caixa.caixa.position.y + 4.0, "placa em cima da caixa")

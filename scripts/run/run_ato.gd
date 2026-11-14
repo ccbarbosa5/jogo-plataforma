@@ -80,9 +80,21 @@ func carregar_sala(n: int) -> SalaRun:
 	camera.definir_limites(sala.limites())
 	camera.posicionar_imediato()
 	hud.mostrar_mensagem("SALA %d · %s" % [n, String(plano["nome"]).to_upper()], 1.8)
+	if n == 0:
+		hud.mostrar_dica(dica_do_tutorial())
+	else:
+		hud.esconder_dica()
 	_tocar_fala_de_entrada(plano)
 	sala_carregada.emit(sala)
 	return sala
+
+
+## Dica de teclas da sala 0 (D-054), com as teclas que o jogador escolheu nos Controles.
+static func dica_do_tutorial() -> String:
+	var c: Callable = Config.tecla_principal
+	return "%s %s andar · %s pular · Mouse mirar · %s atirar · %s Grilhão · %s dash · %s granada · Esc pausa" % [
+		c.call(&"mover_esquerda"), c.call(&"mover_direita"), c.call(&"pular"), c.call(&"atirar"),
+		c.call(&"ferramenta"), c.call(&"dash"), c.call(&"granada")]
 
 
 func _tocar_fala_de_entrada(plano: Dictionary) -> void:
@@ -185,13 +197,19 @@ func oferecer_dadiva_extra(j: Jogador) -> void:
 
 
 func _unhandled_input(evento: InputEvent) -> void:
-	if evento.is_action_pressed("reiniciar"):
-		get_tree().reload_current_scene()
 	if evento.is_action_pressed("arvore") and not tela_arvore.esta_aberta():
 		if sala != null and sala.arena_ativa:
 			hud.mostrar_mensagem("A árvore só abre fora de combate", 1.0)
 		else:
 			tela_arvore.abrir(jogador)
+	if Depuracao.ativa():
+		_atalhos_de_teste(evento)
+
+
+## F2/F3 assistências, F10 próxima sala, F11 sala de teste, R reinicia. Só em depuração (D-054).
+func _atalhos_de_teste(evento: InputEvent) -> void:
+	if evento.is_action_pressed("reiniciar"):
+		get_tree().reload_current_scene()
 	if evento.is_action_pressed("debug_tiro_automatico"):
 		jogador.assistencias.tiro_automatico = not jogador.assistencias.tiro_automatico
 		hud.mostrar_mensagem("Tiro automático: %s" % ("LIGADO" if jogador.assistencias.tiro_automatico else "DESLIGADO"), 1.2)

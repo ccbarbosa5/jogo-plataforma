@@ -90,7 +90,7 @@ func _chegada() -> void:
 		"morte":
 			hud.mostrar_mensagem("ECO: RECONSTRUÇÃO CONCLUÍDA", 1.5)
 			cenas.assign(["morte_primeira|morte_repeticao", "campo_morte_com_arvore", "sete_chegada"])
-		"vitoria":
+		"vitoria", "desistiu":  # desistiu = abandonou a run pela pausa (D-054)
 			hud.mostrar_mensagem("DE VOLTA À ECO", 1.5)
 			cenas.assign(["sete_chegada"])
 		_:

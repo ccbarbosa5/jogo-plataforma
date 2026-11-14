@@ -28,13 +28,3 @@ offset_right = 200.0
 offset_bottom = 0.0
 horizontal_alignment = 1
 vertical_alignment = 1
-
-[node name="Ajuda" type="Label" parent="."]
-anchors_preset = 12
-anchor_top = 1.0
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_top = -9.0
-modulate = Color(1, 1, 1, 0.6)
-text = "A/D mover · S agachar · Espaço pular · Mouse mirar · Botão esq. atirar · Botão dir. Grilhão · Shift dash · Q granada · E interagir · Tab árvore · F7 arma · F8 +1 ponto · F9 dádiva · F10 próxima sala · F11 sala de teste · F2/F3 assist. · R reiniciar"
-horizontal_alignment = 1
