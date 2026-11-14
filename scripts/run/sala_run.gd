@@ -12,6 +12,8 @@ signal concluida
 signal porta_escolhida(porta: PortaSaida)
 ## Um inimigo da sala morreu (Créditos: GD-02 §6.5; +5 se a facção rival matou, §4.4).
 signal inimigo_morreu(inimigo: Inimigo, pela_rival: bool)
+## O chefe entrou na arena (a run mostra a barra de vida).
+signal chefe_apareceu(chefe: UrKesh)
 
 const ATRASO_PROXIMA_ONDA: float = 20.0
 const FRACAO_PROXIMA_ONDA: float = 0.25
@@ -182,6 +184,8 @@ func _proxima_onda() -> void:
 		var inimigo := _criar_inimigo(item["tipo"], pos, true)
 		inimigo.set_meta("custo", banco_ondas.custo_inimigo(item["tipo"]))
 		vivos_da_onda.append(inimigo)
+		if inimigo is UrKesh:
+			chefe_apareceu.emit(inimigo)
 
 
 func _criar_inimigo(tipo: String, posicao: Vector2, de_onda: bool) -> Inimigo:
@@ -203,7 +207,7 @@ func _vigiar(no: Node) -> void:
 
 
 func _ao_morrer_inimigo(inimigo: Inimigo) -> void:
-	var ultimo: Node = inimigo.get_meta("ultimo_golpe_de", null)
+	var ultimo: Object = inimigo.get_meta("ultimo_golpe_de") if inimigo.has_meta("ultimo_golpe_de") else null
 	var pela_rival: bool = ultimo != null and is_instance_valid(ultimo) and ultimo is Inimigo
 	inimigo_morreu.emit(inimigo, pela_rival)
 

@@ -84,9 +84,8 @@ func planejar_sala(numero: int) -> Dictionary:
 			lista.append_array(["entrada_varrek", "reliquia_aproximacao", "reliquia_reparo", "saida_varrek"])
 		"chefe":
 			lista.append_array(["entrada_varrek", "chefe_arena"])
-			var plano_chefe: Array[Dictionary] = [ondas.onda_elite(rng)]
-			plano_chefe.append_array(ondas.planejar(int(info["orcamento"]), "chefe", rng))
-			plano["ondas"] = plano_chefe
+			# Ur-Kesh (GD-02 §5): os reforços vêm do próprio chefe (fase 2) e do rugido (fase 3).
+			plano["ondas"] = [_onda("chefe_urkesh")]
 	plano["blocos"] = lista
 	# Portas da saída.
 	if tipo == "chefe":

@@ -98,7 +98,7 @@ func test_2_orcamento_nunca_passa_e_blocos_nao_repetem() -> void:
 					if tipo in ["trecho", "arena"]:
 						afirmar(not id in usados, "semente %d: %s repetido" % [semente, id])
 						usados.append(id)
-				if plano["tipo"] in ["combate", "elite", "chefe"]:
+				if plano["tipo"] in ["combate", "elite"]:  # o chefe não sai do orçamento
 					var orc: int = int(g.info_sala(plano["numero"])["orcamento"])
 					var comum: int = BancoOndas.custo_total(g.ondas, plano["ondas"].filter(func(o: Dictionary) -> bool: return not o.get("elite", false)))
 					afirmar(comum <= orc, "sala %d: %d > %d" % [plano["numero"], comum, orc])

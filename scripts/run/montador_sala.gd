@@ -15,6 +15,7 @@ const CENAS_INIMIGOS: Dictionary = {
 	"ninho": "res://scenes/inimigos/ninho.tscn",
 	"brutamontes": "res://scenes/inimigos/brutamontes.tscn",
 	"ceifadora": "res://scenes/inimigos/ceifadora.tscn",
+	"urkesh": "res://scenes/inimigos/ur_kesh.tscn",
 	"soldado": "res://scenes/inimigos/soldado_kharn.tscn",
 	"elite": "res://scenes/inimigos/guerreiro_elite.tscn",
 }

@@ -10,7 +10,8 @@
   "elite": 12,
   "brutamontes": 12,
   "ceifadora": 12,
-  "soldado": 2
+  "soldado": 2,
+  "urkesh": 30
  },
  "ondas": [
   {
@@ -406,6 +407,19 @@
    "inimigos": [
     {
      "tipo": "ceifadora",
+     "ponto": "R"
+    }
+   ]
+  },
+  {
+   "id": "chefe_urkesh",
+   "faccao": "kharn",
+   "biomas": [],
+   "elite": false,
+   "chefe": true,
+   "inimigos": [
+    {
+     "tipo": "urkesh",
      "ponto": "R"
     }
    ]

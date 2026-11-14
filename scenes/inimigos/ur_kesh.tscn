@@ -1,0 +1,31 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/inimigos/ur_kesh.gd" id="1"]
+[ext_resource type="Script" path="res://scripts/comum/vida.gd" id="2"]
+[ext_resource type="PackedScene" path="res://scenes/armas/projetil_inimigo.tscn" id="3"]
+[ext_resource type="PackedScene" path="res://scenes/inimigos/guerreiro_cla.tscn" id="4"]
+[ext_resource type="PackedScene" path="res://scenes/inimigos/zangao.tscn" id="5"]
+
+[sub_resource type="RectangleShape2D" id="corpo"]
+size = Vector2(80, 112)
+
+[node name="UrKesh" type="CharacterBody2D"]
+collision_layer = 4
+collision_mask = 33
+script = ExtResource("1")
+peso = 2
+categoria = 2
+faccao = &"kharn"
+tamanho = Vector2(80, 112)
+creditos = Vector2i(0, 0)
+cena_projetil = ExtResource("3")
+cena_guerreiro = ExtResource("4")
+cena_zangao = ExtResource("5")
+
+[node name="Forma" type="CollisionShape2D" parent="."]
+position = Vector2(0, -56)
+shape = SubResource("corpo")
+
+[node name="Vida" type="Node" parent="."]
+script = ExtResource("2")
+maxima = 1500
