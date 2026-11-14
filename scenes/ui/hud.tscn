@@ -40,5 +40,5 @@ offset_top = -12.0
 modulate = Color(1, 1, 1, 0.6)
 theme_override_fonts/font = ExtResource("3")
 theme_override_font_sizes/font_size = 10
-text = "A/D mover · W/S mirar · Espaço pular · J atirar · Shift dash · K granada · I travar · O Grilhão · E interagir · Tab árvore · F7 arma · F8 +1 ponto · F2/F3 assist. · R reiniciar"
+text = "A/D mover · W/S mirar · Espaço pular · J atirar · Shift dash · K granada · I travar · O Grilhão · E interagir · Tab árvore · F7 arma · F8 +1 ponto · F9 dádiva · F2/F3 assist. · R reiniciar"
 horizontal_alignment = 1

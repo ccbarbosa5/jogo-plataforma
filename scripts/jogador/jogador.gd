@@ -45,6 +45,8 @@ var granadas: int = 0
 ## 0 a 100 (Combate.regras.chamado_maximo).
 var barra_chamado: float = 0.0
 var upgrades: UpgradesJogador = UpgradesJogador.new()
+## O que os upgrades fazem (GD-02 §6).
+var efeitos: EfeitosUpgrades
 var olhando: int = 1
 var mira: Vector2i = Vector2i(1, 0)
 var agachado: bool = false
@@ -102,6 +104,8 @@ func _ready() -> void:
 	arma_equipada = ArmaEquipada.new(arma)
 	arvore = ArvoreRun.new(arma_equipada)
 	controle_arma = ControleArma.new(self, parametros_armas)
+	efeitos = EfeitosUpgrades.new(self)
+	efeitos.conectar()
 	var grilhao := ferramenta as Grilhao
 	if grilhao != null:
 		grilhao.acertou.connect(func(alvo: Node) -> void: controle_arma.marcar(alvo as Inimigo))
@@ -141,6 +145,7 @@ func _physics_process(delta: float) -> void:
 			_tentar_pular(no_chao)
 			move_and_slide()
 		_atualizar_ataque(delta)
+		efeitos.processar(delta)
 		if entrada.granada_pressionada:
 			lancar_granada()
 		if entrada.interagir_pressionado:
@@ -177,12 +182,43 @@ func ponto_de_tiro() -> Vector2:
 
 
 func receber_ataque(info: InfoDano) -> bool:
+	if _couro_anulou():
+		return false
 	return vida.receber_dano(info.valor)
 
 
 ## Atalho: `quantidade` em blocos de vida.
 func receber_dano(quantidade: int, _origem: Node = null) -> bool:
+	if quantidade > 0 and _couro_anulou():
+		return false
 	return vida.receber_dano(quantidade)
+
+
+## Couro de Arena: o 1º acerto da sala não tira vida (e dá a invulnerabilidade normal de dano).
+func _couro_anulou() -> bool:
+	if not vida.esta_vivo() or vida.esta_invulneravel() or not efeitos.anular_acerto():
+		return false
+	vida.tornar_invulneravel(parametros.invulnerabilidade_dano)
+	_timer_pisca = parametros.invulnerabilidade_dano
+	return true
+
+
+## Passivos que aumentam o dano deste jogador (Inimigo.receber_ataque).
+func mult_dano_contra(inimigo: Inimigo) -> float:
+	return efeitos.mult_dano_contra(inimigo)
+
+
+func bonus_atordoado_extra() -> float:
+	return efeitos.bonus_atordoado_extra()
+
+
+## Escolheu um upgrade numa oferta. Retorna o upgrade substituído (ou null).
+func receber_upgrade(u: DadosUpgrade) -> DadosUpgrade:
+	var antigo: DadosUpgrade = upgrades.adicionar(u)
+	Progresso.definir_run("tem_dadiva_" + String(u.faccao))
+	if u.faccao == &"vesh":
+		Progresso.definir_run("pegou_vesh_na_run")
+	return antigo
 
 
 ## Chamado pelos inimigos quando este jogador causa dano: enche a barra de Chamado (GD-02, 6).
@@ -234,6 +270,7 @@ func _iniciar_run() -> void:
 ## Fim da run (morte ou vitória): a árvore e os pontos zeram (GD-05 §2.1).
 func fim_da_run() -> void:
 	arvore.limpar()
+	upgrades.limpar()
 	controle_arma.reiniciar()
 
 
@@ -247,6 +284,7 @@ func ganhar_aprimoramento(pontos: int = 1) -> void:
 func entrar_na_sala() -> void:
 	reabastecer_granadas()
 	vida.tornar_invulneravel(Combate.regras.invulnerabilidade_entrada_sala)
+	efeitos.entrar_na_sala()
 
 
 ## Caiu num buraco (D-036): perde 1 bloco e volta para o último chão firme.
@@ -288,7 +326,7 @@ func lancar_granada() -> Granada:
 			-Unidades.px(granada.velocidade_lancamento.y))
 	if mira.y < 0 and mira.x == 0:
 		lancamento = Vector2(olhando * lancamento.x * 0.3, lancamento.y * 1.3)  # mais para cima
-	g.lancar(ponto_de_tiro(), lancamento + Vector2(velocity.x * 0.5, 0.0), granada, self)
+	g.lancar(ponto_de_tiro(), lancamento + Vector2(velocity.x * 0.5, 0.0), efeitos.dados_da_granada(granada), self)
 	lancou_granada.emit(g)
 	return g
 

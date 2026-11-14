@@ -8,6 +8,10 @@
 
 [ext_resource type="Resource" path="res://scenes/armas/bramido.tres" id="arma_bramido"]
 
+[ext_resource type="Resource" path="res://scenes/upgrades/kharn.tres" id="cat_kharn"]
+
+[ext_resource type="Resource" path="res://scenes/upgrades/vesh.tres" id="cat_vesh"]
+
 [ext_resource type="Script" path="res://scripts/salas/bloco.gd" id="2"]
 
 [ext_resource type="Script" path="res://scripts/salas/ponto_gancho.gd" id="3"]
@@ -40,6 +44,7 @@ size = Vector2(16, 270)
 script = ExtResource("1")
 cena_inimigo = ExtResource("4")
 armas_arsenal = Array[Resource]([ExtResource("arma_mordida"), ExtResource("arma_bramido")])
+catalogos_faccoes = Array[Resource]([ExtResource("cat_kharn"), ExtResource("cat_vesh")])
 
 [node name="FundoParallax" type="Node2D" parent="."]
 z_index = -10
