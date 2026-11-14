@@ -66,9 +66,20 @@ func _ready() -> void:
 
 
 func _unhandled_input(evento: InputEvent) -> void:
+	if evento.is_action_pressed("arvore") and not tela_arvore.esta_aberta():
+		# Fora de combate a árvore abre a qualquer hora (GD-05 §2.2).
+		if arena_ativa:
+			hud.mostrar_mensagem("A árvore só abre fora de combate", 1.0)
+		else:
+			tela_arvore.abrir(jogador)
+	if Depuracao.ativa():
+		_atalhos_de_teste(evento)
+
+
+## Sala de teste: F2–F9 e R só em depuração (D-054). As opções de verdade estão na pausa.
+func _atalhos_de_teste(evento: InputEvent) -> void:
 	if evento.is_action_pressed("reiniciar"):
 		get_tree().reload_current_scene()
-	# Atalhos provisórios até existir o menu de opções (Fase 2).
 	var opcoes: Assistencias = jogador.assistencias
 	if evento.is_action_pressed("debug_mira_automatica"):
 		opcoes.modo_mira = ((opcoes.modo_mira + 1) % 3) as Assistencias.ModoMira
@@ -83,12 +94,6 @@ func _unhandled_input(evento: InputEvent) -> void:
 		_cena_revisao = (_cena_revisao + 1) % cenas.size()
 		hud.mostrar_mensagem("Cena %d/%d: %s" % [_cena_revisao + 1, cenas.size(), cenas[_cena_revisao]], 2.0)
 		Dialogos.previsualizar(cenas[_cena_revisao])
-	if evento.is_action_pressed("arvore") and not tela_arvore.esta_aberta():
-		# Fora de combate a árvore abre a qualquer hora (GD-05 §2.2).
-		if arena_ativa:
-			hud.mostrar_mensagem("A árvore só abre fora de combate", 1.0)
-		else:
-			tela_arvore.abrir(jogador)
 	if evento.is_action_pressed("debug_trocar_arma") and not armas_arsenal.is_empty():
 		# Arsenal provisório: troca a arma e zera a árvore (D-038: na run de verdade não se troca).
 		var i: int = (armas_arsenal.find(jogador.arma) + 1) % armas_arsenal.size()

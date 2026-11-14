@@ -12,12 +12,28 @@ signal terminou(id_cena: String)
 
 const COR_TEXTO: Color = Color("eceff4")
 const COR_DIRECAO: Color = Color("a7adba")
-## Placa de nome legível (D-057): texto claro sobre fundo escuro e liso. A cor de quem fala
-## aparece só na faixa da esquerda e no filete de baixo, nunca no texto.
-const COR_TEXTO_PLACA: Color = Color("f6f3ec")
-const COR_FUNDO_PLACA: Color = Color("0b0a10")
-const FAIXA_PLACA: int = 3
-const RESPIRO_PLACA: Vector2 = Vector2(8, 3)
+## Placa de nome legível (D-057), com a arte da ART (assets/sprites/ui/menus/placa_<grupo>.png):
+## nine-patch 16×16, margem 4, fundo escuro e liso, filete de 1 px na cor do grupo.
+## Nome em Atkinson Bold, claro.
+const COR_TEXTO_PLACA: Color = Color("fff6ea")
+const COR_TEXTO_PLACA_ECO: Color = Color("ffe7b0")
+## Cor do miolo da arte (o teste confere o contraste com o texto).
+const COR_FUNDO_PLACA: Color = Color("16111c")
+const PASTA_PLACAS: String = "res://assets/sprites/ui/menus/"
+## moldura do falante -> arquivo da placa
+const PLACAS: Dictionary = {
+	"humano": "placa_humano.png",
+	"humano_danificada": "placa_humano.png",
+	"eco": "placa_eco.png",
+	"antigos": "placa_eco.png",
+	"kharn": "placa_kharn.png",
+	"vesh": "placa_vesh.png",
+	"ilo": "placa_ilo.png",
+}
+const MARGEM_PLACA: int = 4
+## Altura da placa (ART: 19 px de arte = 76 px em 1080p) e respiro de cada lado do nome.
+const ALTURA_PLACA: float = 19.0
+const RESPIRO_PLACA: float = 8.0
 
 ## Segundos por caractere no modo rápido (com um mínimo).
 @export var segundos_por_caractere: float = 0.05
@@ -32,7 +48,7 @@ var escurecer: ColorRect
 var retrato_esquerda: RetratoDialogo
 var retrato_direita: RetratoDialogo
 var caixa: MolduraDialogo
-var placa: Panel
+var placa: NinePatchRect
 var nome: Label
 var texto: Label
 var direcao: Label
@@ -49,7 +65,6 @@ var _timer: float = 0.0
 var _trava: float = 0.0
 var _pausou: bool = false
 var _ativa: bool = false
-var _estilo_placa: StyleBoxFlat
 
 
 func _ready() -> void:
@@ -145,17 +160,19 @@ func _exibir() -> void:
 	outro.ativo = false
 	# Placa só com o NOME (D-046), encostada no lado de quem fala.
 	placa.visible = true
+	placa.texture = FolhaSprite.carregar(PASTA_PLACAS + PLACAS.get(moldura, PLACAS["humano"]))
 	nome.text = nome_falante.to_upper()
-	_estilo_placa.border_color = cor
+	nome.add_theme_color_override("font_color", COR_TEXTO_PLACA_ECO if moldura == "eco" else COR_TEXTO_PLACA)
 	var tamanho_nome: Vector2 = Fontes.placa().get_string_size(nome.text, HORIZONTAL_ALIGNMENT_LEFT, -1, Fontes.TAMANHO_PLACA)
-	placa.size = Vector2(maxf(tamanho_nome.x + FAIXA_PLACA + RESPIRO_PLACA.x * 2.0, 56.0), tamanho_nome.y + RESPIRO_PLACA.y * 2.0)
-	nome.position = Vector2(FAIXA_PLACA + RESPIRO_PLACA.x, RESPIRO_PLACA.y)
-	nome.size = Vector2(tamanho_nome.x + 1.0, tamanho_nome.y)
-	var y_placa: float = caixa.position.y - placa.size.y + 2.0
+	placa.size = Vector2(maxf(tamanho_nome.x + RESPIRO_PLACA * 2.0, 48.0), ALTURA_PLACA)
+	nome.size = Vector2(placa.size.x, ALTURA_PLACA)
+	nome.position = Vector2.ZERO
+	# Logo acima do canto de cima da caixa, do lado de quem fala (mockup v08 da ART).
+	var y_placa: float = caixa.position.y - placa.size.y - 3.0
 	if lado == "direita":
-		placa.position = Vector2(caixa.position.x + caixa.size.x - placa.size.x - 10.0, y_placa)
+		placa.position = Vector2(caixa.position.x + caixa.size.x - placa.size.x + 3.0, y_placa)
 	else:
-		placa.position = Vector2(caixa.position.x + 10.0, y_placa)
+		placa.position = Vector2(caixa.position.x - 3.0, y_placa)
 
 
 func _process(delta: float) -> void:
@@ -241,15 +258,17 @@ func _montar() -> void:
 	direcao.size = Vector2(caixa.size.x - 44, 12)
 	direcao.clip_text = true
 
-	placa = Panel.new()
+	placa = NinePatchRect.new()
+	placa.patch_margin_left = MARGEM_PLACA
+	placa.patch_margin_top = MARGEM_PLACA
+	placa.patch_margin_right = MARGEM_PLACA
+	placa.patch_margin_bottom = MARGEM_PLACA
+	placa.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 	placa.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	_estilo_placa = StyleBoxFlat.new()
-	_estilo_placa.bg_color = COR_FUNDO_PLACA
-	_estilo_placa.border_width_left = FAIXA_PLACA
-	_estilo_placa.border_width_bottom = 1
-	placa.add_theme_stylebox_override("panel", _estilo_placa)
 	add_child(placa)
 	nome = _rotulo(placa, Fontes.placa(), Fontes.TAMANHO_PLACA, COR_TEXTO_PLACA)
+	nome.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	nome.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 
 	rapida = MolduraDialogo.new()
 	rapida.mostrar_seta = false

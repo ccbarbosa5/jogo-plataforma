@@ -96,12 +96,18 @@ func _ready() -> void:
 	add_to_group("jogadores")
 	if parametros == null:
 		parametros = ParametrosJogador.new()
+	if assistencias == null:
+		assistencias = Assistencias.new()
 	if entrada == null:
 		entrada = EntradaLocal.new()
 		# Mira com o mouse (D-052): cursor em cruz.
 		Input.set_default_cursor_shape(Input.CURSOR_CROSS)
-	if assistencias == null:
-		assistencias = Assistencias.new()
+		# Jogador de verdade: mira e tiro automáticos vêm das Opções (D-054). Cópia própria,
+		# para não mexer no recurso compartilhado da cena.
+		var config: Node = get_node_or_null("/root/Config")
+		if config != null:
+			assistencias = assistencias.duplicate()
+			config.aplicar_assistencias(assistencias)
 	for filho in get_children():
 		if filho is Ferramenta:
 			ferramenta = filho
