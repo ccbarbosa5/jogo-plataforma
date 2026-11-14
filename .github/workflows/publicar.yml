@@ -1,0 +1,83 @@
+name: Publicar no itch.io
+
+# Exporta o jogo para Windows e Web e publica com o butler em ccbarbosa/no-rest (D-028, D-051).
+# Roda só quando acionado à mão (aba Actions → "Publicar no itch.io" → Run workflow) ou com uma
+# tag v* (ex.: v0.2.0). Nunca roda a cada PR. A página no itch.io continua em rascunho.
+# A chave fica SÓ no Secret BUTLER_API_KEY do GitHub; nunca no código nem em conversa.
+
+on:
+  workflow_dispatch:
+  push:
+    tags: ["v*"]
+
+env:
+  GODOT_VERSION: 4.5.1
+  ITCH_PROJETO: ccbarbosa/no-rest
+
+jobs:
+  publicar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Conferir o Secret BUTLER_API_KEY
+        env:
+          BUTLER_API_KEY: ${{ secrets.BUTLER_API_KEY }}
+        run: |
+          if [ -z "$BUTLER_API_KEY" ]; then
+            echo "::error title=Falta a chave do itch.io::O Secret BUTLER_API_KEY não existe neste repositório. O dono precisa criar em Settings → Secrets and variables → Actions → New repository secret (nome: BUTLER_API_KEY; valor: a chave de https://itch.io/user/settings/api-keys). Ninguém cola a chave em conversa."
+            exit 1
+          fi
+
+      - name: Baixar Godot ${{ env.GODOT_VERSION }} e os export templates
+        run: |
+          curl -sSfL -o godot.zip "https://github.com/godotengine/godot/releases/download/${GODOT_VERSION}-stable/Godot_v${GODOT_VERSION}-stable_linux.x86_64.zip"
+          unzip -q godot.zip
+          mv Godot_v${GODOT_VERSION}-stable_linux.x86_64 godot
+          chmod +x godot
+          curl -sSfL -o templates.tpz "https://github.com/godotengine/godot/releases/download/${GODOT_VERSION}-stable/Godot_v${GODOT_VERSION}-stable_export_templates.tpz"
+          DESTINO="$HOME/.local/share/godot/export_templates/${GODOT_VERSION}.stable"
+          mkdir -p "$DESTINO"
+          # Só os templates usados (Windows e Web): o pacote inteiro tem mais de 1 GB.
+          unzip -q -j templates.tpz "templates/version.txt" "templates/windows_*_x86_64.exe" "templates/web_nothreads_*.zip" -d "$DESTINO"
+          ls -la "$DESTINO"
+
+      - name: Importar o projeto
+        run: |
+          ./godot --headless --path . --import 2>&1 | tee import.log
+          if grep -E "SCRIPT ERROR|Parse Error|ERROR: Failed" import.log; then
+            echo "::error::Erros ao importar o projeto"; exit 1
+          fi
+
+      - name: Exportar Windows e Web
+        run: |
+          mkdir -p builds/windows builds/web
+          ./godot --headless --path . --export-release "Windows Desktop" builds/windows/NoRest.exe
+          ./godot --headless --path . --export-release "Web" builds/web/index.html
+          test -s builds/windows/NoRest.exe || { echo "::error::A exportação para Windows falhou"; exit 1; }
+          test -s builds/web/index.html || { echo "::error::A exportação para Web falhou"; exit 1; }
+          ls -la builds/windows builds/web
+
+      - name: Baixar o butler
+        run: |
+          curl -sSfL -o butler.zip https://broth.itch.zone/butler/linux-amd64/LATEST/archive/default
+          unzip -q butler.zip -d butler
+          chmod +x butler/butler
+          ./butler/butler -V
+
+      - name: Publicar no itch.io
+        env:
+          BUTLER_API_KEY: ${{ secrets.BUTLER_API_KEY }}
+        run: |
+          VERSAO="${GITHUB_REF_NAME}"
+          if [ "${GITHUB_REF_TYPE}" != "tag" ]; then VERSAO="dev-${GITHUB_SHA::7}"; fi
+          ./butler/butler push builds/windows "${ITCH_PROJETO}:windows" --userversion "$VERSAO"
+          ./butler/butler push builds/web "${ITCH_PROJETO}:html5" --userversion "$VERSAO"
+          ./butler/butler status "${ITCH_PROJETO}"
+
+      - name: Guardar os arquivos exportados
+        uses: actions/upload-artifact@v4
+        with:
+          name: no-rest-builds
+          path: builds/
+          retention-days: 14
