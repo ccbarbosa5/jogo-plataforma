@@ -24,6 +24,8 @@ Geradas pelo dono no ChatGPT a partir dos prompts da ART (`ART/prompts/` no proj
 | `assets/sprites/retratos/sete/sete_retratos.png` | `07B_sete_retratos_v1.png` | 07B — Sete, retrato 4 expressões | 2026-11-13 |
 | `assets/sprites/personagens/vossa/vossa_referencia.png` | `08A_vossa_referencia_v1.png` | 08A — Vossa Margem, folha de referência | 2026-11-13 |
 | `assets/sprites/retratos/vossa/vossa_retratos.png` | `08B_vossa_retratos_v1.png` | 08B — Vossa Margem, retrato 3 expressões | 2026-11-13 |
+| `assets/sprites/ui/titulo/logo_no_rest.png` | `09A_logo_v3.png` (v1 e v2 guardadas, não usadas) | 09A — logo de No Rest | 2026-11-14 |
+| `assets/sprites/ui/titulo/fundo_titulo_ia.png` | `09B_fundo_titulo_v1.png` | 09B — fundo da tela de título | 2026-11-14 |
 
 ## Fontes
 | Asset | Autor | Licença |

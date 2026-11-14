@@ -306,6 +306,15 @@ def lista_botoes(tela, x, y, w, itens, foco=0, desativados=(), tam=34, passo=22)
 
 
 def mockup_titulo(lg):
+    pasta = os.path.join(RAIZ, 'assets', 'sprites', 'ui', 'titulo')
+    ia_fundo, ia_logo = os.path.join(pasta, 'fundo_titulo_ia.png'), os.path.join(pasta, 'logo_no_rest.png')
+    if os.path.exists(ia_fundo) and os.path.exists(ia_logo):  # versão definitiva (pacote 09)
+        tela = up(Image.open(ia_fundo).convert('RGBA'))
+        lg = Image.open(ia_logo).convert('RGBA')
+        L = up(lg); tela.alpha_composite(L, ((1920 - L.width) // 2, 90))
+        lista_botoes(tela, 190, 128, 100, ['Continuar', 'Novo jogo', 'Opções', 'Créditos', 'Sair'], foco=0)
+        escrever(tela, (40, 1040), 'v0.2 · protótipo', 22, hx('#a4abb6'), ancora='ls')
+        return tela
     tela = up(fundo_ceu()).convert('RGBA')
     tela.alpha_composite(up(fundo_longe().crop((120, 0, 600, 270))))
     tela.alpha_composite(up(fundo_arena().crop((300, 0, 780, 270))))
