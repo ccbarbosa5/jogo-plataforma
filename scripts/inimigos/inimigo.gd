@@ -355,7 +355,7 @@ func _veio_pela_frente(direcao: Vector2) -> bool:
 
 
 func _causar_dano_contato() -> void:
-	if dano_contato <= 0 or _contato == null:
+	if dano_contato <= 0 or _contato == null or not _contato.monitoring:
 		return
 	for corpo in _contato.get_overlapping_bodies():
 		if corpo.has_method("receber_ataque"):

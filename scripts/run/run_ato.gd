@@ -24,6 +24,7 @@ var numero_sala: int = -1
 var tela_arvore: TelaArvore
 var tela_recompensa: TelaRecompensa
 var _trocando: bool = false
+var barra_chefe: BarraChefe
 
 
 func _ready() -> void:
@@ -45,6 +46,8 @@ func _ready() -> void:
 	tela_recompensa = TelaRecompensa.new()
 	add_child(tela_recompensa)
 	tela_recompensa.entrada = jogador.entrada
+	barra_chefe = BarraChefe.new()
+	hud.add_child(barra_chefe)
 	carregar_sala(0)
 
 
@@ -64,7 +67,8 @@ func carregar_sala(n: int) -> SalaRun:
 	sala.porta_escolhida.connect(_ao_escolher_porta)
 	sala.concluida.connect(_ao_concluir_sala)
 	sala.inimigo_morreu.connect(_ao_inimigo_morrer)
-	sala.arena_comecou.connect(func() -> void: hud.mostrar_mensagem("ALERTA!", 1.0))
+	sala.arena_comecou.connect(_ao_comecar_arena)
+	sala.chefe_apareceu.connect(func(c: UrKesh) -> void: barra_chefe.chefe = c)
 	jogador.global_position = sala.inicio
 	jogador.velocity = Vector2.ZERO
 	jogador.posicao_segura = sala.inicio
@@ -82,9 +86,6 @@ func _tocar_fala_de_entrada(plano: Dictionary) -> void:
 		"loja":
 			if not Dialogos.tocar("loja_primeira"):
 				Dialogos.tocar("loja_entrada")
-		"chefe":
-			if not Dialogos.tocar("urkesh_primeiro"):
-				Dialogos.tocar("urkesh_entrada")
 
 
 ## Créditos por inimigo (GD-02 §6.5) e +5 quando a facção rival mata (§4.4).
@@ -93,6 +94,16 @@ func _ao_inimigo_morrer(inimigo: Inimigo, pela_rival: bool) -> void:
 	if pela_rival:
 		ganho += 5
 	jogador.creditos += ganho
+
+
+func _ao_comecar_arena() -> void:
+	if sala.plano["tipo"] != "chefe":
+		hud.mostrar_mensagem("ALERTA!", 1.0)
+		return
+	# Encontro com Ur-Kesh (NAR-01): 1ª vez ou entradas que reagem à run.
+	Progresso.incrementar("urkesh_encontros")
+	if not Dialogos.tocar("urkesh_primeiro"):
+		Dialogos.tocar("urkesh_entrada")
 
 
 func _ao_concluir_sala() -> void:
@@ -104,12 +115,23 @@ func _ao_concluir_sala() -> void:
 		_fim_do_ato()
 
 
-## Fim provisório do Ato 1: o chefe Ur-Kesh entra na tarefa 5.
+## Vitória sobre Ur-Kesh (GD-02 §5): Núcleos, Dados e, na 1ª vez, o Bramido (NAR-03).
+## No VS a run termina aqui ("Continua no Ato 2"); o Ponto de Aprimoramento vale para o ato seguinte.
 func _fim_do_ato() -> void:
-	jogador.ganhar_aprimoramento(1)  # o chefe dá 1 Ponto garantido (GD-01 §7.2)
+	var primeira: bool = not Progresso.tem_flag("bramido_liberado")
+	Progresso.incrementar("urkesh_vitorias")
 	Progresso.incrementar("vitorias_ato1")
+	Progresso.incrementar("nucleos", 50)
+	Progresso.incrementar("dados", 25 if primeira else 10)
+	Progresso.incrementar("duvida")  # D-034: vitórias também contam
+	Dialogos.tocar("vitoria")
+	Progresso.definir_flag("bramido_liberado")
 	Progresso.salvar()
-	hud.mostrar_mensagem("FIM DO ATO 1\n(o chefe Ur-Kesh entra na próxima etapa)\nR: nova run")
+	barra_chefe.chefe = null
+	var texto: String = "VITÓRIA SOBRE UR-KESH\n+50 Núcleos · +%d Dados" % (25 if primeira else 10)
+	if primeira:
+		texto += "\nBramido liberado no Arsenal"
+	hud.mostrar_mensagem(texto + "\nContinua no Ato 2 · R: nova run")
 
 
 func _ao_escolher_porta(porta: PortaSaida) -> void:
@@ -173,6 +195,10 @@ func _unhandled_input(evento: InputEvent) -> void:
 
 
 func _ao_jogador_morrer(_j: Jogador) -> void:
+	if sala != null and sala.plano.get("tipo", "") == "chefe" and sala.arena_ativa:
+		Progresso.incrementar("mortes_urkesh")
+		Progresso.definir_flag("1a_morte_urkesh")
+		Dialogos.tocar("urkesh_mata_ryker")
 	Progresso.incrementar("mortes_total")
 	Progresso.definir_flag("1a_morte")
 	Progresso.salvar()  # Núcleos e Dados ficam (GD-01 §8)
