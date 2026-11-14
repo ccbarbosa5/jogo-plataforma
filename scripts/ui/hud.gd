@@ -8,6 +8,11 @@ extends CanvasLayer
 var _timer_mensagem: float = 0.0
 
 
+func _ready() -> void:
+	# Fonte das falas também nas mensagens (vale mesmo se o HUD nascer antes do autoload).
+	mensagem.add_theme_font_override("font", Fontes.texto())
+
+
 func conectar(jogador: Jogador) -> void:
 	painel.jogador = jogador
 

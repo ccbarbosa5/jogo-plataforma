@@ -51,6 +51,8 @@ var _puxado_por: Node2D
 var _velocidade_puxao: float = 0.0
 var _contato: Area2D
 var _timer_entrada: float = 0.0
+## Armadura quebrada por um tempo (Bramido B2); volta quando o timer acaba.
+var _timer_armadura_quebrada: float = 0.0
 
 
 func _ready() -> void:
@@ -155,9 +157,10 @@ func receber_ataque(info: InfoDano) -> bool:
 		info.autor.registrar_dano_causado(dano)
 	if not vida.esta_vivo():
 		return true
+	# fator_efeito (GD-05 §2.3): o Bramido divide os efeitos "ao acertar" entre os balins.
 	if info.abalo > 0.0:
-		adicionar_abalo(info.abalo)
-	if info.acidos > 0:
+		adicionar_abalo(info.abalo * info.fator_efeito)
+	if info.acidos > 0 and randf() < info.fator_efeito:
 		adicionar_acido(info.acidos, info.autor)
 	if info.empurrao != Vector2.ZERO:
 		empurrar(info.empurrao)
@@ -210,11 +213,31 @@ func empurrar(impulso: Vector2) -> void:
 	_timer_empurrao = 0.2
 
 
+## Coice do Bramido: desloca na hora `deslocamento` px (leves e médios; pesados não se mexem).
+func deslocar(deslocamento: Vector2) -> void:
+	if peso == Peso.PESADO or deslocamento == Vector2.ZERO:
+		return
+	move_and_collide(deslocamento)
+
+
+## Abre-Couraça (Bramido B2): a armadura frontal some por `segundos` e depois volta.
+func quebrar_armadura(segundos: float) -> void:
+	if not armadura_frontal and _timer_armadura_quebrada <= 0.0:
+		return  # não tinha armadura (ou o Grilhão já arrancou)
+	armadura_frontal = false
+	_timer_armadura_quebrada = maxf(_timer_armadura_quebrada, segundos)
+
+
+func armadura_quebrada() -> bool:
+	return _timer_armadura_quebrada > 0.0
+
+
 ## Grilhão em alvo Médio com proteção: arranca a armadura (GD-02, 1.1).
 func arrancar_protecao() -> bool:
-	if not armadura_frontal:
+	if not armadura_frontal and _timer_armadura_quebrada <= 0.0:
 		return false
 	armadura_frontal = false
+	_timer_armadura_quebrada = 0.0  # arrancada de vez
 	return true
 
 
@@ -282,6 +305,10 @@ func _atualizar_status(delta: float) -> void:
 	var r: RegrasCombate = Combate.regras
 	_timer_flash = maxf(_timer_flash - delta, 0.0)
 	_timer_empurrao = maxf(_timer_empurrao - delta, 0.0)
+	if _timer_armadura_quebrada > 0.0:
+		_timer_armadura_quebrada -= delta
+		if _timer_armadura_quebrada <= 0.0:
+			armadura_frontal = true
 	if _timer_atordoado > 0.0:
 		_timer_atordoado -= delta
 		if _timer_atordoado <= 0.0:

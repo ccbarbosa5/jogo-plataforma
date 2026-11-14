@@ -10,6 +10,10 @@ signal morreu(jogador: Jogador)
 signal atirou(projetil: Projetil)
 signal golpeou(alvos: Array[Inimigo])
 signal lancou_granada(granada: Granada)
+## Ganhou um Ponto de Aprimoramento (porta, chefe, loja): a sala abre a tela da árvore.
+signal ganhou_aprimoramento(jogador: Jogador)
+## Apertou Interagir (lojas, portas, NPCs).
+signal interagiu(jogador: Jogador)
 
 ## Hitbox (o sprite do Ryker tem 16×32 px; GD-01 3.2).
 const LARGURA: float = 12.0
@@ -22,6 +26,8 @@ const TEMPO_ATRAVESSAR_PLATAFORMA: float = 0.25
 @export var arma: DadosArma
 @export var granada: DadosGranada
 @export var assistencias: Assistencias
+## Números das assinaturas e dos nós da árvore (GD-05).
+@export var parametros_armas: ParametrosArmas
 
 @onready var vida: Vida = $Vida
 @onready var forma: CollisionShape2D = $Forma
@@ -30,6 +36,11 @@ var entrada: EntradaJogador
 ## Onde os projéteis e granadas são criados. Se vazio, usa o pai do jogador.
 var container_projeteis: Node
 var arma_equipada: ArmaEquipada
+## Mini árvore da arma nesta run (GD-05 §2) e o comportamento da arma (assinatura e nós).
+var arvore: ArvoreRun
+var controle_arma: ControleArma
+## Moeda da run (loja Ilo).
+var creditos: int = 0
 var granadas: int = 0
 ## 0 a 100 (Combate.regras.chamado_maximo).
 var barra_chamado: float = 0.0
@@ -50,7 +61,6 @@ var _dash_restante_px: float = 0.0
 var _direcao_dash: int = 1
 var _timer_recarga_dash: float = 0.0
 var _dashes_no_ar: int = 0
-var _cooldown_tiro: float = 0.0
 var _cooldown_golpe: float = 0.0
 var _timer_golpe_visual: float = 0.0
 var _timer_atravessar: float = 0.0
@@ -90,6 +100,12 @@ func _ready() -> void:
 	cargas_dash = parametros.cargas_dash
 	_dashes_no_ar = parametros.dashes_no_ar
 	arma_equipada = ArmaEquipada.new(arma)
+	arvore = ArvoreRun.new(arma_equipada)
+	controle_arma = ControleArma.new(self, parametros_armas)
+	var grilhao := ferramenta as Grilhao
+	if grilhao != null:
+		grilhao.acertou.connect(func(alvo: Node) -> void: controle_arma.marcar(alvo as Inimigo))
+	_iniciar_run()
 	reabastecer_granadas()
 	_aplicar_altura(ALTURA_EM_PE)
 	posicao_segura = global_position
@@ -127,6 +143,8 @@ func _physics_process(delta: float) -> void:
 		_atualizar_ataque(delta)
 		if entrada.granada_pressionada:
 			lancar_granada()
+		if entrada.interagir_pressionado:
+			interagiu.emit(self)
 		if is_on_floor() and _timer_atravessar <= 0.0 and _chao_firme_embaixo():
 			posicao_segura = global_position
 		if global_position.y > limite_queda_y:
@@ -196,11 +214,33 @@ func cancelar_puxao() -> void:
 	_timer_puxao = 0.0
 
 
-## Escolha de arma no Arsenal, antes da run (D-038). Zera os modificadores.
+## Escolha de arma no Arsenal, antes da run (D-038). Zera a árvore e os modificadores.
 func equipar(nova_arma: DadosArma) -> void:
 	arma = nova_arma
 	arma_equipada = ArmaEquipada.new(nova_arma)
-	_cooldown_tiro = 0.0
+	arvore = ArvoreRun.new(arma_equipada)
+	controle_arma.reiniciar()
+	_iniciar_run()
+
+
+## Começo da run: a arma vai para o estado da run (falas) e o Treino com Garrak dá 1 ponto.
+func _iniciar_run() -> void:
+	if arma != null:
+		Progresso.definir_run("arma_atual", String(arma.id))
+	if Progresso.tem_flag("treino_garrak"):
+		arvore.ganhar_pontos(1)
+
+
+## Fim da run (morte ou vitória): a árvore e os pontos zeram (GD-05 §2.1).
+func fim_da_run() -> void:
+	arvore.limpar()
+	controle_arma.reiniciar()
+
+
+## +1 Ponto de Aprimoramento (porta, chefe ou loja). A sala abre a tela da árvore.
+func ganhar_aprimoramento(pontos: int = 1) -> void:
+	arvore.ganhar_pontos(pontos)
+	ganhou_aprimoramento.emit(self)
 
 
 ## Chamado pela sala ao começar (D-036): granadas cheias e 1 s de invulnerabilidade.
@@ -384,6 +424,7 @@ func _tentar_iniciar_dash(no_chao: bool) -> void:
 	olhando = _direcao_dash
 	_subindo_por_pulo = false
 	vida.tornar_invulneravel(parametros.invulnerabilidade_dash)
+	controle_arma.ao_dash()
 
 
 ## Dash horizontal sem gravidade. Anda exatamente distancia_dash (o último passo é parcial).
@@ -429,27 +470,18 @@ func _aplicar_altura(altura: float) -> void:
 # --- Ataque: tiro ou golpe corpo a corpo automático ---
 
 func _atualizar_ataque(delta: float) -> void:
-	_cooldown_tiro -= delta
 	_cooldown_golpe = maxf(_cooldown_golpe - delta, 0.0)
 	var perto: Array[Inimigo] = inimigos_ao_alcance_do_golpe()
-	var quer: bool = entrada.atirar_segurado or (assistencias.tiro_automatico and not perto.is_empty())
-	if not quer:
-		quer = _tiro_automatico_quer_atirar()
-	if not quer:
-		_cooldown_tiro = maxf(_cooldown_tiro, 0.0)
-		return
+	var manual: bool = entrada.atirar_segurado
+	var automatico: bool = not manual and assistencias.tiro_automatico \
+			and (not perto.is_empty() or _tiro_automatico_quer_atirar())
 	# Inimigo colado: o botão de atirar vira golpe de corrente (GD-02, 1.2).
-	if not perto.is_empty():
-		_cooldown_tiro = maxf(_cooldown_tiro, 0.0)
+	if (manual or automatico) and not perto.is_empty():
+		controle_arma.processar(delta, false, false)
 		if _cooldown_golpe <= 0.0:
 			_golpear(perto)
 		return
-	if arma == null or arma.cena_projetil == null:
-		return
-	if _cooldown_tiro > 0.0:
-		return
-	_disparar()
-	_cooldown_tiro = maxf(_cooldown_tiro, -delta) + 1.0 / arma_equipada.cadencia()
+	controle_arma.processar(delta, manual, automatico)
 
 
 func _tiro_automatico_quer_atirar() -> bool:
@@ -492,26 +524,11 @@ func _golpear(alvos: Array[Inimigo]) -> void:
 	golpeou.emit(alvos)
 
 
-func _disparar() -> void:
-	var direcao: Vector2 = Vector2(mira).normalized()
-	var origem: Vector2 = ponto_de_tiro() + direcao * 10.0
-	var destino: Node = container_projeteis if container_projeteis != null else get_parent()
-	var a: ArmaEquipada = arma_equipada
-	var espalhamento: float = a.espalhamento_graus()
-	for i in a.projeteis_por_tiro():
-		var desvio: float = deg_to_rad(randf_range(-espalhamento, espalhamento))
-		var projetil: Projetil = arma.cena_projetil.instantiate()
-		destino.add_child(projetil)
-		projetil.configurar(origem, direcao.rotated(desvio), Unidades.px(a.velocidade_projetil()),
-				InfoDano.criar(a.dano(), self), a.duracao_projetil(),
-				Camadas.PROJETEIS_JOGADOR, Camadas.MUNDO | Camadas.INIMIGOS | Camadas.PONTOS_FRACOS)
-		atirou.emit(projetil)
-
-
 # --- Dano e morte ---
 
 func _ao_levar_dano(_quantidade: int) -> void:
 	_timer_pisca = parametros.invulnerabilidade_dano
+	controle_arma.ao_levar_dano()
 
 
 func _ao_morrer() -> void:
@@ -520,6 +537,7 @@ func _ao_morrer() -> void:
 	_timer_puxao = 0.0
 	if ferramenta != null:
 		ferramenta.cancelar()
+	fim_da_run()
 	morreu.emit(self)
 
 

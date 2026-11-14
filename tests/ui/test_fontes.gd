@@ -41,3 +41,20 @@ func test_creditos_registram_as_fontes() -> void:
 func test_fonte_padrao_do_jogo_e_a_das_falas() -> void:
 	afirmar(ThemeDB.fallback_font == Fontes.texto(), "Label sem fonte própria usa a Jersey 10")
 	afirmar_igual(ThemeDB.fallback_font_size, Fontes.TAMANHO_TEXTO, "tamanho padrão")
+
+
+func test_textos_das_armas_desenham_sem_faltar_caractere() -> void:
+	var fonte := Fontes.texto()
+	var faltando: Dictionary = {}
+	for caminho: String in ["res://scenes/armas/mordida.tres", "res://scenes/armas/bramido.tres"]:
+		var arma: DadosArma = load(caminho)
+		var textos: Array[String] = [arma.nome, arma.assinatura_descricao]
+		textos.append_array(arma.arvore.ramos)
+		for no in arma.arvore.nos:
+			textos.append(no.nome)
+			textos.append(no.descricao)
+		for t in textos:
+			for c in t:
+				if c.unicode_at(0) > 32 and not fonte.has_char(c.unicode_at(0)):
+					faltando[c] = true
+	afirmar(faltando.is_empty(), "caracteres sem desenho: %s" % "".join(faltando.keys()))

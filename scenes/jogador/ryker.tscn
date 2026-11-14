@@ -2,12 +2,13 @@
 
 [ext_resource type="Script" path="res://scripts/jogador/jogador.gd" id="1"]
 [ext_resource type="Resource" path="res://scenes/jogador/parametros_ryker.tres" id="2"]
-[ext_resource type="Resource" path="res://scenes/armas/fuzil_de_servico.tres" id="3"]
+[ext_resource type="Resource" path="res://scenes/armas/mordida.tres" id="3"]
 [ext_resource type="Resource" path="res://scenes/jogador/assistencias_padrao.tres" id="4"]
 [ext_resource type="Script" path="res://scripts/comum/vida.gd" id="5"]
 [ext_resource type="Script" path="res://scripts/jogador/grilhao.gd" id="6"]
 [ext_resource type="Resource" path="res://scenes/armas/granada_padrao.tres" id="7"]
 [ext_resource type="Script" path="res://scripts/jogador/visual_ryker.gd" id="8"]
+[ext_resource type="Resource" path="res://scenes/armas/parametros_armas.tres" id="9"]
 
 [sub_resource type="RectangleShape2D" id="forma"]
 size = Vector2(12, 28)
@@ -20,6 +21,7 @@ parametros = ExtResource("2")
 arma = ExtResource("3")
 granada = ExtResource("7")
 assistencias = ExtResource("4")
+parametros_armas = ExtResource("9")
 
 [node name="Forma" type="CollisionShape2D" parent="."]
 position = Vector2(0, -14)
