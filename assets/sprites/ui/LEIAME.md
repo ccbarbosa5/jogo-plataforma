@@ -45,6 +45,8 @@ Layout sugerido (ver o mockup): ícone da arma + nome + assinatura no topo; pont
 | `fundo_titulo_arena.png` | 960×270, a arena em ruínas com correntes penduradas; rolar mais rápido (≈10 px/s) |
 | `brasa.png` | 3 quadros 3×3: partícula de brasa (`CPUParticles2D`, sobe devagar, 20–30 na tela) |
 
+**Versão definitiva (pacote 09, IA):** `logo_no_rest.png` (259×66, variação 3 de 3; mostrar **×1** na arte = ×4 em 1080p, centralizado, topo em y ≈ 22) e `fundo_titulo_ia.png` (480×270, parado; centro escuro para os botões). Use estes no lugar do logo provisório e das 3 camadas; as **brasas** continuam por cima, e as camadas por código ficam como reserva. Layout: `conceito/mockup_v05_titulo.png`.
+
 **Fundo animado simples:** `ParallaxBackground` com as 3 camadas (`motion_mirroring` = 960 nas duas que rolam) + brasas. Logo no alto, centralizado; botões no centro, embaixo dele; versão pequena no canto de baixo à esquerda. Ver `conceito/mockup_v05_titulo.png`.
 
 ## Menus (D-053, D-054) — `menus/`
