@@ -91,7 +91,7 @@ func mostrar(id_cena: String, falas: Array[Dictionary], modo: String, banco: Ban
 	if _ativa:
 		_encerrar()
 	_id_cena = id_cena
-	_falas = falas
+	_falas = PaginasFala.paginar(falas)
 	_indice = 0
 	_modo = modo
 	_banco = banco
@@ -249,10 +249,10 @@ func _montar() -> void:
 	caixa.position = Vector2(92, 192)
 	caixa.size = Vector2(296, 72)
 	add_child(caixa)
-	texto = _rotulo(caixa, Fontes.texto(), Fontes.TAMANHO_TEXTO, COR_TEXTO)
+	texto = _rotulo(caixa, Fontes.texto(), Fontes.TAMANHO_FALA, COR_TEXTO)
 	texto.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	texto.position = Vector2(14, 9)
-	texto.size = Vector2(caixa.size.x - 28, 46)
+	texto.size = Vector2(PaginasFala.LARGURA, 38)
 	direcao = _rotulo(caixa, Fontes.pequena(), Fontes.TAMANHO_PEQUENA, COR_DIRECAO)
 	direcao.position = Vector2(14, caixa.size.y - 18)
 	direcao.size = Vector2(caixa.size.x - 44, 12)
@@ -273,15 +273,15 @@ func _montar() -> void:
 	rapida = MolduraDialogo.new()
 	rapida.mostrar_seta = false
 	rapida.position = Vector2(132, 4)
-	rapida.size = Vector2(tela.x - 136, 44)
+	rapida.size = Vector2(tela.x - 136, 54)
 	add_child(rapida)
 	rapida_nome = _rotulo(rapida, Fontes.placa(), Fontes.TAMANHO_PEQUENA, Color.WHITE)
 	rapida_nome.position = Vector2(12, 5)
 	rapida_nome.size = Vector2(rapida.size.x - 24, 10)
-	rapida_texto = _rotulo(rapida, Fontes.texto(), Fontes.TAMANHO_TEXTO, COR_TEXTO)
+	rapida_texto = _rotulo(rapida, Fontes.texto(), Fontes.TAMANHO_FALA, COR_TEXTO)
 	rapida_texto.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	rapida_texto.position = Vector2(12, 14)
-	rapida_texto.size = Vector2(rapida.size.x - 24, 28)
+	rapida_texto.size = Vector2(rapida.size.x - 24, 38)
 
 
 func _rotulo(pai: Control, fonte: Font, tamanho_fonte: int, cor: Color) -> Label:
