@@ -97,9 +97,13 @@ static func botao(pai: Control, texto: String, ret: Rect2, acao: Callable, taman
 	return b
 
 
-static func rotulo(pai: Control, texto: String, ret: Rect2, tamanho: int, cor: Color, centro: bool = false) -> Label:
+## `quebra`: quebra linha na largura de `ret` (precisa ser ligada antes de definir o tamanho).
+static func rotulo(pai: Control, texto: String, ret: Rect2, tamanho: int, cor: Color, centro: bool = false,
+		quebra: bool = false) -> Label:
 	var r := Label.new()
 	r.text = texto
+	if quebra:
+		r.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	r.position = ret.position
 	r.add_theme_font_override("font", Fontes.texto())
 	r.add_theme_font_size_override("font_size", tamanho)

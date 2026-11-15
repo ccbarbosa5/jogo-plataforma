@@ -148,10 +148,9 @@ func _abrir_painel(qual: String) -> void:
 			_painel.size = tamanho
 			EstiloMenu.titulo(_painel, "CRÉDITOS", tamanho.x, 8.0)
 			var texto: Label = EstiloMenu.rotulo(_painel, texto_dos_creditos(), Rect2(18, 28, tamanho.x - 36, 118),
-					Fontes.TAMANHO_TEXTO, EstiloMenu.COR_TEXTO)
+					Fontes.TAMANHO_TEXTO, EstiloMenu.COR_TEXTO, false, true)
 			texto.name = "Texto"
 			texto.vertical_alignment = VERTICAL_ALIGNMENT_TOP
-			texto.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 			_botoes_painel.append(EstiloMenu.botao(_painel, "Voltar", Rect2((tamanho.x - 99) * 0.5, 152, 99, 16), _fechar_painel))
 	_painel.position = ((TELA - tamanho) * 0.5).round()
 	_focar.call_deferred(_botoes_painel[0])

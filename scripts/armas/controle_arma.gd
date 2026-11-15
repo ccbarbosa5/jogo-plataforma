@@ -69,6 +69,11 @@ func reiniciar() -> void:
 	balas = tamanho_carregador()
 
 
+## Uma Gambiarra nova pode mudar o tamanho do carregador: começa cheio.
+func reiniciar_carregador() -> void:
+	balas = tamanho_carregador()
+
+
 ## 1 = sem carregador. Cano Duplo ou Carregador de Arena: 2; os dois juntos: 3.
 func tamanho_carregador() -> int:
 	return 1 + contar(&"cano_duplo") + contar(&"carregador_arena")
