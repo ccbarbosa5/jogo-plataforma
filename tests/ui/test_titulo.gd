@@ -118,7 +118,7 @@ func test_creditos_mostram_fonte_e_motor() -> void:
 	t.ativar("Créditos")
 	afirmar_igual(t.sobreposicao, "creditos", "abriu Créditos")
 	var texto: String = TelaTitulo.texto_dos_creditos()
-	for trecho in ["Atkinson Hyperlegible", "OFL", "Godot Engine", "CREDITS.md"]:
+	for trecho in ["Open Sans", "OFL", "Godot Engine", "CREDITS.md"]:
 		afirmar(texto.contains(trecho), "créditos citam %s" % trecho)
 	t.ativar("Voltar")
 	afirmar_igual(t.sobreposicao, "", "Voltar fecha")

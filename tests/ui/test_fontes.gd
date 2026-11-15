@@ -40,6 +40,12 @@ func test_fonte_padrao_do_jogo_e_a_das_falas() -> void:
 
 # --- D-056: texto nítido na resolução nativa da tela ---
 
+func test_fonte_e_a_open_sans_d060() -> void:
+	afirmar(Fontes.texto().get_font_name().begins_with("Open Sans"), "texto em Open Sans")
+	afirmar(Fontes.placa() is FontVariation and (Fontes.placa() as FontVariation).base_font == Fontes.texto(),
+			"placa, botões e títulos: a mesma fonte engrossada")
+
+
 func test_texto_e_desenhado_na_resolucao_da_tela() -> void:
 	# "canvas_items": o texto é rasterizado no tamanho real da janela; o mundo segue em 480×270.
 	afirmar_igual(ProjectSettings.get_setting("display/window/stretch/mode"), "canvas_items", "modo de escala")

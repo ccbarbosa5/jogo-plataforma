@@ -3,7 +3,7 @@ NO REST — Estúdio No Rest
 Design, programação, arte, narrativa e direção: equipe do estúdio.
 Arte grande (retratos, logo e fundo do título): gerada com IA e tratada pela ART.
 
-Fonte: Atkinson Hyperlegible — Braille Institute (licença OFL 1.1).
+Fonte: Open Sans — Steve Matteson (licença OFL 1.1), embutida no Godot.
 Feito com Godot Engine — godotengine.org (licença MIT).
 
 Lista completa dos recursos e licenças: assets/CREDITS.md

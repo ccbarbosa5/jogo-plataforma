@@ -16,12 +16,11 @@ const CENAS_INIMIGOS: Dictionary = {
 	"brutamontes": "res://scenes/inimigos/brutamontes.tscn",
 	"ceifadora": "res://scenes/inimigos/ceifadora.tscn",
 	"urkesh": "res://scenes/inimigos/ur_kesh.tscn",
-	"soldado": "res://scenes/inimigos/soldado_kharn.tscn",
 	"elite": "res://scenes/inimigos/guerreiro_elite.tscn",
 }
 ## Marcadores dos blocos para inimigos colocados à mão.
 const MARCADORES_INIMIGOS: Dictionary = {
-	"G": "guerreiro", "T": "artilheiro", "W": "muralha", "Z": "zangao", "C": "cuspidor", "N": "ninho", "S": "soldado",
+	"G": "guerreiro", "T": "artilheiro", "W": "muralha", "Z": "zangao", "C": "cuspidor", "N": "ninho",
 }
 const SUBSTITUTO: String = "guerreiro"
 const FALAS: Dictionary = {"1": "queda_saida", "2": "queda_inimigo_grande", "4": "reliquia"}
@@ -73,7 +72,7 @@ static func montar(plano: Dictionary, banco: BancoBlocos) -> SalaRun:
 						sala.inicio = pe
 					"D":
 						sala.pontos_porta.append(pe)
-					"G", "T", "W", "Z", "C", "N", "S":
+					"G", "T", "W", "Z", "C", "N":
 						sala.inimigos_fixos.append({"tipo": MARCADORES_INIMIGOS[c], "posicao": pe})
 					"M":
 						# Loja do Ilo (GD-02 §6.5): três bancas lado a lado.
