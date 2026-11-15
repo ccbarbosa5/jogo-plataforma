@@ -84,6 +84,10 @@ var _ponto_fraco_falado: bool = false
 var _rugido_cooldown: float = 0.0
 
 
+func _init() -> void:
+	pulo_tiles = 0.0  # o chefe não pula (D-071)
+
+
 func _ready() -> void:
 	tamanho = tamanho_andador
 	super()
