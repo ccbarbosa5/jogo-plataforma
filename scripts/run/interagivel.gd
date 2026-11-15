@@ -9,6 +9,7 @@ const GRUPO: StringName = &"interagiveis"
 const COR_NOME: Color = Color("eceff4")
 const COR_DESCRICAO: Color = Color("a7adba")
 const COR_TECLA: Color = Color("ffc95c")
+const COR_EXTRA: Color = Color("4fb0a6")
 
 ## Área de toque (centrada no meio da área de baixo para cima, em px).
 var tamanho_area: Vector2 = Vector2(24, 40)
@@ -47,6 +48,11 @@ func titulo() -> String:
 
 
 func descricao() -> String:
+	return ""
+
+
+## Linha extra (ex.: Leitura de Sinal na porta).
+func extra() -> String:
 	return ""
 
 
@@ -135,6 +141,8 @@ func desenhar_dica(y: float) -> void:
 		linhas.append([titulo(), COR_NOME])
 	if not descricao().is_empty():
 		linhas.append([descricao(), COR_DESCRICAO])
+	if not extra().is_empty():
+		linhas.append([extra(), COR_EXTRA])
 	linhas.append([texto_tecla(), COR_TECLA])
 	var altura: float = fonte.get_height(tam)
 	var largura: float = 0.0
