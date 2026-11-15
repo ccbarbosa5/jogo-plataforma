@@ -10,8 +10,8 @@ func test_soldado_kharn_provisorio_foi_apagado() -> void:
 
 func test_loja_cura_40_ate_2_e_dadivas_80() -> void:
 	afirmar_igual(LojaIlo.ITENS[&"cura"], ["Cura (1 bloco)", 40, 2], "Cura: 40, até 2")
-	afirmar_igual(LojaIlo.ITENS[&"dadiva_kharn"][1], 80, "Dádiva Kharn: 80")
-	afirmar_igual(LojaIlo.ITENS[&"dadiva_vesh"][1], 80, "Dádiva Vesh: 80")
+	afirmar_igual(LojaIlo.ITENS[&"dadiva_kharn"][1], 80, "Oferta Kharn: 80")
+	afirmar_igual(LojaIlo.ITENS[&"dadiva_vesh"][1], 80, "Oferta Vesh: 80")
 	afirmar(not LojaIlo.ITENS.has(&"aprimoramento_de_arma"), "sem Aprimoramento")
 
 

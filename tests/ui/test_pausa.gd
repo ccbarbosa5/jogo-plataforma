@@ -70,7 +70,7 @@ func test_esc_volta_uma_tela_e_fecha_na_principal() -> void:
 
 func test_nao_abre_por_cima_de_outra_tela_que_pausou() -> void:
 	_com_jogador()
-	tree.paused = true  # ex.: diálogo ou oferta de dádiva aberta
+	tree.paused = true  # ex.: diálogo ou oferta de oferta aberta
 	afirmar(not _pausa().abrir(), "não abre por cima")
 	tree.paused = false
 	_limpar()

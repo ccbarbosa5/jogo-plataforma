@@ -1,6 +1,6 @@
 class_name TelaRecompensa
 extends CanvasLayer
-## Tela de oferta de dádiva de facção (GD-01 §6.3): 3 opções da mesma facção, o jogador pega 1.
+## Tela de oferta de oferta de facção (GD-01 §6.3): 3 opções da mesma facção, o jogador pega 1.
 ## Moldura da facção; cor do nome pela raridade; avisa quando a escolha substitui o upgrade
 ## do mesmo slot (GD-01 §6.1). Antes das opções, a patrona fala (NAR-01: KHAR_*, VESH_*);
 ## a parte marcada "[depois da escolha]" toca depois que o jogador escolhe.
@@ -178,7 +178,7 @@ func _falas_finais(dual: bool) -> void:
 	if caixa != null and not _falas_depois.is_empty():
 		caixa.mostrar(_id_cena, _falas_depois, "conversa", Dialogos.banco)
 		await caixa.terminou
-	# 1ª vez com dádivas das duas facções (NAR-01, DUAL_*).
+	# 1ª vez com ofertas das duas facções (NAR-01, DUAL_*).
 	if dual and caixa != null and Dialogos.tocar("dual"):
 		await caixa.terminou
 	_fechar()
@@ -327,7 +327,7 @@ func _desenhar() -> void:
 	var c: Control = desenho
 	var fonte: Font = Fontes.texto()
 	var pequena: Font = Fontes.pequena()
-	c.draw_string(fonte, Vector2(PAINEL.position.x + 14.0, 34.0), "DÁDIVA · " + catalogo.nome.to_upper(),
+	c.draw_string(fonte, Vector2(PAINEL.position.x + 14.0, 34.0), "OFERTA · " + catalogo.nome.to_upper(),
 			HORIZONTAL_ALIGNMENT_LEFT, -1, Fontes.TAMANHO_TEXTO, catalogo.cor)
 	c.draw_string(pequena, Vector2(PAINEL.end.x - 214.0, 34.0), "Escolha 1",
 			HORIZONTAL_ALIGNMENT_RIGHT, 200, Fontes.TAMANHO_PEQUENA, COR_APAGADO)

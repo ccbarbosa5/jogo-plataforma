@@ -292,7 +292,7 @@ func equipar(nova_arma: DadosArma) -> void:
 		Progresso.definir_run("arma_atual", String(arma.id))
 
 
-## Fim da run (morte ou vitória): as Gambiarras e as dádivas somem (GD-07 §5.1).
+## Fim da run (morte ou vitória): as Gambiarras e as ofertas somem (GD-07 §5.1).
 func fim_da_run() -> void:
 	arma_equipada.limpar()
 	upgrades.limpar()

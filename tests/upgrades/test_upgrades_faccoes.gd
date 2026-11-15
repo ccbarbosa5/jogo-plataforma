@@ -428,7 +428,7 @@ func test_tela_oferta_kharn_com_falas_antes_e_depois() -> void:
 	afirmar(tela.esta_escolhendo(), "3 opções na tela")
 	afirmar_igual(tela.ofertas.size(), 3, "3 opções")
 	var u := tela.escolher(1)
-	afirmar(j.upgrades.tem(u.id), "pegou a dádiva")
+	afirmar(j.upgrades.tem(u.id), "pegou a oferta")
 	afirmar(caixa.esta_ativa() and caixa.fala_atual()["id"] == "KHAR_06", "fala de depois da escolha")
 	caixa.avancar()
 	await tree.process_frame

@@ -34,11 +34,11 @@ func _ready() -> void:
 
 
 func titulo() -> String:
-	return "Reparo" if tipo == "cura" else "Dádiva extra"
+	return "Reparo" if tipo == "cura" else "Oferta extra"
 
 
 func descricao() -> String:
-	return "Cura %d blocos de vida" % CURA_BLOCOS if tipo == "cura" else "Escolha 1 de 3 dádivas"
+	return "Cura %d blocos de vida" % CURA_BLOCOS if tipo == "cura" else "Escolha 1 de 3 ofertas"
 
 
 func texto_tecla() -> String:
@@ -81,7 +81,7 @@ func _draw() -> void:
 		cor = Color("3f4250")
 	draw_rect(Rect2(-10, -8, 20, 8), Color("4b4753"))
 	draw_rect(Rect2(-6, -22, 12, 14), Color(cor, 0.9))
-	var texto: String = "Cura: +2 blocos" if tipo == "cura" else "Dádiva extra"
+	var texto: String = "Cura: +2 blocos" if tipo == "cura" else "Oferta extra"
 	if e_a_vez():
 		desenhar_dica(-28 + roundf(sin(Time.get_ticks_msec() / 400.0)))
 	elif not desligada:

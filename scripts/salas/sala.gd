@@ -93,7 +93,7 @@ func _atalhos_de_teste(evento: InputEvent) -> void:
 		else:
 			Dialogos.tocar("arsenal_escolha_mordida")
 	if evento.is_action_pressed("debug_oferta") and not catalogos_faccoes.is_empty() and not tela_recompensa.esta_aberta():
-		# Abre uma oferta de dádiva, alternando as facções.
+		# Abre uma oferta de oferta, alternando as facções.
 		tela_recompensa.abrir(jogador, catalogos_faccoes[_oferta_debug % catalogos_faccoes.size()])
 		_oferta_debug += 1
 	if evento.is_action_pressed("debug_apagar_progresso"):
@@ -145,7 +145,7 @@ func _concluir_arena() -> void:
 	arena_concluida = true
 	_ativar_paredes(false)
 	hud.mostrar_mensagem("SALA LIMPA!")
-	# Saídas da sala (GD-01 §7.1): dádiva Kharn e dádiva Vesh. O jogador pega 1; a outra some.
+	# Saídas da sala (GD-01 §7.1): oferta Kharn e oferta Vesh. O jogador pega 1; a outra some.
 	var centro: float = limites_arena.get_center().x
 	for i in catalogos_faccoes.size():
 		var pf := PortaFaccao.new()
