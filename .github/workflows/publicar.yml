@@ -73,7 +73,24 @@ jobs:
           if [ "${GITHUB_REF_TYPE}" != "tag" ]; then VERSAO="dev-${GITHUB_SHA::7}"; fi
           ./butler/butler push builds/windows "${ITCH_PROJETO}:windows" --userversion "$VERSAO"
           ./butler/butler push builds/web "${ITCH_PROJETO}:html5" --userversion "$VERSAO"
-          ./butler/butler status "${ITCH_PROJETO}"
+
+      - name: Conferir os dois canais no itch.io
+        env:
+          BUTLER_API_KEY: ${{ secrets.BUTLER_API_KEY }}
+        run: |
+          # O itch processa os builds depois do envio: espera até ~5 min os dois canais aparecerem prontos.
+          for tentativa in $(seq 1 20); do
+            SAIDA="$(./butler/butler status "${ITCH_PROJETO}" 2>&1 || true)"
+            if echo "$SAIDA" | grep -q "windows" && echo "$SAIDA" | grep -q "html5" && ! echo "$SAIDA" | grep -qi "processing"; then
+              echo "$SAIDA"
+              echo "Os dois canais estão no itch.io."
+              exit 0
+            fi
+            echo "Ainda processando (tentativa $tentativa)..."
+            sleep 15
+          done
+          echo "$SAIDA"
+          echo "::warning::Os builds foram enviados, mas o itch ainda não terminou de processar. Confira a página de edição do jogo."
 
       - name: Guardar os arquivos exportados
         uses: actions/upload-artifact@v4
