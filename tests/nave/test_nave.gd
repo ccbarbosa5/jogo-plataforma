@@ -66,22 +66,45 @@ func test_desbloqueios_com_dados_ligam_as_flags() -> void:
 	p.free()
 
 
-func test_melhorias_valem_no_comeco_da_run() -> void:
+func test_arvore_passiva_vale_no_comeco_da_run() -> void:
+	# GD-07 §3 (D-058): a árvore Passiva substitui a lista de melhorias permanentes.
 	CenarioTeste.criar_chao(self)
 	var j := CenarioTeste.criar_jogador(self)
 	var p := _progresso()
-	for par in [["blindagem", 1], ["cinto_granadas", 2], ["propulsores", 1], ["contato_mercado", 2], ["recalibrar", 1], ["sinal_emergencia", 1]]:
+	for par in [["blindagem", 1], ["passada", 2], ["pernas_de_mineiro", 1], ["propulsores", 2],
+			["contato_mercado", 2], ["recalibrar", 1], ["sinal_emergencia", 1], ["memoria_da_ancora", 3], ["coleta_fina", 2]]:
 		p.contadores["melhoria_" + par[0]] = par[1]
 	var vida: int = j.vida.maxima
-	var granadas: int = j.granada.por_sala
-	var dash: int = j.parametros.cargas_dash
+	var original: ParametrosJogador = j.parametros
 	MelhoriasPermanentes.aplicar(j, p)
 	afirmar_igual(j.vida.maxima, vida + 1, "Blindagem: +1 bloco")
-	afirmar_igual([j.granada.por_sala, j.granadas], [granadas + 2, granadas + 2], "Cinto: +2 granadas por sala")
-	afirmar_igual(j.parametros.cargas_dash, dash + 1, "Propulsores: +1 dash")
+	afirmar_proximo(j.parametros.velocidade_corrida, original.velocidade_corrida * 1.10, 0.001, "Passada: +5% por nível")
+	afirmar_proximo(j.parametros.altura_pulo, original.altura_pulo * 1.06, 0.001, "Pernas de Mineiro: +6%")
+	afirmar_proximo(j.parametros.recarga_dash, original.recarga_dash - 0.2, 0.001, "Propulsores: −0,1 s por nível")
 	afirmar_igual(j.creditos, 60, "Contato: 30 Créditos por nível")
 	afirmar_igual([j.rerolls, j.retornos], [1, 1], "Recalibrar e Sinal de Emergência")
-	afirmar_igual((load("res://scenes/jogador/parametros_ryker.tres") as ParametrosJogador).cargas_dash, dash, "o recurso original não muda")
+	afirmar_proximo(MelhoriasPermanentes.mult_xp(p), 1.3, 0.001, "Memória da Âncora: +30% de XP")
+	afirmar_proximo(MelhoriasPermanentes.mult_nucleos(p), 1.2, 0.001, "Coleta Fina: +20% de Núcleos")
+	afirmar_proximo((load("res://scenes/jogador/parametros_ryker.tres") as ParametrosJogador).velocidade_corrida,
+			original.velocidade_corrida, 0.001, "o recurso original não muda")
+	p.free()
+
+
+func test_arvore_passiva_custa_1210_nucleos_e_o_sinal_exige_blindagem() -> void:
+	var m := MelhoriasPermanentes.new()
+	var total: int = 0
+	var ids: Array[String] = []
+	for i in m.do_lugar("vossa"):
+		ids.append(i["id"])
+		for c in i["custos"]:
+			total += int(c)
+	afirmar_igual(total, 1210, "total do GD-07 §3")
+	afirmar_igual(ids.size(), 9, "9 nós")
+	afirmar(not "cinto_granadas" in ids, "o Cinto foi para a árvore de Combate")
+	var p := _progresso()
+	p.incrementar("nucleos", 500)
+	afirmar(not m.comprar("sinal_emergencia", p), "Sinal de Emergência exige Blindagem 1")
+	afirmar(m.comprar("blindagem", p) and m.comprar("sinal_emergencia", p), "depois da Blindagem, compra")
 	p.free()
 
 
@@ -93,7 +116,7 @@ func test_sinal_de_emergencia_volta_uma_vez() -> void:
 	j.voltou.connect(func(_j: Jogador) -> void: voltas[0] += 1)
 	j.vida.receber_dano(99, true)
 	afirmar(not j.esta_morto(), "a ECO puxa de volta")
-	afirmar_igual(j.vida.atual, ceili(j.vida.maxima / 2.0), "com metade da vida")
+	afirmar_igual(j.vida.atual, 2, "com 2 blocos (GD-07 §3)")
 	afirmar_igual(voltas[0], 1, "avisou")
 	j.vida.receber_dano(99, true)
 	afirmar(j.esta_morto(), "só uma vez por run")
@@ -145,11 +168,12 @@ func test_nave_presencas_reconstrucao_e_menus() -> void:
 	nave.atualizar_presencas()
 	afirmar(nave.garrak.visible and nave.vossa.visible, "depois da 1ª morte, eles chegam")
 	var armas := nave.opcoes_arsenal()
-	afirmar_igual(armas.size(), 3, "Mordida, Bramido e Treino")
-	afirmar(not armas[1]["pode"], "Bramido ainda não")
+	afirmar_igual(armas.size(), 4, "Árvore de Combate, Mordida, Bramido e Treino")
+	afirmar_igual(armas[0]["nome"], "Árvore de Combate", "a árvore vem primeiro")
+	afirmar(not armas[2]["pode"], "Bramido ainda não")
 	Progresso.definir_flag("bramido_liberado")
 	nave.tela.abrir("Arsenal", "kharn", nave.opcoes_arsenal)
-	afirmar(nave.tela.confirmar(1), "escolheu o Bramido")
+	afirmar(nave.tela.confirmar(2), "escolheu o Bramido")
 	afirmar_igual(Ciclo.arma_escolhida, &"bramido", "Ciclo guarda a arma")
 	nave.tela.fechar()
 	_fechar_falas()

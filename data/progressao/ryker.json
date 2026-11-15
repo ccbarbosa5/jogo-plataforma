@@ -1,0 +1,241 @@
+{
+ "_nota": "GD-07 §4 (D-058). Progressão permanente do Ryker: XP, nível e árvore de Combate. Ajuste aqui, não no código.",
+ "xp": {
+  "base": 60,
+  "por_nivel": 20,
+  "nivel_maximo": 25,
+  "por_inimigo": {
+   "zangao": 2,
+   "cuspidor": 3,
+   "guerreiro_cla": 6,
+   "soldado_kharn": 6,
+   "artilheiro_kharn": 6,
+   "muralha": 8,
+   "ninho": 10
+  },
+  "elite": 30,
+  "chefe": 120,
+  "chefe_primeira_vitoria": 100,
+  "padrao": 4
+ },
+ "combate": {
+  "maximo_apices": 2,
+  "ramos": [
+   {
+    "id": "mordida",
+    "nome": "Mordida",
+    "arma": "mordida",
+    "nos": [
+     {
+      "id": "mordida_rebite_afiado",
+      "nome": "Rebite Afiado",
+      "custo": 1,
+      "descricao": "+15% de dano.",
+      "modificador": {
+       "mult_dano": 1.15
+      }
+     },
+     {
+      "id": "mordida_gatilho_de_mina",
+      "nome": "Gatilho de Mina",
+      "custo": 1,
+      "descricao": "+15% de cadência.",
+      "modificador": {
+       "mult_cadencia": 1.15
+      }
+     },
+     {
+      "id": "mordida_perfurante",
+      "nome": "Perfurante",
+      "custo": 2,
+      "descricao": "O tiro atravessa 1 inimigo.",
+      "modificador": {
+       "soma_perfuracoes": 1
+      }
+     },
+     {
+      "id": "mordida_tres_golpes",
+      "nome": "Três Golpes",
+      "custo": 2,
+      "descricao": "O 3º acerto seguido no mesmo alvo é crítico (×2).",
+      "modificador": {
+       "marcadores": [
+        "tres_golpes"
+       ]
+      }
+     },
+     {
+      "id": "mordida_grande_arena",
+      "nome": "Grande Arena",
+      "custo": 3,
+      "descricao": "Cada 10º tiro é um rebite de 40 de dano que atravessa tudo (×2 em elites e chefes).",
+      "apice": true,
+      "modificador": {
+       "marcadores": [
+        "grande_arena"
+       ]
+      }
+     }
+    ]
+   },
+   {
+    "id": "bramido",
+    "nome": "Bramido",
+    "arma": "bramido",
+    "nos": [
+     {
+      "id": "bramido_balins_pesados",
+      "nome": "Balins Pesados",
+      "custo": 1,
+      "descricao": "+15% de dano.",
+      "modificador": {
+       "mult_dano": 1.15
+      }
+     },
+     {
+      "id": "bramido_boca_larga",
+      "nome": "Boca Larga",
+      "custo": 1,
+      "descricao": "+2 balins, dispersão de ±20°.",
+      "modificador": {
+       "soma_projeteis_por_tiro": 2,
+       "soma_espalhamento_graus": 5.0
+      }
+     },
+     {
+      "id": "bramido_abre_couraca",
+      "nome": "Abre-Couraça",
+      "custo": 2,
+      "descricao": "Acertar a 24 px ou menos quebra a armadura frontal por 3 s.",
+      "modificador": {
+       "marcadores": [
+        "abre_couraca"
+       ]
+      }
+     },
+     {
+      "id": "bramido_cano_duplo",
+      "nome": "Cano Duplo",
+      "custo": 2,
+      "descricao": "Carregador de 2 (0,15 s entre os disparos, 0,9 s para recarregar).",
+      "modificador": {
+       "marcadores": [
+        "cano_duplo"
+       ]
+      }
+     },
+     {
+      "id": "bramido_recuo_de_gladiador",
+      "nome": "Recuo de Gladiador",
+      "custo": 3,
+      "descricao": "O disparo empurra o Ryker 24 px para trás, mais um impulso no ar 1 vez por pulo.",
+      "apice": true,
+      "modificador": {
+       "marcadores": [
+        "recuo"
+       ]
+      }
+     }
+    ]
+   },
+   {
+    "id": "granada",
+    "nome": "Granada",
+    "nos": [
+     {
+      "id": "granada_cinto",
+      "nome": "Cinto",
+      "custo": 1,
+      "descricao": "+1 granada por sala."
+     },
+     {
+      "id": "granada_pavio_curto",
+      "nome": "Pavio Curto",
+      "custo": 1,
+      "descricao": "+25% de raio da explosão."
+     },
+     {
+      "id": "granada_estilhacos",
+      "nome": "Estilhaços",
+      "custo": 2,
+      "descricao": "A explosão solta 4 estilhaços de 10 de dano."
+     },
+     {
+      "id": "granada_recarga_de_campo",
+      "nome": "Recarga de Campo",
+      "custo": 2,
+      "descricao": "A cada 3 mortes, +1 granada (até o limite da sala)."
+     },
+     {
+      "id": "granada_bomba_de_fragmentacao",
+      "nome": "Bomba de Fragmentação",
+      "custo": 3,
+      "descricao": "A explosão solta 3 granadas menores (25 de dano, 24 px).",
+      "apice": true
+     }
+    ]
+   },
+   {
+    "id": "grilhao",
+    "nome": "Grilhão",
+    "nos": [
+     {
+      "id": "grilhao_corrente_longa",
+      "nome": "Corrente Longa",
+      "custo": 1,
+      "descricao": "Alcance de 128 px."
+     },
+     {
+      "id": "grilhao_marca_funda",
+      "nome": "Marca Funda",
+      "custo": 1,
+      "descricao": "A Marca dá +40% de dano por 6 s."
+     },
+     {
+      "id": "grilhao_duas_cargas",
+      "nome": "Duas Cargas",
+      "custo": 2,
+      "descricao": "+1 carga do Grilhão."
+     },
+     {
+      "id": "grilhao_arrastao",
+      "nome": "Arrastão",
+      "custo": 2,
+      "descricao": "Puxa até 3 leves perto do alvo; médios passam a ser puxados; elites cambaleiam 0,4 s."
+     },
+     {
+      "id": "grilhao_corrente_explosiva",
+      "nome": "Corrente Explosiva",
+      "custo": 3,
+      "descricao": "O impacto explode (40 de dano, 40 px) e arranca escudos e placas na área.",
+      "apice": true
+     }
+    ]
+   },
+   {
+    "id": "dash",
+    "nome": "Dash",
+    "nos": [
+     {
+      "id": "dash_passo_leve",
+      "nome": "Passo Leve",
+      "custo": 1,
+      "descricao": "−0,15 s na recarga do dash."
+     },
+     {
+      "id": "dash_duplo",
+      "nome": "Dash Duplo",
+      "custo": 2,
+      "descricao": "+1 carga de dash."
+     },
+     {
+      "id": "dash_esquiva_de_arena",
+      "nome": "Esquiva de Arena",
+      "custo": 2,
+      "descricao": "Atravessar um golpe ou projétil no dash deixa o próximo tiro (em até 1 s) com +50% de dano."
+     }
+    ]
+   }
+  ]
+ }
+}

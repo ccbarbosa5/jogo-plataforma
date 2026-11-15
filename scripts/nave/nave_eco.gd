@@ -30,6 +30,9 @@ var sete: PontoNave
 var terminal: PontoNave
 var capsula: PontoNave
 var _lancando: bool = false
+## Árvore de Combate do Ryker (GD-07 §4), no Arsenal.
+var progressao: ProgressaoPersonagem
+var tela_arvore: TelaArvoreCombate
 
 
 func _ready() -> void:
@@ -50,12 +53,15 @@ func _ready() -> void:
 	tela = TelaLista.new()
 	add_child(tela)
 	tela.entrada = jogador.entrada
+	progressao = ProgressaoPersonagem.new("ryker")
+	tela_arvore = TelaArvoreCombate.new()
+	add_child(tela_arvore)
 	PontoNave.criar(self, Vector2(120, CHAO), PontoNave.Figura.RECONSTRUTOR, "")
 	eco = _ponto(Vector2(440, CHAO), PontoNave.Figura.ECO, "falar com a ECO", _usar_eco)
 	terminal = _ponto(Vector2(590, CHAO), PontoNave.Figura.TERMINAL, "Arquivo (Dados)", _usar_terminal)
 	sete = _ponto(Vector2(520, CHAO), PontoNave.Figura.SETE, "falar com o Sete", _usar_sete)
 	garrak = _ponto(Vector2(800, CHAO), PontoNave.Figura.GARRAK, "Arsenal", _usar_garrak)
-	vossa = _ponto(Vector2(1120, CHAO), PontoNave.Figura.VOSSA, "melhorias (Núcleos)", _usar_vossa)
+	vossa = _ponto(Vector2(1120, CHAO), PontoNave.Figura.VOSSA, "árvore Passiva (Núcleos)", _usar_vossa)
 	capsula = _ponto(Vector2(1480, CHAO), PontoNave.Figura.CAPSULA, "descer para Varrek", _usar_capsula)
 	atualizar_presencas()
 	_chegada()
@@ -64,7 +70,7 @@ func _ready() -> void:
 func _ponto(pos: Vector2, figura: PontoNave.Figura, acao: String, ao_usar: Callable) -> PontoNave:
 	var p := PontoNave.criar(self, pos, figura, acao)
 	p.usado.connect(func(_p: PontoNave) -> void:
-		if not caixa.esta_ativa() and not tela.esta_aberta():
+		if not caixa.esta_ativa() and not tela.esta_aberta() and not tela_arvore.esta_aberta():
 			ao_usar.call())
 	return p
 
@@ -88,16 +94,30 @@ func _chegada() -> void:
 	var cenas: Array[String] = []
 	match Ciclo.resultado:
 		"morte":
-			hud.mostrar_mensagem("ECO: RECONSTRUÇÃO CONCLUÍDA", 1.5)
+			hud.mostrar_mensagem("ECO: RECONSTRUÇÃO CONCLUÍDA" + texto_xp_da_run(), 2.5)
 			cenas.assign(["morte_primeira|morte_repeticao", "campo_morte_com_arvore", "sete_chegada"])
 		"vitoria", "desistiu":  # desistiu = abandonou a run pela pausa (D-054)
-			hud.mostrar_mensagem("DE VOLTA À ECO", 1.5)
+			hud.mostrar_mensagem("DE VOLTA À ECO" + texto_xp_da_run(), 2.5)
 			cenas.assign(["sete_chegada"])
 		_:
 			cenas.assign(["abertura", "sete_chegada"])
 	await get_tree().process_frame
 	await tocar_em_sequencia(cenas)
 	atualizar_presencas()
+
+
+## XP da run que acabou e o nível agora (GD-07 §4.1: aparece na reconstrução, não no HUD).
+func texto_xp_da_run() -> String:
+	var xp: int = int(Ciclo.ultima_run.get("xp_ganho", 0))
+	if xp <= 0:
+		return ""
+	var nivel: int = progressao.nivel(Progresso)
+	var subiu: bool = nivel > int(Ciclo.ultima_run.get("nivel_inicial", nivel))
+	return "\n+%d XP · Nível %d%s" % [xp, nivel, " — novos pontos no Arsenal!" if subiu else ""]
+
+
+func abrir_arvore_combate() -> void:
+	tela_arvore.abrir(progressao, Progresso, String(Ciclo.arma_escolhida))
 
 
 ## Toca as cenas em ordem, esperando cada conversa acabar. "a|b" = a primeira que puder tocar.
@@ -129,7 +149,7 @@ func _usar_vossa() -> void:
 	if Dialogos.tocar("vossa_primeira"):
 		await caixa.terminou
 	tela.cor_titulo = Color("d9b26a")
-	tela.abrir("Vossa Margem · Sindicato Ilo", "ilo", func() -> Array[Dictionary]: return opcoes_melhorias("vossa"), _saldos)
+	tela.abrir("Vossa Margem · Árvore Passiva", "ilo", func() -> Array[Dictionary]: return opcoes_melhorias("vossa"), _saldos)
 
 
 func _usar_garrak() -> void:
@@ -178,8 +198,9 @@ func _opcao_melhoria(i: Dictionary) -> Dictionary:
 		direita = "%d/%d · %s" % [n, maximo, direita]
 	var motivo: String = "Já no máximo." if custo < 0 else ("Precisa de %s antes." % melhorias.item(i["requer"])["nome"] \
 			if melhorias.bloqueado(id, Progresso) else "%s insuficientes." % moeda)
+	var nome: String = "%s · %s" % [i["ramo"], i["nome"]] if i.has("ramo") else i["nome"]
 	return {
-		"nome": i["nome"], "descricao": i["descricao"], "direita": direita, "ativo": n > 0,
+		"nome": nome, "descricao": i["descricao"], "direita": direita, "ativo": n > 0,
 		"pode": melhorias.pode_comprar(id, Progresso), "motivo": motivo, "feito": "%s comprado." % i["nome"],
 		"acao": func() -> bool: return melhorias.comprar(id, Progresso),
 	}
@@ -187,6 +208,15 @@ func _opcao_melhoria(i: Dictionary) -> Dictionary:
 
 func opcoes_arsenal() -> Array[Dictionary]:
 	var lista: Array[Dictionary] = []
+	lista.append({
+		"nome": "Árvore de Combate",
+		"descricao": "Nível %d · %d pontos livres. Redistribuir é grátis." % [progressao.nivel(Progresso), progressao.pontos_livres(Progresso)],
+		"direita": "ABRIR", "ativo": false, "pode": true, "motivo": "", "feito": "",
+		"acao": func() -> bool:
+			tela.fechar()
+			abrir_arvore_combate.call_deferred()
+			return true,
+	})
 	for id in ARMAS:
 		var dados: DadosArma = load(Ciclo.ARMAS[id])
 		var liberada: bool = Ciclo.arma_liberada(id)

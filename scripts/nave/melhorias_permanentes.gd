@@ -1,7 +1,7 @@
 class_name MelhoriasPermanentes
 extends RefCounted
-## Melhorias permanentes (GD-01 §9.2, Vossa Margem, Núcleos) e desbloqueios (GD-03 §3.3, Ponte e
-## Arsenal, Dados). Os níveis ficam no Progresso ("melhoria_<id>"), e os desbloqueios também
+## Árvore Passiva (GD-07 §3, D-058: Vossa Margem, Núcleos, igual para todos os personagens) e
+## desbloqueios (GD-03 §3.3, Ponte e Arsenal, Dados). Os níveis ficam no Progresso ("melhoria_<id>"), e os desbloqueios também
 ## ligam a flag que o resto do jogo consulta (treino_garrak, arquivo_kharn, rotas_varrek_1...).
 
 const ARQUIVO: String = "res://data/nave/melhorias.json"
@@ -68,21 +68,29 @@ func comprar(id: String, progresso: DadosProgresso) -> bool:
 	return true
 
 
-## Aplica as melhorias de Núcleos no começo da run.
+## Aplica a árvore Passiva no começo da run.
 static func aplicar(jogador: Jogador, progresso: DadosProgresso) -> void:
 	var blindagem: int = nivel("blindagem", progresso)
 	if blindagem > 0:
 		jogador.vida.reiniciar(jogador.vida.maxima + blindagem)
-	var cinto: int = nivel("cinto_granadas", progresso)
-	if cinto > 0 and jogador.granada != null:
-		jogador.granada = jogador.granada.duplicate()
-		jogador.granada.por_sala += cinto
-		jogador.reabastecer_granadas()
+	var passada: int = nivel("passada", progresso)
+	var pernas: int = nivel("pernas_de_mineiro", progresso)
 	var propulsores: int = nivel("propulsores", progresso)
-	if propulsores > 0:
+	if passada > 0 or pernas > 0 or propulsores > 0:
 		jogador.parametros = jogador.parametros.duplicate()
-		jogador.parametros.cargas_dash += propulsores
-		jogador.cargas_dash = jogador.parametros.cargas_dash
+		jogador.parametros.velocidade_corrida *= 1.0 + 0.05 * passada
+		jogador.parametros.altura_pulo *= 1.0 + 0.06 * pernas
+		jogador.parametros.recarga_dash = maxf(jogador.parametros.recarga_dash - 0.1 * propulsores, 0.05)
 	jogador.creditos += 30 * nivel("contato_mercado", progresso)
 	jogador.rerolls = nivel("recalibrar", progresso)
 	jogador.retornos = nivel("sinal_emergencia", progresso)
+
+
+## Memória da Âncora: +10% de XP por nível.
+static func mult_xp(progresso: DadosProgresso) -> float:
+	return 1.0 + 0.1 * nivel("memoria_da_ancora", progresso)
+
+
+## Coleta Fina: +10% de Núcleos por nível.
+static func mult_nucleos(progresso: DadosProgresso) -> float:
+	return 1.0 + 0.1 * nivel("coleta_fina", progresso)
