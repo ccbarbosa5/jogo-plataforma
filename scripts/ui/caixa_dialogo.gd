@@ -14,7 +14,7 @@ const COR_TEXTO: Color = Color("eceff4")
 const COR_DIRECAO: Color = Color("a7adba")
 ## Placa de nome legível (D-057), com a arte da ART (assets/sprites/ui/menus/placa_<grupo>.png):
 ## nine-patch 16×16, margem 4, fundo escuro e liso, filete de 1 px na cor do grupo.
-## Nome em Atkinson Bold, claro.
+## Nome em Open Sans engrossada (Fontes.placa()), claro.
 const COR_TEXTO_PLACA: Color = Color("fff6ea")
 const COR_TEXTO_PLACA_ECO: Color = Color("ffe7b0")
 ## Cor do miolo da arte (o teste confere o contraste com o texto).
