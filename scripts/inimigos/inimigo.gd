@@ -41,6 +41,19 @@ enum Categoria { COMUM, ELITE, CHEFE }
 ## Chance de soltar os Créditos (o enxame tem 10%, GD-08 §4).
 @export var chance_creditos: float = 1.0
 
+@export_group("Pulo e perseguição (D-071)")
+## Altura que o inimigo vence pulando (tiles). 0 = não pula.
+@export var pulo_tiles: float = 2.0
+## Sobe em plataformas atrás do jogador (o enxame); os pesados ficam embaixo, rondando.
+@export var sobe_plataformas: bool = false
+## Buracos que pula (tiles); 0 = para na beira.
+@export var vao_maximo_tiles: float = 0.0
+## Sem progresso por este tempo (s): tenta pular; depois muda de rota (volta um pouco).
+@export var tempo_preso_pular: float = 1.0
+@export var tempo_preso_mudar_rota: float = 2.0
+## Duração da volta ao mudar de rota (s).
+@export var duracao_desvio: float = 1.2
+
 @onready var vida: Vida = $Vida
 @onready var forma: CollisionShape2D = $Forma
 
@@ -63,6 +76,14 @@ var _contato: Area2D
 var _timer_entrada: float = 0.0
 ## Armadura quebrada por um tempo (Bramido B2); volta quando o timer acaba.
 var _timer_armadura_quebrada: float = 0.0
+## D-071: anti-travamento.
+var tempo_sem_progresso: float = 0.0
+var _x_anterior: float = INF
+var _timer_desvio: float = 0.0
+var _direcao_desvio: float = 0.0
+var _pulou_preso: bool = false
+## Velocidade para a frente mantida no ar depois de um pulo de navegação.
+var _impulso_x: float = 0.0
 
 
 func _ready() -> void:
@@ -98,10 +119,113 @@ func _physics_process(delta: float) -> void:
 			velocity.x = 0.0
 		else:
 			_comportamento(delta)
+			_navegar(delta)
 		move_and_slide()
 		if not esta_atordoado() and not esta_entrando():
 			_causar_dano_contato()
 	queue_redraw()
+
+
+# --- Pulo e perseguição (D-071) ---
+
+## Depois da IA de cada inimigo: pula obstáculos, degraus e buracos pequenos, sobe atrás do
+## jogador (quem `sobe_plataformas`) e não fica preso (pula; depois volta um pouco e tenta de novo).
+func _navegar(delta: float) -> void:
+	if voa:
+		return
+	if _timer_desvio > 0.0:
+		_timer_desvio -= delta
+		velocity.x = _direcao_desvio * maxf(absf(velocity.x), Unidades.px(2.0))
+		olhando = int(_direcao_desvio)
+	if _impulso_x != 0.0:
+		if is_on_floor() and velocity.y >= 0.0:
+			_impulso_x = 0.0
+		else:
+			velocity.x = _impulso_x  # no ar, o pulo leva para a frente (a IA de chão zera o x)
+	var quer_andar: bool = absf(velocity.x) > 1.0
+	_medir_progresso(delta, quer_andar)
+	if pulo_tiles <= 0.0 or not is_on_floor():
+		return
+	var sentido: float = signf(velocity.x)
+	if quer_andar and is_on_wall() and signf(get_wall_normal().x) == -sentido:
+		var altura: float = altura_do_obstaculo(sentido)
+		if altura <= Unidades.px(pulo_tiles):
+			pular(altura + 6.0)
+			return
+	if quer_andar and vao_maximo_tiles > 0.0 and not _chao_logo_a_frente(sentido):
+		pular(Unidades.px(minf(pulo_tiles, 1.5)), true)
+		return
+	if sobe_plataformas:
+		var alvo: Node2D = escolher_alvo(Vector2(Unidades.px(12.0), Unidades.px(10.0)))
+		if alvo != null:
+			var subida: float = global_position.y - alvo.global_position.y
+			if subida > Unidades.px(1.0) and subida <= Unidades.px(pulo_tiles) \
+					and absf(alvo.global_position.x - global_position.x) <= Unidades.px(4.0):
+				pular(subida + 10.0)
+				return
+	if tempo_sem_progresso >= tempo_preso_pular and not _pulou_preso:
+		_pulou_preso = true
+		pular(Unidades.px(pulo_tiles))
+
+
+func pular(altura_px: float, avancar: bool = false) -> void:
+	velocity.y = -sqrt(2.0 * _gravidade() * maxf(altura_px, 4.0))
+	var sentido: float = signf(velocity.x if velocity.x != 0.0 else float(olhando))
+	var rapidez: float = maxf(absf(velocity.x), Unidades.px(3.0 if avancar else 2.0))
+	_impulso_x = sentido * rapidez
+	velocity.x = _impulso_x
+
+
+func _medir_progresso(delta: float, quer_andar: bool) -> void:
+	if not quer_andar or absf(global_position.x - _x_anterior) > Unidades.px(1.0) * delta:
+		tempo_sem_progresso = 0.0
+		_pulou_preso = false
+	else:
+		tempo_sem_progresso += delta
+		if tempo_sem_progresso >= tempo_preso_mudar_rota and _timer_desvio <= 0.0:
+			# Muda de rota: volta um pouco e tenta de novo.
+			_timer_desvio = duracao_desvio
+			_direcao_desvio = -signf(velocity.x) if velocity.x != 0.0 else float(-olhando)
+			tempo_sem_progresso = 0.0
+			_pulou_preso = false
+			_ao_ficar_preso()
+	_x_anterior = global_position.x
+
+
+## Ficou preso de verdade (pulou e não saiu do lugar). O enxame fora da tela volta ao pool.
+func _ao_ficar_preso() -> void:
+	pass
+
+
+func esta_na_tela() -> bool:
+	var p: Vector2 = get_global_transform_with_canvas().origin
+	return get_viewport_rect().grow(16.0).has_point(p)
+
+
+## Altura (px) do obstáculo logo à frente, medindo de cima para baixo.
+func altura_do_obstaculo(sentido: float) -> float:
+	var espaco := get_world_2d().direct_space_state
+	var x: float = global_position.x + sentido * (tamanho.x * 0.5 + 4.0)
+	var topo: float = global_position.y - Unidades.px(pulo_tiles) - 8.0
+	# O começo do raio dentro da parede: ela é mais alta que o pulo.
+	var ponto := PhysicsPointQueryParameters2D.new()
+	ponto.position = Vector2(x, topo)
+	ponto.collision_mask = Camadas.MUNDO
+	if not espaco.intersect_point(ponto, 1).is_empty():
+		return INF
+	var consulta := PhysicsRayQueryParameters2D.create(Vector2(x, topo), Vector2(x, global_position.y - 1.0),
+			Camadas.MUNDO, [get_rid()])
+	var r: Dictionary = espaco.intersect_ray(consulta)
+	if r.is_empty():
+		return Unidades.px(pulo_tiles)  # parede baixa (cabe no pulo)
+	return global_position.y - (r["position"] as Vector2).y
+
+
+func _chao_logo_a_frente(sentido: float) -> bool:
+	var inicio: Vector2 = global_position + Vector2(sentido * (tamanho.x * 0.5 + 2.0), -2.0)
+	var consulta := PhysicsRayQueryParameters2D.create(inicio, inicio + Vector2(0, 40),
+			Camadas.MUNDO | Camadas.PLATAFORMAS, [get_rid()])
+	return not get_world_2d().direct_space_state.intersect_ray(consulta).is_empty()
 
 
 # --- Para as subclasses ---
@@ -315,7 +439,8 @@ func olhar_para(alvo: Node2D) -> void:
 ## true se existe chão logo à frente (para não cair de plataformas).
 func ha_chao_a_frente() -> bool:
 	var inicio: Vector2 = global_position + Vector2(olhando * (tamanho.x * 0.5 + 2.0), -2.0)
-	var consulta := PhysicsRayQueryParameters2D.create(inicio, inicio + Vector2(0, 12),
+	# D-071: desce degraus de até ~2 tiles (o chão logo abaixo também conta); buraco não.
+	var consulta := PhysicsRayQueryParameters2D.create(inicio, inicio + Vector2(0, 36),
 			Camadas.MUNDO | Camadas.PLATAFORMAS, [get_rid()])
 	return not get_world_2d().direct_space_state.intersect_ray(consulta).is_empty()
 

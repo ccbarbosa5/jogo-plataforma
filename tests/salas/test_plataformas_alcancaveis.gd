@@ -128,3 +128,39 @@ func test_pulo_de_verdade_sobe_o_degrau_maximo() -> void:
 	j.entrada.pular_segurado = false
 	await esperar_frames(10)
 	afirmar(j.is_on_floor() and j.global_position.y < -40.0, "em pé na plataforma (y = %.0f)" % j.global_position.y)
+
+
+## D-071: todo inimigo pesado de bloco tem caminho a pé (degraus até o pulo de um pesado) até
+## uma das bordas do bloco, por onde o Ryker passa.
+func test_pesados_tem_caminho_ate_a_area_do_jogador() -> void:
+	var pulo_pesado: int = floori((load("res://scenes/inimigos/guerreiro_cla.tscn") as PackedScene).instantiate().pulo_tiles)
+	var dados: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://data/salas/blocos_varrek.json"))
+	var presos: Array[String] = []
+	for bloco: Dictionary in dados["blocos"]:
+		var linhas: Array = bloco["linhas"]
+		var largura: int = String(linhas[0]).length()
+		var pes: Array[Vector2i] = _pes(linhas)
+		for y in linhas.size():
+			for x in largura:
+				if not String(linhas[y])[x] in ["G", "T", "W", "C", "N"]:
+					continue
+				var inicio := Vector2i(x, y)
+				while not pes.has(inicio) and inicio.y < linhas.size():
+					inicio.y += 1
+				var visto: Dictionary = {inicio: true}
+				var fila: Array[Vector2i] = [inicio]
+				var chegou: bool = false
+				while not fila.is_empty() and not chegou:
+					var a: Vector2i = fila.pop_front()
+					chegou = a.x == 0 or a.x == largura - 1
+					for b in pes:
+						if visto.has(b):
+							continue
+						var dx: int = absi(b.x - a.x)
+						var subida: int = a.y - b.y
+						if (subida == 0 and dx == 1) or (subida < 0 and dx <= 2) or (subida > 0 and subida <= pulo_pesado and dx <= 2):
+							visto[b] = true
+							fila.append(b)
+				if not chegou:
+					presos.append("%s %s (%d, %d)" % [bloco["id"], String(linhas[y])[x], x, y])
+	afirmar_igual(presos, [] as Array[String], "pesados sem caminho")

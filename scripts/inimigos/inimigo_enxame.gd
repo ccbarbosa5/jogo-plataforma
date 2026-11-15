@@ -33,6 +33,7 @@ var _alvo_recuo: float = 0.0
 
 func _init() -> void:
 	peso = Peso.LEVE
+	sobe_plataformas = true
 	creditos = Vector2i(1, 1)
 	chance_creditos = 0.1  # GD-08 §4: 10% de chance de 1 Crédito
 
@@ -137,6 +138,13 @@ func _ao_morrer() -> void:
 	_criar_efeito_morte()
 	morreu.emit(self)
 	_sair()
+
+
+## D-071: preso fora da tela (pulou e não saiu do lugar): some e volta ao pool; o diretor
+## solta outro numa entrada válida.
+func _ao_ficar_preso() -> void:
+	if not esta_na_tela():
+		sumir()
 
 
 ## Sai de cena sem morrer (fugiu da tela).

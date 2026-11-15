@@ -5,12 +5,19 @@ extends InimigoEnxame
 
 const PASTA_SPRITES: String = "res://assets/sprites/inimigos/vesh/roedor/"
 
-@export var altura_pulo_tiles: float = 1.5
 @export var escalada_maxima_tiles: float = 2.0
 
 var sprite: FolhaSprite
 var _escalado: float = 0.0
 var _escalando: bool = false
+
+
+func _init() -> void:
+	super()
+	# D-071 (padrão DIR): pula baixo e muito; sobe atrás do jogador; pula buracos pequenos.
+	pulo_tiles = 2.0
+	vao_maximo_tiles = 2.0
+	tempo_preso_pular = 0.5
 
 
 func _ready() -> void:
@@ -42,9 +49,7 @@ func _perseguir(alvo: Node2D, delta: float) -> void:
 	velocity.x = olhando * Unidades.px(velocidade)
 	_escalando = false
 	if is_on_floor():
-		_escalado = 0.0
-		if is_on_wall():
-			velocity.y = -sqrt(2.0 * _gravidade() * Unidades.px(altura_pulo_tiles + 0.25))
+		_escalado = 0.0  # o pulo de degraus e buracos vem do Inimigo._navegar (D-071)
 	elif is_on_wall() and _escalado < Unidades.px(escalada_maxima_tiles):
 		# Sobe a parede curta.
 		_escalando = true

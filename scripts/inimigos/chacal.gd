@@ -21,6 +21,13 @@ var _proximo_salto: float = 0.0
 var _destino: Vector2 = Vector2.ZERO
 
 
+func _init() -> void:
+	super()
+	# D-071 (padrão DIR): pula alto; é o caçador que sobe atrás do jogador.
+	pulo_tiles = 3.5
+	vao_maximo_tiles = 3.0
+
+
 func _ready() -> void:
 	super()
 	_proximo_salto = randf_range(1.0, intervalo_salto)
@@ -63,8 +70,6 @@ func _perseguir(alvo: Node2D, delta: float) -> void:
 			if absf(dx) > 2.0:
 				olhando = 1 if dx > 0.0 else -1
 			velocity.x = olhando * Unidades.px(velocidade)
-			if is_on_floor() and is_on_wall():
-				velocity.y = -sqrt(2.0 * _gravidade() * Unidades.px(1.75))
 			if _proximo_salto <= 0.0 and is_on_floor() and absf(dx) <= Unidades.px(alcance_salto_tiles):
 				estado = Estado.AVISO
 				_timer = tempo_aviso
