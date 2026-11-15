@@ -138,7 +138,7 @@ func test_gambiarra_esc_nao_fecha_nem_abre_a_pausa() -> void:
 	tela.queue_free()
 
 
-func test_dadiva_com_mouse_e_esc_sem_efeito() -> void:
+func test_oferta_com_mouse_e_esc_volta_sem_gastar() -> void:
 	CenarioTeste.criar_chao(self)
 	var j := CenarioTeste.criar_jogador(self)
 	j.rerolls = 1
@@ -156,8 +156,21 @@ func test_dadiva_com_mouse_e_esc_sem_efeito() -> void:
 		await esperar_frames(1)
 	afirmar(tela.esta_escolhendo(), "as 3 opções na tela")
 	await esperar_frames(15)
+	var antes: Array[DadosUpgrade] = tela.ofertas.duplicate()
 	tela._input(_tecla_esc())
-	afirmar(tela.esta_escolhendo(), "Esc não fecha a escolha")
+	afirmar(not tela.esta_aberta() and tela.cancelada, "Esc volta sem escolher (D-068)")
+	afirmar(tela.abrir(j, load("res://scenes/upgrades/vesh.tres")), "abre de novo")
+	afirmar(tela.esta_escolhendo(), "sem as falas de novo")
+	afirmar_igual(tela.ofertas, antes, "as mesmas 3 opções")
+	await esperar_frames(15)
+	tela._input(_clique(Vector2(4, 4)))
+	afirmar(not tela.esta_aberta() and tela.cancelada, "clique fora do painel também volta")
+	tela.abrir(j, load("res://scenes/upgrades/vesh.tres"))
+	await esperar_frames(15)
+	tela._input(_clique(TelaRecompensa.VOLTAR.get_center()))
+	afirmar(not tela.esta_aberta(), "botão Voltar")
+	tela.abrir(j, load("res://scenes/upgrades/vesh.tres"))
+	await esperar_frames(15)
 	var centro := Rect2(TelaRecompensa.CARTA_X, TelaRecompensa.CARTA_Y + 2 * TelaRecompensa.CARTA_PASSO,
 			TelaRecompensa.CARTA_LARGURA, TelaRecompensa.CARTA_ALTURA).get_center()
 	tela._input(_mover(centro))

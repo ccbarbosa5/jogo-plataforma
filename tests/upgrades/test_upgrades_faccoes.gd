@@ -485,6 +485,8 @@ func test_porta_de_faccao_abre_a_oferta_e_fecha_as_outras() -> void:
 	await esperar_frames(2)
 	afirmar(porta.foi_usada(), "pegou a porta com E")
 	afirmar(tela.esta_aberta(), "oferta Vesh aberta")
-	afirmar(not is_instance_valid(outra) or outra.is_queued_for_deletion(), "as outras saídas somem")
+	afirmar(is_instance_valid(outra) and not outra.is_queued_for_deletion(), "abrir não gasta a escolha (D-068)")
 	tela.escolher(0)
 	await tree.process_frame
+	await tree.process_frame
+	afirmar(not is_instance_valid(outra) or outra.is_queued_for_deletion(), "escolheu: as outras saídas somem")

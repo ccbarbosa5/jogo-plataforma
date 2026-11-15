@@ -220,7 +220,18 @@ func _abrir_portas() -> void:
 
 
 func _ao_escolher_porta(porta: PortaSaida) -> void:
+	porta_escolhida.emit(porta)
+
+
+## A recompensa da porta foi confirmada: as outras somem (D-066/D-068).
+func confirmar_porta(porta: PortaSaida) -> void:
 	for p in portas:
 		if p != porta and is_instance_valid(p):
 			p.queue_free()
-	porta_escolhida.emit(porta)
+
+
+## O jogador voltou da tela de escolha sem escolher (D-068): todas as portas valem de novo.
+func reabrir_portas() -> void:
+	for p in portas:
+		if is_instance_valid(p):
+			p.reabrir()

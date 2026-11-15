@@ -4,8 +4,10 @@ extends CanvasLayer
 ## Moldura da facção; cor do nome pela raridade; avisa quando a escolha substitui o upgrade
 ## do mesmo slot (GD-01 §6.1). Antes das opções, a patrona fala (NAR-01: KHAR_*, VESH_*);
 ## a parte marcada "[depois da escolha]" toca depois que o jogador escolhe.
-## D-065: inteira com o mouse (passar destaca, clique pega; "Recalibrar" é clicável). A escolha é
-## obrigatória: Esc não fecha nem abre a pausa.
+## D-065: inteira com o mouse (passar destaca, clique pega; "Recalibrar" é clicável).
+## D-068: abrir não gasta a escolha. Esc, "Voltar" ou clique fora do painel fecham sem escolher
+## (`cancelada` = true) e a recompensa continua na sala; ao abrir de novo, as mesmas 3 opções
+## voltam (sem sortear de novo). Só confirmar gasta.
 
 signal escolheu(upgrade: DadosUpgrade, substituido: DadosUpgrade)
 signal fechou
@@ -23,6 +25,8 @@ const CORES_RARIDADE: Array[Color] = [Color("eceff4"), Color("6ab0ff"), Color("c
 const COR_SUBSTITUI: Color = Color("ff8a6a")
 ## Botão clicável de recalibrar, no rodapé.
 const RECALIBRAR: Rect2 = Rect2(344, 232, 84, 13)
+## Botão clicável de voltar sem escolher (D-068).
+const VOLTAR: Rect2 = Rect2(282, 232, 56, 13)
 
 var entrada: EntradaJogador
 var jogador: Jogador
@@ -42,6 +46,11 @@ var _escolhendo: bool = false
 var _pausou: bool = false
 var _direcao_anterior: Vector2i = Vector2i.ZERO
 var _trava: float = 0.0
+## A última vez fechou sem escolher (D-068).
+var cancelada: bool = false
+## Ofertas já sorteadas e ainda não escolhidas (chave: facção + elite): voltam iguais.
+var _pendentes: Dictionary = {}
+var _chave: String = ""
 
 
 func _ready() -> void:
@@ -94,16 +103,27 @@ func abrir(jogador_: Jogador, catalogo_: CatalogoFaccao, elite: bool = false) ->
 		return false
 	jogador = jogador_
 	catalogo = catalogo_
-	ofertas = GeradorOfertas.gerar(catalogo, jogador.upgrades, rng, Progresso, elite)
+	cancelada = false
+	_chave = "%s_%s" % [catalogo.faccao, elite]
+	var reaberta: bool = _pendentes.has(_chave)
+	if reaberta:
+		ofertas.assign(_pendentes[_chave])
+	else:
+		ofertas = GeradorOfertas.gerar(catalogo, jogador.upgrades, rng, Progresso, elite)
 	if ofertas.is_empty():
 		return false
+	_pendentes[_chave] = ofertas.duplicate()
 	_aberta = true
 	selecionada = 0
-	Progresso.incrementar("ofertas_%s_total" % catalogo.faccao)
 	if not get_tree().paused:
 		get_tree().paused = true
 		_pausou = true
 	painel.moldura = catalogo.moldura
+	if reaberta:
+		_falas_depois.clear()
+		_mostrar_opcoes()  # voltou depois de desistir: sem as falas de novo
+		return true
+	Progresso.incrementar("ofertas_%s_total" % catalogo.faccao)
 	# Falas da patrona: 1ª oferta ou repetição (NAR-01).
 	var falas: Array[Dictionary] = []
 	_id_cena = catalogo.cena_falas + "_primeira"
@@ -143,6 +163,7 @@ func escolher(indice: int) -> DadosUpgrade:
 	if not _escolhendo or indice < 0 or indice >= ofertas.size():
 		return null
 	_escolhendo = false
+	_pendentes.erase(_chave)
 	var u: DadosUpgrade = ofertas[indice]
 	var tinha_outra: bool = _tem_outra_faccao(u.faccao)
 	var antigo: DadosUpgrade = jogador.receber_upgrade(u)
@@ -193,6 +214,7 @@ func recalibrar() -> bool:
 		return false
 	jogador.rerolls -= 1
 	ofertas = novas
+	_pendentes[_chave] = ofertas.duplicate()
 	selecionada = 0
 	_mostrar(true)
 	_atualizar_textos()
@@ -229,11 +251,20 @@ func carta_no_ponto(ponto: Vector2) -> int:
 	return -1
 
 
+## Fecha sem escolher (D-068): a recompensa continua na sala.
+func cancelar() -> void:
+	if not _escolhendo:
+		return
+	cancelada = true
+	_fechar()
+
+
 func _input(evento: InputEvent) -> void:
 	if not _aberta:
 		return
 	if evento.is_action_pressed("ui_cancel") or evento.is_action_pressed("pausa"):
-		get_viewport().set_input_as_handled()  # escolha obrigatória: Esc não faz nada
+		get_viewport().set_input_as_handled()
+		cancelar()
 		return
 	if not _escolhendo:
 		return
@@ -251,6 +282,9 @@ func _input(evento: InputEvent) -> void:
 		return
 	if jogador.rerolls > 0 and RECALIBRAR.has_point(botao.position):
 		recalibrar()
+		return
+	if VOLTAR.has_point(botao.position) or not PAINEL.has_point(botao.position):
+		cancelar()
 		return
 	var i: int = carta_no_ponto(botao.position)
 	if i >= 0:
@@ -317,8 +351,12 @@ func _desenhar() -> void:
 			c.draw_string(pequena, Vector2(r.position.x + 8.0, r.end.y - 3.0), "Substitui: " + antigo.nome,
 					HORIZONTAL_ALIGNMENT_LEFT, -1, Fontes.TAMANHO_PEQUENA, COR_SUBSTITUI)
 	c.draw_string(pequena, Vector2(PAINEL.position.x + 14.0, PAINEL.end.y - 15.0),
-			"Mouse ou setas: escolher · Clique, Atirar ou E: pegar" + (" · Pular: recalibrar" if jogador.rerolls > 0 else ""),
+			"Clique, Atirar ou E: pegar · Esc: voltar",
 			HORIZONTAL_ALIGNMENT_LEFT, -1, Fontes.TAMANHO_PEQUENA, COR_APAGADO)
+	c.draw_rect(VOLTAR, Color(0, 0, 0, 0.35))
+	c.draw_rect(VOLTAR, COR_APAGADO, false, 1.0)
+	c.draw_string(pequena, Vector2(VOLTAR.position.x, VOLTAR.end.y - 3.0), "Voltar",
+			HORIZONTAL_ALIGNMENT_CENTER, VOLTAR.size.x, Fontes.TAMANHO_PEQUENA, COR_TEXTO)
 	if jogador.rerolls > 0:
 		c.draw_rect(RECALIBRAR, Color(0, 0, 0, 0.35))
 		c.draw_rect(RECALIBRAR, catalogo.cor, false, 1.0)

@@ -46,9 +46,14 @@ func interagir(jogador: Jogador) -> void:
 	var tela := get_tree().get_first_node_in_group(TelaRecompensa.GRUPO) as TelaRecompensa
 	if tela == null or tela.esta_aberta():
 		return
+	if not tela.abrir(jogador, catalogo, elite):
+		return
 	_usada = true
-	fechar_outras_portas(self)
-	tela.abrir(jogador, catalogo, elite)
+	await tela.fechou
+	if tela.cancelada:
+		_usada = false  # D-068: voltou sem escolher; a porta continua valendo
+	else:
+		fechar_outras_portas(self)
 	queue_redraw()
 
 

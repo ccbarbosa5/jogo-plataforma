@@ -234,18 +234,24 @@ func _ao_escolher_porta(porta: PortaSaida) -> void:
 	if _trocando:
 		return
 	_trocando = true
-	await aplicar_recompensa(porta.tipo)
+	var ok: bool = await aplicar_recompensa(porta.tipo)
 	_trocando = false
+	if not ok:
+		sala.reabrir_portas()  # D-068: voltou sem escolher; as portas continuam lá
+		return
+	sala.confirmar_porta(porta)
 	if numero_sala + 1 < gerador.quantidade_de_salas():
 		carregar_sala.call_deferred(numero_sala + 1)
 
 
-## Aplica a recompensa da porta (GD-01 §7.4). Espera as telas fecharem.
-func aplicar_recompensa(tipo: String) -> void:
+## Aplica a recompensa da porta (GD-01 §7.4). Espera as telas fecharem. Devolve false se o
+## jogador voltou da escolha sem escolher (D-068).
+func aplicar_recompensa(tipo: String) -> bool:
 	match tipo:
 		"kharn", "vesh":
 			if tela_recompensa.abrir(jogador, catalogo_kharn if tipo == "kharn" else catalogo_vesh):
 				await tela_recompensa.fechou
+				return not tela_recompensa.cancelada
 		"creditos":
 			var v: int = gerador.valor_recompensa("creditos")
 			jogador.creditos += v
@@ -262,6 +268,7 @@ func aplicar_recompensa(tipo: String) -> void:
 			jogador.vida.maxima += 1
 			jogador.vida.curar(1)
 			hud.mostrar_mensagem("+1 bloco de vida máximo", 1.2)
+	return true
 
 
 ## Gambiarra (GD-07 §5.1): 3 cartas da arma em uso; Elite garante 1 Rara ou melhor.
@@ -300,14 +307,26 @@ func _treino_com_garrak() -> void:
 	await oferecer_gambiarra(false, true, "TREINO COM GARRAK")
 
 
-## Loja do Ilo: dádiva da facção escolhida na banca (GD-02 §6.5).
-func abrir_dadiva(j: Jogador, faccao: String) -> void:
-	tela_recompensa.abrir(j, catalogo_kharn if faccao == "kharn" else catalogo_vesh)
+## Loja do Ilo: Oferta da facção escolhida na banca (GD-02 §6.5). Devolve true se o jogador
+## escolheu (D-068: voltar sem escolher não gasta nada).
+func abrir_dadiva(j: Jogador, faccao: String) -> bool:
+	if not tela_recompensa.abrir(j, catalogo_kharn if faccao == "kharn" else catalogo_vesh):
+		return false
+	await tela_recompensa.fechou
+	return not tela_recompensa.cancelada
 
 
-## Reparo: a dádiva extra é de uma facção sorteada.
-func oferecer_dadiva_extra(j: Jogador) -> void:
-	tela_recompensa.abrir(j, catalogo_kharn if randf() < 0.5 else catalogo_vesh)
+## Reparo: a Oferta extra é de uma facção sorteada (a mesma se o jogador voltar e abrir de novo).
+var _faccao_extra: String = ""
+
+
+func oferecer_dadiva_extra(j: Jogador) -> bool:
+	if _faccao_extra.is_empty():
+		_faccao_extra = "kharn" if randf() < 0.5 else "vesh"
+	var ok: bool = await abrir_dadiva(j, _faccao_extra)
+	if ok:
+		_faccao_extra = ""
+	return ok
 
 
 func _unhandled_input(evento: InputEvent) -> void:
