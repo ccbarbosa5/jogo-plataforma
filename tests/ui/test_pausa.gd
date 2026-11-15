@@ -209,3 +209,61 @@ func test_atalhos_de_teste_so_em_depuracao() -> void:
 		var antes_do_guarda: String = codigo.substr(0, codigo.find("func _atalhos_de_teste"))
 		afirmar(not antes_do_guarda.contains("\"debug_"), "%s: atalhos só dentro de _atalhos_de_teste" % arquivo)
 		afirmar(codigo.contains("if Depuracao.ativa():"), "%s: guarda de depuração" % arquivo)
+
+
+# --- Controle (gamepad) trocável (item 15) ---
+
+func _botao_joy(b: JoyButton) -> InputEventJoypadButton:
+	var e := InputEventJoypadButton.new()
+	e.button_index = b
+	e.pressed = true
+	return e
+
+
+func test_controle_troca_botao_salva_e_reserva_o_start() -> void:
+	var c := _config()
+	afirmar_igual(c.texto_do_controle(&"pular"), "A", "pular no A")
+	afirmar_igual(c.texto_do_controle(&"atirar"), "X / RT", "atirar no X e no RT")
+	afirmar_igual(c.trocar_botao(&"pular", _botao_joy(JOY_BUTTON_B)), &"dash", "B era do dash: trocou")
+	afirmar_igual([c.texto_do_controle(&"pular"), c.texto_do_controle(&"dash")], ["B", "A"], "pular = B, dash = A")
+	afirmar_igual(c.trocar_botao(&"granada", _botao_joy(JOY_BUTTON_START)), &"reservada", "Start é da pausa")
+	var lt := InputEventJoypadMotion.new()
+	lt.axis = JOY_AXIS_TRIGGER_LEFT
+	lt.axis_value = 1.0
+	afirmar(c.serve_para_controle(lt), "puxar o gatilho serve")
+	afirmar_igual(c.trocar_botao(&"granada", lt), &"chamado", "LT era do Chamado: trocou")
+	afirmar_igual(c.texto_do_controle(&"granada"), "LT", "granada no LT")
+	var teclas_antes: String = c.texto_da_acao(&"pular")
+	afirmar_igual(c.texto_da_acao(&"pular"), teclas_antes, "o teclado não muda")
+	c.redefinir_sem_salvar()
+	afirmar_igual(c.texto_do_controle(&"pular"), "A", "padrão em memória")
+	c.carregar()
+	afirmar_igual([c.texto_do_controle(&"pular"), c.texto_do_controle(&"granada")], ["B", "LT"], "botões salvos voltam")
+	c.restaurar_teclas()
+	afirmar_igual([c.texto_do_controle(&"pular"), c.texto_do_controle(&"dash"), c.texto_do_controle(&"granada")],
+			["A", "B", "Y"], "restaurar padrão volta o controle também")
+	_limpar()
+
+
+func test_tela_de_controles_troca_o_botao_do_controle() -> void:
+	var p := _pausa()
+	var c := _config()
+	_com_jogador()
+	p.abrir()
+	p.ativar("Controles")
+	for acao: StringName in c.ACOES_CONTROLE:
+		afirmar(p.botao_do_controle(acao) != null, "coluna Controle: %s" % acao)
+	afirmar(p.botao_do_controle(&"mover_esquerda") == null, "andar fica no analógico")
+	p.botao_do_controle(&"ferramenta").pressed.emit()
+	afirmar(p.capturando_controle and p.esperando_acao == &"ferramenta", "esperando um botão")
+	afirmar_igual(p.botao_do_controle(&"ferramenta").text, "Aperte um botão…", "pede o botão")
+	var tecla := InputEventKey.new()
+	tecla.physical_keycode = KEY_K
+	tecla.pressed = true
+	p._input(tecla)
+	afirmar_igual(p.esperando_acao, &"ferramenta", "tecla não vale para o controle")
+	p._input(_botao_joy(JOY_BUTTON_RIGHT_SHOULDER))
+	afirmar_igual(p.esperando_acao, &"", "recebeu o botão")
+	afirmar_igual(c.texto_do_controle(&"ferramenta"), "RB", "Grilhão no RB")
+	afirmar_igual(p.botao_do_controle(&"ferramenta").text, "RB", "tela atualizada")
+	_limpar()
