@@ -4,12 +4,12 @@ extends RefCounted
 ## - salas 1 e 2 (e a sala 0) têm 2 portas; as demais, 3;
 ## - nunca duas portas com o mesmo tipo de recompensa;
 ## - garantia de facção: nunca mais de 2 saídas seguidas sem porta Kharn ou Vesh;
-## - Aprimoramento de Arma: no máximo 3 por ato, nunca na sala 1, garantida até a sala 5;
+## - (GD-07: saiu a porta de Aprimoramento de Arma; as Gambiarras vêm ao limpar a sala);
 ## - +1 bloco de vida máximo: no máximo 1 por ato, só a partir da sala 3.
 
-const TIPOS: Array[String] = ["kharn", "vesh", "aprimoramento", "creditos", "nucleos", "dados", "vida_maxima"]
+const TIPOS: Array[String] = ["kharn", "vesh", "creditos", "nucleos", "dados", "vida_maxima"]
 const NOMES: Dictionary = {
-	"kharn": "Dádiva Kharn", "vesh": "Dádiva Vesh", "aprimoramento": "Aprimoramento de Arma",
+	"kharn": "Dádiva Kharn", "vesh": "Dádiva Vesh",
 	"creditos": "Créditos", "nucleos": "Núcleos", "dados": "Dados de Inteligência",
 	"vida_maxima": "+1 bloco de vida", "chefe": "Ur-Kesh", "seguir": "Seguir",
 }
@@ -28,8 +28,6 @@ static func sortear(numero: int, estado: EstadoAto, rng: RandomNumberGenerator, 
 	if numero == 0 and estado.primeira_run:
 		portas.assign(["kharn", "vesh"])  # GD-03 §1.2: garante o 1º upgrade e a 1ª patrona
 	else:
-		if RegrasPortas.aprimoramento_obrigatorio(numero, estado.aprimoramentos):
-			portas.append("aprimoramento")
 		if estado.salas_sem_faccao >= 2:
 			portas.append("kharn" if rng.randf() < 0.5 else "vesh")
 		while portas.size() < quantas:
@@ -60,8 +58,6 @@ static func _sortear_tipo(numero: int, estado: EstadoAto, rng: RandomNumberGener
 
 static func permitido(tipo: String, numero: int, estado: EstadoAto, vida_a_partir: int = 3) -> bool:
 	match tipo:
-		"aprimoramento":
-			return RegrasPortas.aprimoramento_permitido(numero, estado.aprimoramentos)
 		"vida_maxima":
 			return numero >= vida_a_partir and not estado.vida_maxima_dada
 	return true

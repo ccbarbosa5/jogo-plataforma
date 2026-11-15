@@ -5,6 +5,7 @@ extends SceneTree
 ## Procura todos os arquivos tests/**/test_*.gd. Cada arquivo deve estender
 ## res://tests/caso_teste.gd. Todo método que começa com "test_" é executado.
 ## O processo sai com código 1 se algum teste falhar (o CI usa isso).
+## Para rodar só alguns testes: FILTRO_TESTES=trecho_do_nome godot --headless --path . -s ...
 
 const TESTS_DIR: String = "res://tests"
 
@@ -54,9 +55,12 @@ func _rodar_arquivo(caminho: String) -> void:
 		print("[ERRO] não foi possível carregar %s" % caminho)
 		return
 	print("\n%s" % caminho)
+	var filtro: String = OS.get_environment("FILTRO_TESTES")
 	for metodo in script.get_script_method_list():
 		var nome: String = metodo["name"]
 		if not nome.begins_with("test_"):
+			continue
+		if not filtro.is_empty() and not nome.contains(filtro):
 			continue
 		var caso: TestCase = script.new()
 		caso.tree = self

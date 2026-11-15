@@ -102,11 +102,7 @@ func test_textos_das_armas_desenham_sem_faltar_caractere() -> void:
 	var faltando: Dictionary = {}
 	for caminho: String in ["res://scenes/armas/mordida.tres", "res://scenes/armas/bramido.tres"]:
 		var arma: DadosArma = load(caminho)
-		var textos: Array[String] = [arma.nome, arma.assinatura_descricao]
-		textos.append_array(arma.arvore.ramos)
-		for no in arma.arvore.nos:
-			textos.append(no.nome)
-			textos.append(no.descricao)
+		var textos: Array[String] = [arma.nome, arma.descricao]
 		for t in textos:
 			for c in t:
 				if c.unicode_at(0) > 32 and not fonte.has_char(c.unicode_at(0)):

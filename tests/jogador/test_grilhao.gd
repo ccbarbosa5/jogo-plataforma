@@ -1,5 +1,5 @@
 extends TestCase
-## Grilhão, a Ferramenta do Ryker (D-016), com os números do GD-02 1.1 (D-027).
+## Grilhão, a Ferramenta do Ryker (D-016), com os números do GD-07 §2 (dano 10, sem Golpe de Arena).
 ## Inclui o teste 1 da seção 7 do GD-02 (os três pesos).
 
 
@@ -48,7 +48,7 @@ func test_leve_e_puxado_e_atordoado() -> void:
 	afirmar(atordoou, "inimigo leve fica atordoado")
 	var distancia: float = Unidades.em_tiles(absf(b.global_position.x - j.global_position.x))
 	afirmar(distancia <= 2.0, "inimigo puxado para perto (%.2f tiles)" % distancia)
-	afirmar_igual(b.vida.atual, 485, "o Grilhão causa 15 de dano")
+	afirmar_igual(b.vida.atual, 490, "o Grilhão causa 10 de dano")
 	await esperar_frames(50)
 	afirmar(b.esta_atordoado(), "atordoado por ~1 s")
 	await esperar_frames(15)
@@ -66,12 +66,12 @@ func test_medio_com_protecao_perde_a_armadura_e_cambaleia() -> void:
 	afirmar(not b.armadura_frontal, "armadura arrancada")
 	afirmar(b.esta_atordoado(), "cambaleando")
 	afirmar_proximo(b.global_position.x, x0, 0.5, "o médio não é puxado")
-	afirmar_igual(b.vida.atual, 485, "15 de dano (a corrente não é reduzida pela armadura)")
+	afirmar_igual(b.vida.atual, 490, "10 de dano (a corrente não é reduzida pela armadura)")
 	await esperar_frames(40)
 	afirmar(not b.esta_atordoado(), "cambaleio curto (0,6 s)")
 
 
-func test_pesado_puxa_o_ryker_com_invulnerabilidade_e_golpe_de_arena() -> void:
+func test_pesado_puxa_o_ryker_com_invulnerabilidade() -> void:
 	CenarioTeste.criar_chao(self)
 	var j := CenarioTeste.criar_jogador(self)
 	var b := CenarioTeste.criar_boneco(self, Vector2(CenarioTeste.tiles(5), 0), Inimigo.Peso.PESADO, Vector2(40, 64))
@@ -93,11 +93,8 @@ func test_pesado_puxa_o_ryker_com_invulnerabilidade_e_golpe_de_arena() -> void:
 	afirmar(j.global_position.x - x0 > CenarioTeste.tiles(3), "Ryker foi puxado até o pesado")
 	afirmar(invulneravel_no_caminho, "invulnerável durante a puxada")
 	afirmar(j.vida.esta_invulneravel(), "invulnerável logo depois de chegar")
-	afirmar(j.golpe_de_arena_ativo(), "ganhou o Golpe de Arena")
 	await esperar_frames(15)  # 0,25 s
 	afirmar(not j.vida.esta_invulneravel(), "a invulnerabilidade extra é curta (0,2 s)")
-	await esperar_frames(80)  # ~1,6 s no total
-	afirmar(not j.golpe_de_arena_ativo(), "Golpe de Arena dura 1,5 s")
 
 
 func test_ponto_de_ancoragem_puxa_o_ryker() -> void:
@@ -167,7 +164,7 @@ func test_dash_solta_o_puxao() -> void:
 	afirmar(j.esta_em_dash(), "e o dash acontece")
 
 
-func test_ponto_fraco_dobra_e_golpe_de_arena_dobra_de_novo() -> void:
+func test_ponto_fraco_dobra() -> void:
 	CenarioTeste.criar_chao(self)
 	var j := CenarioTeste.criar_jogador(self)
 	var b := CenarioTeste.criar_boneco(self, Vector2(CenarioTeste.tiles(8), 0), Inimigo.Peso.PESADO, Vector2(40, 64))
@@ -176,11 +173,8 @@ func test_ponto_fraco_dobra_e_golpe_de_arena_dobra_de_novo() -> void:
 	await esperar_frames(2)
 	pf.receber_ataque(InfoDano.criar(10, j))
 	afirmar_igual(b.vida.atual, 480, "ponto fraco: 2× (20)")
-	j.ativar_golpe_de_arena(1.5)
-	pf.receber_ataque(InfoDano.criar(10, j))
-	afirmar_igual(b.vida.atual, 440, "com Golpe de Arena: 4× (40)")
 	b.receber_ataque(InfoDano.criar(10, j))
-	afirmar_igual(b.vida.atual, 430, "fora do ponto fraco, Golpe de Arena não muda nada")
+	afirmar_igual(b.vida.atual, 470, "fora do ponto fraco: 1×")
 
 
 func test_tiro_acerta_o_ponto_fraco() -> void:

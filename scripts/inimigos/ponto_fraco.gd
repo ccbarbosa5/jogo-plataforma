@@ -1,7 +1,7 @@
 class_name PontoFraco
 extends Area2D
 ## Hitbox de ponto fraco, filha de um Inimigo (radiador do andador, tanque do Brutamontes, núcleo do Ninho).
-## Acertar aqui multiplica o dano. Com o Golpe de Arena do Ryker ativo, o bônus dobra de novo.
+## Acertar aqui multiplica o dano (×2 por padrão). A mira automática nunca mira ponto fraco (GD-07 §6).
 ## Só tiros mirados e o Grilhão alcançam pontos fracos (a mira automática mira no centro do corpo).
 
 @export var multiplicador: float = 2.0
@@ -32,9 +32,6 @@ func receber_ataque(info: InfoDano) -> bool:
 	var golpe := info.copiar()
 	golpe.ponto_fraco = true
 	golpe.multiplicador *= multiplicador
-	if info.autor != null and is_instance_valid(info.autor) and info.autor.has_method("golpe_de_arena_ativo") \
-			and info.autor.golpe_de_arena_ativo():
-		golpe.multiplicador *= 2.0
 	return inimigo.receber_ataque(golpe)
 
 

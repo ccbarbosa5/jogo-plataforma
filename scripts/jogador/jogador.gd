@@ -11,7 +11,6 @@ signal atirou(projetil: Projetil)
 signal golpeou(alvos: Array[Inimigo])
 signal lancou_granada(granada: Granada)
 ## Ganhou um Ponto de Aprimoramento (porta, chefe, loja): a sala abre a tela da árvore.
-signal ganhou_aprimoramento(jogador: Jogador)
 ## Apertou Interagir (lojas, portas, NPCs).
 signal interagiu(jogador: Jogador)
 
@@ -22,7 +21,7 @@ const ALTURA_AGACHADO: float = 18.0
 const TEMPO_ATRAVESSAR_PLATAFORMA: float = 0.25
 
 @export var parametros: ParametrosJogador
-## Arma escolhida no Arsenal (D-038). Os modificadores da run ficam em arma_equipada.
+## Arma escolhida no Arsenal (D-038). Árvore de Combate e Gambiarras ficam em arma_equipada.
 @export var arma: DadosArma
 @export var granada: DadosGranada
 @export var assistencias: Assistencias
@@ -37,7 +36,8 @@ var entrada: EntradaJogador
 var container_projeteis: Node
 var arma_equipada: ArmaEquipada
 ## Mini árvore da arma nesta run (GD-05 §2) e o comportamento da arma (assinatura e nós).
-var arvore: ArvoreRun
+## Nós da árvore de Combate ativos nesta run (GD-07 §4), escolhidos na nave.
+var nos_combate: Array[StringName] = []
 var controle_arma: ControleArma
 ## Moeda da run (loja Ilo).
 var creditos: int = 0
@@ -80,7 +80,6 @@ var _cooldown_golpe: float = 0.0
 var _timer_golpe_visual: float = 0.0
 var _timer_atravessar: float = 0.0
 var _timer_pisca: float = 0.0
-var _timer_golpe_arena: float = 0.0
 var _morto: bool = false
 var _puxao_destino: Vector2 = Vector2.ZERO
 var _puxao_velocidade: float = 0.0
@@ -123,14 +122,14 @@ func _ready() -> void:
 	cargas_dash = parametros.cargas_dash
 	_dashes_no_ar = parametros.dashes_no_ar
 	arma_equipada = ArmaEquipada.new(arma)
-	arvore = ArvoreRun.new(arma_equipada)
 	controle_arma = ControleArma.new(self, parametros_armas)
 	efeitos = EfeitosUpgrades.new(self)
 	efeitos.conectar()
 	var grilhao := ferramenta as Grilhao
 	if grilhao != null:
 		grilhao.acertou.connect(func(alvo: Node) -> void: controle_arma.marcar(alvo as Inimigo))
-	_iniciar_run()
+	if arma != null:
+		Progresso.definir_run("arma_atual", String(arma.id))
 	reabastecer_granadas()
 	_aplicar_altura(ALTURA_EM_PE)
 	posicao_segura = global_position
@@ -193,8 +192,14 @@ func esta_sendo_puxado() -> bool:
 	return _timer_puxao > 0.0
 
 
-func golpe_de_arena_ativo() -> bool:
-	return _timer_golpe_arena > 0.0
+## Centro do corpo (os inimigos miram aqui, não nos pés).
+func centro() -> Vector2:
+	return global_position + Vector2(0.0, -_altura_atual * 0.5)
+
+
+## Nó da árvore de Combate ativo (GD-07 §4.3), ex.: &"grilhao_duas_cargas".
+func tem_no(id: StringName) -> bool:
+	return id in nos_combate
 
 
 ## Ponto de onde saem os tiros e o Grilhão (altura do peito).
@@ -257,10 +262,6 @@ func chamado_pronto() -> bool:
 	return barra_chamado >= Combate.regras.chamado_maximo
 
 
-func ativar_golpe_de_arena(segundos: float) -> void:
-	_timer_golpe_arena = maxf(_timer_golpe_arena, segundos)
-
-
 ## Puxa o jogador em linha reta até `destino` (pés). Usado pelo Grilhão.
 func iniciar_puxao(destino: Vector2, velocidade_px: float, tempo_max: float, invulneravel: bool = false) -> void:
 	_puxao_destino = destino
@@ -276,35 +277,20 @@ func cancelar_puxao() -> void:
 	_timer_puxao = 0.0
 
 
-## Escolha de arma no Arsenal, antes da run (D-038). Zera a árvore e os modificadores.
+## Escolha de arma no Arsenal, antes da run (D-038). Começa sem Gambiarras.
 func equipar(nova_arma: DadosArma) -> void:
 	arma = nova_arma
 	arma_equipada = ArmaEquipada.new(nova_arma)
-	arvore = ArvoreRun.new(arma_equipada)
 	controle_arma.reiniciar()
-	_iniciar_run()
-
-
-## Começo da run: a arma vai para o estado da run (falas) e o Treino com Garrak dá 1 ponto.
-func _iniciar_run() -> void:
 	if arma != null:
 		Progresso.definir_run("arma_atual", String(arma.id))
-	if Progresso.tem_flag("treino_garrak"):
-		arvore.ganhar_pontos(1)
 
 
-## Fim da run (morte ou vitória): a árvore e os pontos zeram (GD-05 §2.1).
+## Fim da run (morte ou vitória): as Gambiarras e as dádivas somem (GD-07 §5.1).
 func fim_da_run() -> void:
-	arvore.limpar()
+	arma_equipada.limpar()
 	upgrades.limpar()
 	controle_arma.reiniciar()
-
-
-## +1 Ponto de Aprimoramento (porta, chefe ou loja). A sala abre a tela da árvore.
-func ganhar_aprimoramento(pontos: int = 1) -> void:
-	arvore.ganhar_pontos(pontos)
-	Progresso.definir_flag("1o_aprimoramento_pego")  # Garrak comenta no Arsenal (NAR-03)
-	ganhou_aprimoramento.emit(self)
 
 
 ## Chamado pela sala ao começar (D-036): granadas cheias e 1 s de invulnerabilidade.
@@ -364,7 +350,6 @@ func _atualizar_timers(delta: float) -> void:
 	_timer_coyote -= delta
 	_timer_buffer_pulo -= delta
 	_timer_pisca = maxf(_timer_pisca - delta, 0.0)
-	_timer_golpe_arena = maxf(_timer_golpe_arena - delta, 0.0)
 	_timer_golpe_visual = maxf(_timer_golpe_visual - delta, 0.0)
 	if _timer_atravessar > 0.0:
 		_timer_atravessar -= delta
@@ -661,7 +646,7 @@ func _draw() -> void:
 	if visual != null:
 		# Sprites da ART (VisualRyker): aqui só os efeitos por cima.
 		visual.visible = not piscando
-		visual.modulate = Color(1.0, 0.85, 0.6) if golpe_de_arena_ativo() else Color.WHITE
+		visual.modulate = Color.WHITE
 		if _timer_golpe_visual > 0.0:
 			var c: Vector2 = Vector2(olhando * 14.0, -_altura_atual * 0.6)
 			var ini: float = -PI * 0.5 if olhando > 0 else PI * 0.5
@@ -673,8 +658,6 @@ func _draw() -> void:
 	var cor: Color = Color("c8b273")
 	if esta_em_dash():
 		cor = Color("7fdcff")
-	if golpe_de_arena_ativo():
-		cor = Color("ffb347")
 	if _morto:
 		cor = Color("5c5c5c")
 	draw_rect(Rect2(-LARGURA * 0.5, -h, LARGURA, h), cor)

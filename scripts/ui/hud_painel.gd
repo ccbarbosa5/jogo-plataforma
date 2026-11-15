@@ -23,7 +23,6 @@ var _chamado_completa: Texture2D = FolhaSprite.carregar(PASTA_HUD + "barra_chama
 var _embalo_fundo: Texture2D = FolhaSprite.carregar(PASTA_HUD + "barra_embalo_fundo.png")
 var _embalo_cheia: Texture2D = FolhaSprite.carregar(PASTA_HUD + "barra_embalo_cheia.png")
 var _embalo_completa: Texture2D = FolhaSprite.carregar(PASTA_HUD + "barra_embalo_completa.png")
-var _ponto: Texture2D = FolhaSprite.carregar("res://assets/sprites/ui/arvore/ponto_aprimoramento.png")
 
 
 ## Elo da corrente (folha da ART: 2 quadros de 11×8, cheio / quebrado).
@@ -61,12 +60,9 @@ func _draw() -> void:
 	for i in vida.maxima:
 		_desenhar_elo(Vector2(i * 13.0, 0.0), i < vida.atual)
 	var y: float = 11.0
-	# Embalo da Mordida (D-043): barrinha laranja logo abaixo dos elos.
+	# Carga da Artilharia: barrinha laranja logo abaixo dos elos (arte da barra do antigo Embalo).
 	var controle: ControleArma = jogador.controle_arma
-	if controle != null and controle.assinatura() == &"embalo":
-		_desenhar_barra(Vector2(0.0, y), controle.fracao_embalo(), _embalo_fundo, _embalo_cheia, _embalo_completa, Color("e8742c"))
-		y += 7.0
-	elif controle != null and controle.carregando():
+	if controle != null and controle.carregando():
 		_desenhar_barra(Vector2(0.0, y), controle.fracao_carga(), _embalo_fundo, _embalo_cheia, _embalo_completa, Color("e8742c"))
 		y += 7.0
 	for i in jogador.parametros.cargas_dash:
@@ -87,11 +83,6 @@ func _draw() -> void:
 	y += 15.0
 	if jogador.arma != null:
 		draw_string(Fontes.pequena(), Vector2(0.0, y), jogador.arma_equipada.nome(), HORIZONTAL_ALIGNMENT_LEFT, -1, Fontes.TAMANHO_PEQUENA)
-		# Pontos de Aprimoramento guardados e Créditos da run.
-		var x: float = Fontes.pequena().get_string_size(jogador.arma_equipada.nome(), HORIZONTAL_ALIGNMENT_LEFT, -1, Fontes.TAMANHO_PEQUENA).x + 6.0
-		if jogador.arvore != null and jogador.arvore.pontos > 0:
-			if _ponto != null:
-				draw_texture(_ponto, Vector2(x, y - 10.0))
-			draw_string(Fontes.pequena(), Vector2(x + 14.0, y), str(jogador.arvore.pontos), HORIZONTAL_ALIGNMENT_LEFT, -1, Fontes.TAMANHO_PEQUENA)
+		# Créditos da run.
 		y += 10.0
 		draw_string(Fontes.pequena(), Vector2(0.0, y), "%d Créditos" % jogador.creditos, HORIZONTAL_ALIGNMENT_LEFT, -1, Fontes.TAMANHO_PEQUENA, Color("d9b26a"))

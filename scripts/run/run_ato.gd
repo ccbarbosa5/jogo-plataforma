@@ -21,7 +21,6 @@ signal sala_carregada(sala: SalaRun)
 var gerador: GeradorAto
 var sala: SalaRun
 var numero_sala: int = -1
-var tela_arvore: TelaArvore
 var tela_recompensa: TelaRecompensa
 var _trocando: bool = false
 var barra_chefe: BarraChefe
@@ -44,9 +43,6 @@ func _ready() -> void:
 	camera.alvos = [jogador]
 	hud.conectar(jogador)
 	($CaixaDialogo as CaixaDialogo).entrada = jogador.entrada
-	tela_arvore = TelaArvore.new()
-	add_child(tela_arvore)
-	tela_arvore.entrada = jogador.entrada
 	tela_recompensa = TelaRecompensa.new()
 	add_child(tela_recompensa)
 	tela_recompensa.entrada = jogador.entrada
@@ -132,7 +128,7 @@ func _ao_concluir_sala() -> void:
 
 
 ## Vitória sobre Ur-Kesh (GD-02 §5): Núcleos, Dados e, na 1ª vez, o Bramido (NAR-03).
-## No VS a run termina aqui ("Continua no Ato 2"); o Ponto de Aprimoramento vale para o ato seguinte.
+## No VS a run termina aqui ("Continua no Ato 2").
 func _fim_do_ato() -> void:
 	var primeira: bool = not Progresso.tem_flag("bramido_liberado")
 	Progresso.incrementar("urkesh_vitorias")
@@ -173,9 +169,6 @@ func aplicar_recompensa(tipo: String) -> void:
 		"kharn", "vesh":
 			if tela_recompensa.abrir(jogador, catalogo_kharn if tipo == "kharn" else catalogo_vesh):
 				await tela_recompensa.fechou
-		"aprimoramento":
-			jogador.ganhar_aprimoramento(1)
-			await tela_arvore.fechou
 		"creditos":
 			var v: int = gerador.valor_recompensa("creditos")
 			jogador.creditos += v
@@ -191,17 +184,17 @@ func aplicar_recompensa(tipo: String) -> void:
 			hud.mostrar_mensagem("+1 bloco de vida máximo", 1.2)
 
 
+## Loja do Ilo: dádiva da facção escolhida na banca (GD-02 §6.5).
+func abrir_dadiva(j: Jogador, faccao: String) -> void:
+	tela_recompensa.abrir(j, catalogo_kharn if faccao == "kharn" else catalogo_vesh)
+
+
 ## Reparo: a dádiva extra é de uma facção sorteada.
 func oferecer_dadiva_extra(j: Jogador) -> void:
 	tela_recompensa.abrir(j, catalogo_kharn if randf() < 0.5 else catalogo_vesh)
 
 
 func _unhandled_input(evento: InputEvent) -> void:
-	if evento.is_action_pressed("arvore") and not tela_arvore.esta_aberta():
-		if sala != null and sala.arena_ativa:
-			hud.mostrar_mensagem("A árvore só abre fora de combate", 1.0)
-		else:
-			tela_arvore.abrir(jogador)
 	if Depuracao.ativa():
 		_atalhos_de_teste(evento)
 

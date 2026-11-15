@@ -28,7 +28,6 @@ var arena_ativa: bool = false
 var arena_concluida: bool = false
 var _onda: Array[Inimigo] = []
 var _cena_revisao: int = -1
-var tela_arvore: TelaArvore
 var tela_recompensa: TelaRecompensa
 var _oferta_debug: int = 0
 
@@ -49,10 +48,6 @@ func _ready() -> void:
 	camera.posicionar_imediato()
 	hud.conectar(jogador)
 	($CaixaDialogo as CaixaDialogo).entrada = jogador.entrada
-	tela_arvore = TelaArvore.new()
-	add_child(tela_arvore)
-	tela_arvore.entrada = jogador.entrada
-	jogador.ganhou_aprimoramento.connect(func(j: Jogador) -> void: tela_arvore.abrir.call_deferred(j))
 	jogador.creditos = creditos_iniciais
 	tela_recompensa = TelaRecompensa.new()
 	add_child(tela_recompensa)
@@ -66,12 +61,6 @@ func _ready() -> void:
 
 
 func _unhandled_input(evento: InputEvent) -> void:
-	if evento.is_action_pressed("arvore") and not tela_arvore.esta_aberta():
-		# Fora de combate a árvore abre a qualquer hora (GD-05 §2.2).
-		if arena_ativa:
-			hud.mostrar_mensagem("A árvore só abre fora de combate", 1.0)
-		else:
-			tela_arvore.abrir(jogador)
 	if Depuracao.ativa():
 		_atalhos_de_teste(evento)
 
@@ -95,7 +84,7 @@ func _atalhos_de_teste(evento: InputEvent) -> void:
 		hud.mostrar_mensagem("Cena %d/%d: %s" % [_cena_revisao + 1, cenas.size(), cenas[_cena_revisao]], 2.0)
 		Dialogos.previsualizar(cenas[_cena_revisao])
 	if evento.is_action_pressed("debug_trocar_arma") and not armas_arsenal.is_empty():
-		# Arsenal provisório: troca a arma e zera a árvore (D-038: na run de verdade não se troca).
+		# Arsenal provisório: troca a arma (D-038: na run de verdade não se troca).
 		var i: int = (armas_arsenal.find(jogador.arma) + 1) % armas_arsenal.size()
 		jogador.equipar(armas_arsenal[i])
 		hud.mostrar_mensagem("Arsenal: %s" % armas_arsenal[i].nome, 1.2)
@@ -107,8 +96,6 @@ func _atalhos_de_teste(evento: InputEvent) -> void:
 		# Abre uma oferta de dádiva, alternando as facções.
 		tela_recompensa.abrir(jogador, catalogos_faccoes[_oferta_debug % catalogos_faccoes.size()])
 		_oferta_debug += 1
-	if evento.is_action_pressed("debug_aprimoramento"):
-		jogador.ganhar_aprimoramento(1)
 	if evento.is_action_pressed("debug_apagar_progresso"):
 		Progresso.apagar()
 		hud.mostrar_mensagem("Progresso apagado (falas de \"1ª vez\" voltam a tocar)", 1.5)
@@ -158,12 +145,8 @@ func _concluir_arena() -> void:
 	arena_concluida = true
 	_ativar_paredes(false)
 	hud.mostrar_mensagem("SALA LIMPA!")
-	# Saídas da sala (GD-01 §7.1): dádiva Kharn, Aprimoramento de Arma e dádiva Vesh.
-	# O jogador pega 1; as outras somem.
+	# Saídas da sala (GD-01 §7.1): dádiva Kharn e dádiva Vesh. O jogador pega 1; a outra some.
 	var centro: float = limites_arena.get_center().x
-	var porta := PortaAprimoramento.new()
-	porta.position = Vector2(centro, 240.0)
-	add_child.call_deferred(porta)
 	for i in catalogos_faccoes.size():
 		var pf := PortaFaccao.new()
 		pf.catalogo = catalogos_faccoes[i]
