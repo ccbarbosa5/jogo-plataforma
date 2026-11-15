@@ -1,5 +1,5 @@
 {
- "fonte": "NAR/01-dialogos-primeira-run.md v0.3 + NAR/03-armas.md v0.2 (falas ARSE_* e CAMP_*) + NAR/06 §3.1 (falas longas divididas, D-063)",
+ "fonte": "NAR/01-dialogos-primeira-run.md v0.3 + NAR/03-armas.md v0.2 (falas ARSE_* e CAMP_*) + NAR/06 §3.1 (falas longas divididas, D-063) + NAR-06 (falas da progressão: Vossa, Garrak, Gambiarras)",
  "falantes": {
   "RYKER": {
    "nome": "RYKER",
@@ -1931,7 +1931,7 @@
   "arsenal_aprimoramento": {
    "modo": "conversa",
    "uma_vez": "arsenal_aprimoramento_visto",
-   "condicao": "1o_aprimoramento_pego",
+   "condicao": "1a_gambiarra_pega",
    "falas": [
     {
      "id": "ARSE_A1",
@@ -1994,7 +1994,7 @@
   "campo_morte_com_arvore": {
    "modo": "conversa",
    "uma_vez": "visto_CAMP_A3",
-   "condicao": "usou_arvore",
+   "condicao": "morreu_com_gambiarra",
    "falas": [
     {
      "id": "CAMP_A3",
@@ -2211,6 +2211,663 @@
      "aud": "zumbido",
      "duvida": 1
     }
+   ]
+  },
+  "vossa_arvore_primeira": {
+   "modo": "conversa",
+   "uma_vez": "vossa_arvore_vista",
+   "falas": [
+    {
+     "id": "PASS_01",
+     "falante": "VOSSA",
+     "texto": "Catálogo completo! Corpo, Movimento e Fortuna. Tudo pago em Núcleos.",
+     "expressao": "sorriso comercial"
+    },
+    {
+     "id": "PASS_02",
+     "falante": "RYKER",
+     "texto": "Tem garantia?"
+    },
+    {
+     "id": "PASS_03",
+     "falante": "VOSSA",
+     "texto": "Vale até a sua próxima morte. Ou seja: depois dela também. Você volta, a melhoria fica.",
+     "expressao": "ganancioso"
+    }
+   ]
+  },
+  "vossa_arvore_abrir": {
+   "modo": "rapida",
+   "condicao": "vossa_arvore_vista",
+   "sortear": true,
+   "variantes": [
+    [
+     {
+      "id": "PASS_A1",
+      "falante": "VOSSA",
+      "texto": "O cliente favorito voltou!",
+      "expressao": "sorriso comercial"
+     }
+    ],
+    [
+     {
+      "id": "PASS_A2",
+      "falante": "VOSSA",
+      "texto": "Núcleos frescos? Sinto o cheiro daqui.",
+      "expressao": "ganancioso"
+     }
+    ],
+    [
+     {
+      "id": "PASS_A3",
+      "falante": "VOSSA",
+      "texto": "Hoje o preço é o mesmo de ontem. Aproveite essa emoção."
+     }
+    ]
+   ]
+  },
+  "vossa_arvore_sem_nucleos": {
+   "modo": "rapida",
+   "condicao": "vossa_arvore_vista",
+   "falas": [
+    {
+     "id": "PASS_A4",
+     "falante": "VOSSA",
+     "texto": "Olhar é grátis. Por enquanto.",
+     "expressao": "nervoso"
+    }
+   ]
+  },
+  "vossa_compra_blindagem": {
+   "modo": "rapida",
+   "uma_vez": "vossa_comprou_blindagem",
+   "falas": [
+    {
+     "id": "PASS_C_blindagem",
+     "falante": "VOSSA",
+     "texto": "Blindagem! Mais um pedaço de você que não quebra."
+    }
+   ]
+  },
+  "vossa_compra_blindagem_2": {
+   "modo": "rapida",
+   "condicao": "vossa_comprou_blindagem",
+   "falas": [
+    {
+     "id": "PASS_C_blindagem2",
+     "falante": "VOSSA",
+     "texto": "Mais placa. Você vai ranger igual ao Garrak."
+    }
+   ]
+  },
+  "vossa_compra_sinal_emergencia": {
+   "modo": "rapida",
+   "uma_vez": "vossa_comprou_sinal_emergencia",
+   "falas": [
+    {
+     "id": "PASS_C_sinal",
+     "falante": "VOSSA",
+     "texto": "Sinal de Emergência. Volta uma vez. Não me pergunte como, eu só vendo."
+    }
+   ]
+  },
+  "vossa_compra_passada": {
+   "modo": "rapida",
+   "uma_vez": "vossa_comprou_passada",
+   "falas": [
+    {
+     "id": "PASS_C_passada",
+     "falante": "VOSSA",
+     "texto": "Passada! Para fugir mais rápido dos seus problemas."
+    }
+   ]
+  },
+  "vossa_compra_passada_2": {
+   "modo": "rapida",
+   "condicao": "vossa_comprou_passada",
+   "falas": [
+    {
+     "id": "PASS_C_passada2",
+     "falante": "VOSSA",
+     "texto": "Mais rápido ainda. Os problemas também correm, aviso."
+    }
+   ]
+  },
+  "vossa_compra_pernas_de_mineiro": {
+   "modo": "rapida",
+   "uma_vez": "vossa_comprou_pernas_de_mineiro",
+   "falas": [
+    {
+     "id": "PASS_C_pernas",
+     "falante": "VOSSA",
+     "texto": "Pernas de Mineiro. Pulo mais alto. A tecnologia é sua, eu só cobro."
+    }
+   ]
+  },
+  "vossa_compra_pernas_de_mineiro_2": {
+   "modo": "rapida",
+   "condicao": "vossa_comprou_pernas_de_mineiro",
+   "falas": [
+    {
+     "id": "PASS_C_pernas2",
+     "falante": "VOSSA",
+     "texto": "Mais alto. Cuidado com o teto."
+    }
+   ]
+  },
+  "vossa_compra_propulsores": {
+   "modo": "rapida",
+   "uma_vez": "vossa_comprou_propulsores",
+   "falas": [
+    {
+     "id": "PASS_C_propulsores",
+     "falante": "VOSSA",
+     "texto": "Propulsores Ilo! Usados só uma vez. Por um Ilo que explodiu. Detalhe."
+    }
+   ]
+  },
+  "vossa_compra_propulsores_2": {
+   "modo": "rapida",
+   "condicao": "vossa_comprou_propulsores",
+   "falas": [
+    {
+     "id": "PASS_C_propulsores2",
+     "falante": "VOSSA",
+     "texto": "Dash mais curto de espera. Pressa é bom negócio."
+    }
+   ]
+  },
+  "vossa_compra_contato_mercado": {
+   "modo": "rapida",
+   "uma_vez": "vossa_comprou_contato_mercado",
+   "falas": [
+    {
+     "id": "PASS_C_contato",
+     "falante": "VOSSA",
+     "texto": "Contato no Mercado. O contato sou eu. Você vai descer com Créditos."
+    }
+   ]
+  },
+  "vossa_compra_contato_mercado_2": {
+   "modo": "rapida",
+   "condicao": "vossa_comprou_contato_mercado",
+   "falas": [
+    {
+     "id": "PASS_C_contato2",
+     "falante": "VOSSA",
+     "texto": "Mais Créditos lá embaixo. E mais clientes para o meu primo de campo."
+    }
+   ]
+  },
+  "vossa_compra_recalibrar": {
+   "modo": "rapida",
+   "uma_vez": "vossa_comprou_recalibrar",
+   "falas": [
+    {
+     "id": "PASS_C_recalibrar",
+     "falante": "VOSSA",
+     "texto": "Recalibrar. Não gostou do que o destino ofereceu? Peça outro."
+    }
+   ]
+  },
+  "vossa_compra_recalibrar_2": {
+   "modo": "rapida",
+   "condicao": "vossa_comprou_recalibrar",
+   "falas": [
+    {
+     "id": "PASS_C_recalibrar2",
+     "falante": "VOSSA",
+     "texto": "Mais uma troca. O destino odeia clientes como você."
+    }
+   ]
+  },
+  "vossa_compra_memoria_da_ancora": {
+   "modo": "rapida",
+   "uma_vez": "vossa_comprou_memoria_da_ancora",
+   "falas": [
+    {
+     "id": "PASS_C_memoria",
+     "falante": "VOSSA",
+     "texto": "Memória da Âncora. Você lembra mais do que viveu. Não pergunte para a ECO."
+    }
+   ]
+  },
+  "vossa_compra_memoria_da_ancora_2": {
+   "modo": "rapida",
+   "condicao": "vossa_comprou_memoria_da_ancora",
+   "falas": [
+    {
+     "id": "PASS_C_memoria2",
+     "falante": "VOSSA",
+     "texto": "Mais memória. Guarde as boas."
+    }
+   ]
+  },
+  "vossa_compra_coleta_fina": {
+   "modo": "rapida",
+   "uma_vez": "vossa_comprou_coleta_fina",
+   "falas": [
+    {
+     "id": "PASS_C_coleta",
+     "falante": "VOSSA",
+     "texto": "Coleta Fina! Mais Núcleos para você. E, por consequência, para mim."
+    }
+   ]
+  },
+  "vossa_compra_coleta_fina_2": {
+   "modo": "rapida",
+   "condicao": "vossa_comprou_coleta_fina",
+   "falas": [
+    {
+     "id": "PASS_C_coleta2",
+     "falante": "VOSSA",
+     "texto": "Economia circular. Eu adoro círculos."
+    }
+   ]
+  },
+  "vossa_maximo": {
+   "modo": "rapida",
+   "falas": [
+    {
+     "id": "PASS_X1",
+     "falante": "VOSSA",
+     "texto": "Completo. Não tem mais o que vender aí. Que tristeza."
+    }
+   ]
+  },
+  "vossa_falta_nucleos": {
+   "modo": "rapida",
+   "falas": [
+    {
+     "id": "PASS_X2",
+     "falante": "VOSSA",
+     "texto": "Faltam Núcleos. Desça, morra com estilo e volte.",
+     "expressao": "nervoso"
+    }
+   ]
+  },
+  "vossa_tudo": {
+   "modo": "rapida",
+   "uma_vez": "vossa_tudo_visto",
+   "falas": [
+    {
+     "id": "PASS_X3",
+     "falante": "VOSSA",
+     "texto": "Você comprou tudo. Tudo! Vou mandar fazer uma placa com o seu nome.",
+     "expressao": "sorriso comercial"
+    }
+   ]
+  },
+  "vossa_fechar": {
+   "modo": "rapida",
+   "falas": [
+    {
+     "id": "PASS_X4",
+     "falante": "VOSSA",
+     "texto": "Volte sempre. Literalmente, no seu caso."
+    }
+   ]
+  },
+  "arsenal_combate_primeira": {
+   "modo": "conversa",
+   "uma_vez": "arvore_combate_vista",
+   "falas": [
+    {
+     "id": "COMB_01",
+     "falante": "GARRAK",
+     "texto": "Tudo o que você aprende lá embaixo fica aqui. No corpo e na cabeça.",
+     "expressao": "severo"
+    },
+    {
+     "id": "COMB_02",
+     "falante": "RYKER",
+     "texto": "E a morte não apaga?"
+    },
+    {
+     "id": "COMB_03",
+     "falante": "GARRAK",
+     "texto": "A luz te refaz com o que você aprendeu. Então aprenda. Escolha onde pôr cada ponto."
+    },
+    {
+     "id": "COMB_04",
+     "falante": "GARRAK",
+     "texto": "E se escolher mal, desfaz. Aqui eu não cobro. Na arena eu cobrava.",
+     "expressao": "orgulho contido"
+    }
+   ]
+  },
+  "combate_abrir": {
+   "modo": "rapida",
+   "sortear": true,
+   "variantes": [
+    [
+     {
+      "id": "COMB_A1",
+      "falante": "GARRAK",
+      "texto": "Mostre o que aprendeu."
+     }
+    ],
+    [
+     {
+      "id": "COMB_A4",
+      "falante": "GARRAK",
+      "texto": "Nada novo. Desça e volte com mais."
+     }
+    ]
+   ]
+  },
+  "combate_abrir_pontos": {
+   "modo": "rapida",
+   "sortear": true,
+   "variantes": [
+    [
+     {
+      "id": "COMB_A3",
+      "falante": "GARRAK",
+      "texto": "Você subiu. Dá para ver no jeito que segura a arma."
+     }
+    ],
+    [
+     {
+      "id": "COMB_A2",
+      "falante": "GARRAK",
+      "texto": "Pontos parados não matam ninguém. Gaste.",
+      "expressao": "severo"
+     }
+    ]
+   ]
+  },
+  "combate_ramo_mordida": {
+   "modo": "rapida",
+   "uma_vez": "combate_ramo_mordida_visto",
+   "falas": [
+    {
+     "id": "COMB_R_mordida",
+     "falante": "GARRAK",
+     "texto": "A Mordida de sempre, só que com mais dente.",
+     "expressao": "orgulho contido"
+    }
+   ]
+  },
+  "combate_ramo_bramido": {
+   "modo": "rapida",
+   "uma_vez": "combate_ramo_bramido_visto",
+   "falas": [
+    {
+     "id": "COMB_R_bramido",
+     "falante": "GARRAK",
+     "texto": "Bramido. Segure com o corpo inteiro, como eu ensinei."
+    }
+   ]
+  },
+  "combate_ramo_granada": {
+   "modo": "rapida",
+   "uma_vez": "combate_ramo_granada_visto",
+   "falas": [
+    {
+     "id": "COMB_R_granada",
+     "falante": "GARRAK",
+     "texto": "Granada. Arma de quem pensa antes de chegar perto."
+    }
+   ]
+  },
+  "combate_ramo_grilhao": {
+   "modo": "rapida",
+   "uma_vez": "combate_ramo_grilhao_visto",
+   "falas": [
+    {
+     "id": "COMB_R_grilhao",
+     "falante": "GARRAK",
+     "texto": "A corrente da arena... Que ela sirva para alguma coisa boa, então.",
+     "expressao": "vergonha"
+    }
+   ]
+  },
+  "combate_ramo_dash": {
+   "modo": "rapida",
+   "uma_vez": "combate_ramo_dash_visto",
+   "falas": [
+    {
+     "id": "COMB_R_dash",
+     "falante": "GARRAK",
+     "texto": "Pés. Na arena, quem não sabe sair do lugar não sai vivo."
+    }
+   ]
+  },
+  "combate_no": {
+   "modo": "rapida",
+   "sortear": true,
+   "variantes": [
+    [
+     {
+      "id": "COMB_R_x1",
+      "falante": "GARRAK",
+      "texto": "Bom."
+     }
+    ],
+    [
+     {
+      "id": "COMB_R_x2",
+      "falante": "GARRAK",
+      "texto": "Isso."
+     }
+    ],
+    [
+     {
+      "id": "COMB_R_x3",
+      "falante": "GARRAK",
+      "texto": "Mais um."
+     }
+    ],
+    [
+     {
+      "id": "COMB_R_x4",
+      "falante": "GARRAK",
+      "texto": "Hm. Aceitável."
+     }
+    ]
+   ]
+  },
+  "combate_apice_mordida_grande_arena": {
+   "modo": "rapida",
+   "uma_vez": "combate_apice_mordida_grande_arena_visto",
+   "falas": [
+    {
+     "id": "COMB_P_grande_arena",
+     "falante": "GARRAK",
+     "texto": "Grande Arena. O golpe que você deu na final. Eu vi da grade.",
+     "expressao": "orgulho contido"
+    }
+   ]
+  },
+  "combate_apice_bramido_recuo_de_gladiador": {
+   "modo": "rapida",
+   "uma_vez": "combate_apice_bramido_recuo_de_gladiador_visto",
+   "falas": [
+    {
+     "id": "COMB_P_recuo",
+     "falante": "GARRAK",
+     "texto": "O coice que joga você para trás... vai te salvar a vida. Ou não."
+    }
+   ]
+  },
+  "combate_apice_granada_bomba_de_fragmentacao": {
+   "modo": "rapida",
+   "uma_vez": "combate_apice_granada_bomba_de_fragmentacao_visto",
+   "falas": [
+    {
+     "id": "COMB_P_fragmentacao",
+     "falante": "GARRAK",
+     "texto": "Uma granada que solta outras. Os Kharn chamariam isso de covardia. Eu chamo de esperto."
+    }
+   ]
+  },
+  "combate_apice_grilhao_corrente_explosiva": {
+   "modo": "rapida",
+   "uma_vez": "combate_apice_grilhao_corrente_explosiva_visto",
+   "falas": [
+    {
+     "id": "COMB_P_explosiva",
+     "falante": "GARRAK",
+     "texto": "Corrente que explode. Se o Clã Kesh visse isso, morreria de inveja.",
+     "expressao": "raiva"
+    }
+   ]
+  },
+  "combate_segundo_apice": {
+   "modo": "rapida",
+   "uma_vez": "combate_segundo_apice_visto",
+   "falas": [
+    {
+     "id": "COMB_P_2",
+     "falante": "GARRAK",
+     "texto": "Dois Ápices. Mais que isso, nem o melhor campeão aguenta.",
+     "expressao": "severo"
+    }
+   ]
+  },
+  "combate_limite_apices": {
+   "modo": "rapida",
+   "falas": [
+    {
+     "id": "COMB_P_limite",
+     "falante": "GARRAK",
+     "texto": "Não. Dois. Escolha qual tirar.",
+     "expressao": "severo"
+    }
+   ]
+  },
+  "combate_redistribuir": {
+   "modo": "rapida",
+   "sortear": true,
+   "variantes": [
+    [
+     {
+      "id": "COMB_D1",
+      "falante": "GARRAK",
+      "texto": "Desfazer não é vergonha. Morrer igual duas vezes é."
+     }
+    ],
+    [
+     {
+      "id": "COMB_D2",
+      "falante": "GARRAK",
+      "texto": "Começa de novo. Igual cada descida."
+     }
+    ]
+   ]
+  },
+  "combate_nivel_5": {
+   "modo": "conversa",
+   "uma_vez": "combate_nivel_5_visto",
+   "falas": [
+    {
+     "id": "COMB_N5",
+     "falante": "GARRAK",
+     "texto": "Nível cinco. Na arena, isso era um gladiador que valia a aposta.",
+     "expressao": "orgulho contido"
+    }
+   ]
+  },
+  "combate_nivel_10": {
+   "modo": "conversa",
+   "uma_vez": "combate_nivel_10_visto",
+   "falas": [
+    {
+     "id": "COMB_N10",
+     "falante": "GARRAK",
+     "texto": "Dez. Eu já não teria muito o que te ensinar. Ainda assim, vou tentar."
+    }
+   ]
+  },
+  "combate_nivel_25": {
+   "modo": "conversa",
+   "uma_vez": "combate_nivel_25_visto",
+   "condicao": "garrak_chama_ryker",
+   "falas": [
+    {
+     "id": "COMB_N25",
+     "falante": "GARRAK",
+     "texto": "Nada mais para aprender comigo, Ryker. Só com você mesmo.",
+     "expressao": "orgulho contido"
+    }
+   ]
+  },
+  "combate_nivel_25_kratzu": {
+   "modo": "conversa",
+   "uma_vez": "combate_nivel_25_visto",
+   "falas": [
+    {
+     "id": "COMB_N25k",
+     "falante": "GARRAK",
+     "texto": "Nada mais para aprender comigo, Krat'zu. Só com você mesmo.",
+     "expressao": "orgulho contido"
+    }
+   ]
+  },
+  "gambiarra_epica_primeira": {
+   "modo": "rapida",
+   "uma_vez": "visto_GAMB_E1",
+   "falas": [
+    {
+     "id": "GAMB_E1",
+     "falante": "RYKER",
+     "texto": "Essa aqui nem os Kharn têm.",
+     "expressao": "deboche"
+    }
+   ]
+  },
+  "gambiarra_prego": {
+   "modo": "rapida",
+   "uma_vez": "visto_GAMB_P",
+   "falas": [
+    {
+     "id": "GAMB_P",
+     "falante": "RYKER",
+     "texto": "O prego do rato. Agora em tamanho de campeão."
+    }
+   ]
+  },
+  "arsenal_gambiarras_muitas": {
+   "modo": "rapida",
+   "falas": [
+    {
+     "id": "GAMB_G1",
+     "falante": "GARRAK",
+     "texto": "Quanta sucata soldada. Parecia uma loja Ilo com gatilho."
+    }
+   ]
+  },
+  "arsenal_gambiarra_epica": {
+   "modo": "rapida",
+   "falas": [
+    {
+     "id": "GAMB_G2",
+     "falante": "GARRAK",
+     "texto": "Vi a peça grande que você montou. Pena que ficou lá embaixo.",
+     "expressao": "orgulho contido"
+    }
+   ]
+  },
+  "arsenal_gambiarras": {
+   "modo": "rapida",
+   "sortear": true,
+   "variantes": [
+    [
+     {
+      "id": "GAMB_G3",
+      "falante": "GARRAK",
+      "texto": "A arma volta limpa. O que você inventou, inventa de novo."
+     }
+    ],
+    [
+     {
+      "id": "GAMB_G4",
+      "falante": "GARRAK",
+      "texto": "Gambiarra salva a run. Não salva quem não desvia.",
+      "expressao": "severo"
+     }
+    ]
    ]
   }
  }

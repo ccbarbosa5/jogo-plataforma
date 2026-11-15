@@ -35,6 +35,9 @@ var _cabecalho: Label
 var _seletor: TextureRect
 var _aberta: bool = false
 var _pausou: bool = false
+## Fala curta do Garrak dentro da tela (NAR-06 §2.2 a §2.5).
+var fala: Dictionary = {}
+var _fala: Label
 
 
 func _ready() -> void:
@@ -58,7 +61,25 @@ func abrir(progressao_: ProgressaoPersonagem, progresso_: DadosProgresso, arma: 
 	get_tree().paused = true
 	visible = true
 	Input.set_default_cursor_shape(Input.CURSOR_ARROW)
+	fala = {}
+	falar("combate_abrir_pontos" if progressao.pontos_livres(progresso) > 0 else "combate_abrir")
 	_montar()
+
+
+## Mostra a fala curta do Garrak (se a cena tocar agora). Retorna true se mostrou.
+func falar(id_cena: String) -> bool:
+	var f: Dictionary = Dialogos.fala_curta(id_cena)
+	if f.is_empty():
+		return false
+	fala = f
+	if _fala != null and is_instance_valid(_fala):
+		_atualizar_fala()
+	return true
+
+
+func _atualizar_fala() -> void:
+	_fala.text = "" if fala.is_empty() else "%s: %s" % [String(fala["nome"]).to_upper(), fala["texto"]]
+	_fala.add_theme_color_override("font_color", fala.get("cor", EstiloMenu.COR_TEXTO))
 
 
 func fechar() -> void:
@@ -77,15 +98,33 @@ func fechar() -> void:
 
 ## Compra o nó (se puder) e atualiza a tela.
 func comprar(id: StringName) -> bool:
+	var limite: bool = progressao.estado(id, progresso) == ProgressaoPersonagem.Estado.LIMITE_APICES
 	var ok: bool = progressao.comprar(id, progresso)
+	if ok:
+		_falar_compra(id)
+	elif limite:
+		falar("combate_limite_apices")
 	_montar(id)
 	if not ok:
 		_mostrar_info(id)
 	return ok
 
 
+## NAR-06 §2.3/§2.4: Ápice > 2º Ápice > 1º nó do ramo > comentário curto.
+func _falar_compra(id: StringName) -> void:
+	if progressao.e_apice(id):
+		if falar("combate_apice_" + String(id)):
+			return
+		if progressao.apices(progresso) >= 2 and falar("combate_segundo_apice"):
+			return
+	var ramo: String = progressao.ramo_do(id).get("id", "")
+	if not falar("combate_ramo_" + ramo):
+		falar("combate_no")
+
+
 func redistribuir() -> void:
 	progressao.redistribuir(progresso)
+	falar("combate_redistribuir")
 	_montar()
 
 
@@ -126,8 +165,10 @@ func _montar(foco: StringName = &"") -> void:
 				primeiro = b
 			y += ALTURA_NO + ESPACO_NOS
 		x += LARGURA_RAMO + ESPACO_RAMOS
-	_info = EstiloMenu.rotulo(_raiz, "", Rect2(24, 186, TELA.x - 48, 40), Fontes.TAMANHO_TEXTO, EstiloMenu.COR_TEXTO, true, true)
+	_info = EstiloMenu.rotulo(_raiz, "", Rect2(24, 186, TELA.x - 48, 36), Fontes.TAMANHO_TEXTO, EstiloMenu.COR_TEXTO, true, true)
 	_info.vertical_alignment = VERTICAL_ALIGNMENT_TOP
+	_fala = EstiloMenu.rotulo(_raiz, "", Rect2(24, 224, TELA.x - 48, 10), Fontes.TAMANHO_PEQUENA, EstiloMenu.COR_TEXTO, true)
+	_atualizar_fala()
 	EstiloMenu.botao(_raiz, "Redistribuir", Rect2(130, 238, 104, 16), redistribuir, Fontes.TAMANHO_TEXTO)
 	EstiloMenu.botao(_raiz, "Voltar", Rect2(246, 238, 104, 16), fechar, Fontes.TAMANHO_TEXTO)
 	_seletor = EstiloMenu.seletor()
