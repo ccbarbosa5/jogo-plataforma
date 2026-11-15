@@ -27,6 +27,8 @@ var selecionada: int = 0
 ## Primeira linha mostrada (rolagem).
 var primeira: int = 0
 var mensagem: String = ""
+## Fala curta de quem atende (NAR-06), mostrada acima do rodapé.
+var fala: Dictionary = {}
 
 var escurecer: ColorRect
 var painel: MolduraDialogo
@@ -70,6 +72,7 @@ func abrir(titulo_: String, moldura: String, fonte_: Callable, subtitulo_: Calla
 	selecionada = 0
 	primeira = 0
 	mensagem = ""
+	fala = {}
 	_atualizar()
 	_aberta = true
 	_trava = 0.2
@@ -165,11 +168,22 @@ func confirmar(i: int) -> bool:
 	var o: Dictionary = opcoes[i]
 	if not o.get("pode", false):
 		mensagem = o.get("motivo", "Indisponível.")
+		if o.has("ao_falhar"):
+			o["ao_falhar"].call()
 		return false
 	var ok: bool = o["acao"].call()
 	mensagem = o.get("feito", "") if ok else o.get("motivo", "Indisponível.")
 	_atualizar()
 	return ok
+
+
+## Mostra a fala curta da cena (se tocar agora). Retorna true se mostrou.
+func falar(id_cena: String) -> bool:
+	var f: Dictionary = Dialogos.fala_curta(id_cena)
+	if f.is_empty():
+		return false
+	fala = f
+	return true
 
 
 func _mostrar(sim: bool) -> void:
@@ -224,6 +238,13 @@ func _desenhar() -> void:
 		c.draw_string(f, Vector2(r.position.x + 6, y + 12), o["nome"], HORIZONTAL_ALIGNMENT_LEFT, -1, Fontes.TAMANHO_TEXTO, cor)
 		c.draw_string(p, Vector2(r.position.x + 6, y + 23), o.get("descricao", ""), HORIZONTAL_ALIGNMENT_LEFT, r.size.x - 110, Fontes.TAMANHO_PEQUENA, COR_APAGADO if cor == COR_APAGADO else Color("a7adba"))
 		c.draw_string(p, Vector2(r.end.x - 104, y + 12), o.get("direita", ""), HORIZONTAL_ALIGNMENT_RIGHT, 100, Fontes.TAMANHO_PEQUENA, cor_titulo if o.get("ativo", false) else cor)
+	if not fala.is_empty():
+		var y_fala: float = PAINEL.end.y - 27
+		var nome: String = String(fala["nome"]).to_upper() + ": "
+		c.draw_string(p, Vector2(PAINEL.position.x + 14, y_fala), nome, HORIZONTAL_ALIGNMENT_LEFT, -1, Fontes.TAMANHO_PEQUENA, fala["cor"])
+		var largura_nome: float = p.get_string_size(nome, HORIZONTAL_ALIGNMENT_LEFT, -1, Fontes.TAMANHO_PEQUENA).x
+		c.draw_string(p, Vector2(PAINEL.position.x + 14 + largura_nome, y_fala), fala["texto"], HORIZONTAL_ALIGNMENT_LEFT,
+				PAINEL.size.x - 44 - largura_nome, Fontes.TAMANHO_PEQUENA, COR_TEXTO)
 	if primeira > 0:
 		c.draw_string(p, Vector2(PAINEL.end.x - 24, TOPO_LINHAS - 2), "▲", HORIZONTAL_ALIGNMENT_LEFT, -1, Fontes.TAMANHO_PEQUENA, cor_titulo)
 	if primeira + LINHAS_VISIVEIS < opcoes.size():

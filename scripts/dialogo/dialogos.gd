@@ -34,6 +34,17 @@ func tocar(id_cena: String) -> bool:
 	return true
 
 
+## Uma fala curta para mostrar DENTRO de uma tela (árvores da nave, NAR-06): prepara a cena
+## (marca "uma vez") e devolve {nome, texto, cor} da primeira fala, ou {} se não toca agora.
+func fala_curta(id_cena: String) -> Dictionary:
+	var falas: Array[Dictionary] = diretor.preparar(id_cena)
+	if falas.is_empty():
+		return {}
+	var f: Dictionary = falas[0]
+	var falante: String = f.get("falante", "")
+	return {"nome": banco.nome_do_falante(falante), "texto": f.get("texto", ""), "cor": banco.cor_do_falante(falante)}
+
+
 ## Mostra uma cena sem mexer no progresso (sem flags nem "duvida"), para NAR, ART e QA
 ## revisarem as falas no jogo. Usa a primeira entrada de cada parte.
 func previsualizar(id_cena: String) -> bool:

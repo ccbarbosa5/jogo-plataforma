@@ -33,14 +33,18 @@ var _lancando: bool = false
 ## Árvore de Combate do Ryker (GD-07 §4), no Arsenal.
 var progressao: ProgressaoPersonagem
 var tela_arvore: TelaArvoreCombate
+## Garrak já comentou as Gambiarras da run que acabou (NAR-06 §2.6, 1 por volta).
+var _comentou_gambiarras: bool = false
+var _lista_do_vossa: bool = false
 
 
 func _ready() -> void:
 	Combate.reiniciar()
 	Progresso.limpar_run()
-	# Falas da reconstrução que dependem da run que acabou (CAMP_A3).
-	if Ciclo.ultima_run.get("usou_arvore", false):
-		Progresso.definir_run("usou_arvore")
+	# Falas da reconstrução que dependem da run que acabou (CAMP_A3, NAR-06 §2.7: morreu com
+	# pelo menos 1 Gambiarra).
+	if Ciclo.resultado == "morte" and int(Ciclo.ultima_run.get("gambiarras_pegas", 0)) > 0:
+		Progresso.definir_run("morreu_com_gambiarra")
 	_montar_cenario()
 	jogador.global_position = Vector2(120, CHAO)
 	jogador.posicao_segura = jogador.global_position
@@ -56,6 +60,7 @@ func _ready() -> void:
 	progressao = ProgressaoPersonagem.new("ryker")
 	tela_arvore = TelaArvoreCombate.new()
 	add_child(tela_arvore)
+	tela.fechou.connect(_ao_fechar_lista)
 	PontoNave.criar(self, Vector2(120, CHAO), PontoNave.Figura.RECONSTRUTOR, "")
 	eco = _ponto(Vector2(440, CHAO), PontoNave.Figura.ECO, "falar com a ECO", _usar_eco)
 	terminal = _ponto(Vector2(590, CHAO), PontoNave.Figura.TERMINAL, "Arquivo (Dados)", _usar_terminal)
@@ -146,20 +151,74 @@ func _usar_terminal() -> void:
 
 
 func _usar_vossa() -> void:
-	if Dialogos.tocar("vossa_primeira"):
-		await caixa.terminou
+	await tocar_em_sequencia(["vossa_primeira", "vossa_arvore_primeira"] as Array[String])
 	tela.cor_titulo = Color("d9b26a")
 	tela.abrir("Vossa Margem · Árvore Passiva", "ilo", func() -> Array[Dictionary]: return opcoes_melhorias("vossa"), _saldos)
+	_lista_do_vossa = true
+	# NAR-06 §1.2: fala do Vossa ao abrir (sem Núcleos para nada: "Olhar é grátis").
+	var alguma: bool = false
+	for o in tela.opcoes:
+		alguma = alguma or o.get("pode", false)
+	tela.falar("vossa_arvore_abrir" if alguma else "vossa_arvore_sem_nucleos")
+
+
+func _ao_fechar_lista() -> void:
+	if _lista_do_vossa:
+		_lista_do_vossa = false
+		if randf() < 0.5:
+			Dialogos.tocar("vossa_fechar")  # NAR-06 §1.4, PASS_X4 (sorteio)
+
+
+## NAR-06 §1.3/§1.4: o Vossa comenta cada compra (1ª compra, seguintes e tudo comprado). O
+## "Completo" (PASS_X1) toca ao tentar comprar uma melhoria que já está no máximo.
+func _falar_compra_vossa(id: String) -> void:
+	if not tela.falar("vossa_compra_" + id):
+		tela.falar("vossa_compra_%s_2" % id)
+	var tudo: bool = true
+	for i in melhorias.do_lugar("vossa"):
+		tudo = tudo and melhorias.custo(i["id"], Progresso) < 0
+	if tudo:
+		tela.falar("vossa_tudo")
 
 
 func _usar_garrak() -> void:
-	# Garrak fala primeiro quando há algo novo (NAR-01 e NAR-03); depois, o Arsenal.
-	for id: String in ["garrak_primeira", "arsenal_bramido", "arsenal_aprimoramento", "arsenal_treino_primeiro"]:
+	# Garrak fala primeiro quando há algo novo (NAR-01, NAR-03 e NAR-06); depois, o Arsenal.
+	var falou: bool = false
+	for id: String in ["garrak_primeira", "arsenal_combate_primeira", "arsenal_bramido", "arsenal_aprimoramento",
+			"arsenal_treino_primeiro"] + _cenas_de_nivel():
 		if Dialogos.tocar(id):
 			await caixa.terminou
+			falou = true
 			break
 	tela.cor_titulo = Color("ff5a2e")
 	tela.abrir("Arsenal · Garrak", "kharn", opcoes_arsenal, _saldos)
+	if not falou:
+		comentar_gambiarras()
+
+
+## Marcos de nível da árvore de Combate (NAR-06 §2.5), do maior para o menor.
+func _cenas_de_nivel() -> Array[String]:
+	var n: int = progressao.nivel(Progresso)
+	var cenas: Array[String] = []
+	if n >= 25:
+		cenas.append("combate_nivel_25" if Progresso.tem_flag("garrak_chama_ryker") else "combate_nivel_25_kratzu")
+	if n >= 10:
+		cenas.append("combate_nivel_10")
+	if n >= 5:
+		cenas.append("combate_nivel_5")
+	return cenas
+
+
+## NAR-06 §2.6: na volta, Garrak comenta as Gambiarras da run (1 vez por volta, só se teve alguma).
+func comentar_gambiarras() -> bool:
+	if _comentou_gambiarras or int(Ciclo.ultima_run.get("gambiarras_pegas", 0)) <= 0:
+		return false
+	_comentou_gambiarras = true
+	if int(Ciclo.ultima_run.get("gambiarras_pegas", 0)) >= 5:
+		return Dialogos.tocar("arsenal_gambiarras_muitas")
+	if Ciclo.ultima_run.get("gambiarra_epica", false):
+		return Dialogos.tocar("arsenal_gambiarra_epica")
+	return Dialogos.tocar("arsenal_gambiarras")
 
 
 func _usar_capsula() -> void:
@@ -199,10 +258,21 @@ func _opcao_melhoria(i: Dictionary) -> Dictionary:
 	var motivo: String = "Já no máximo." if custo < 0 else ("Precisa de %s antes." % melhorias.item(i["requer"])["nome"] \
 			if melhorias.bloqueado(id, Progresso) else "%s insuficientes." % moeda)
 	var nome: String = "%s · %s" % [i["ramo"], i["nome"]] if i.has("ramo") else i["nome"]
+	var do_vossa: bool = i.get("onde", "") == "vossa"
 	return {
 		"nome": nome, "descricao": i["descricao"], "direita": direita, "ativo": n > 0,
-		"pode": melhorias.pode_comprar(id, Progresso), "motivo": motivo, "feito": "%s comprado." % i["nome"],
-		"acao": func() -> bool: return melhorias.comprar(id, Progresso),
+		"pode": melhorias.pode_comprar(id, Progresso), "motivo": motivo,
+		"feito": "" if do_vossa else "%s comprado." % i["nome"],
+		"acao": func() -> bool:
+			var ok: bool = melhorias.comprar(id, Progresso)
+			if ok and do_vossa:
+				_falar_compra_vossa(id)
+			return ok,
+		"ao_falhar": func() -> void:
+			if not do_vossa or melhorias.bloqueado(id, Progresso):
+				return
+			tela.mensagem = ""
+			tela.falar("vossa_maximo" if melhorias.custo(id, Progresso) < 0 else "vossa_falta_nucleos"),
 	}
 
 

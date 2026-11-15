@@ -126,6 +126,9 @@ func _ao_inimigo_morrer(inimigo: Inimigo, pela_rival: bool) -> void:
 		ganho += 5
 	jogador.creditos += ganho
 	ganhar_xp(progressao.xp_do_inimigo(inimigo))
+	# NAR-06 §2.7: 1º abate da 1ª descida com um Ápice comprado ("é o que eu fazia na final").
+	if progressao.apices(Progresso) > 0:
+		Dialogos.tocar("campo_primeiro_apice")
 
 
 ## XP permanente (GD-07 §4.1), com a Memória da Âncora. Fica salvo mesmo se o Ryker morrer;
@@ -234,7 +237,24 @@ func oferecer_gambiarra(elite: bool = false, so_comuns: bool = false, titulo: St
 		return banco_gambiarras.sortear(jogador.arma_equipada, rng_gambiarras, elite, so_comuns)
 	tela_gambiarras.ao_recalibrar = sortear
 	if tela_gambiarras.abrir(jogador, sortear.call(), titulo):
-		await tela_gambiarras.fechou
+		var m: ModificadorArma = await tela_gambiarras.fechou
+		registrar_gambiarra(m)
+
+
+## Conta a Gambiarra na run (Garrak comenta na volta) e o Ryker fala ao escolher (NAR-06 §2.6).
+func registrar_gambiarra(m: ModificadorArma) -> void:
+	if m == null:
+		return
+	Progresso.definir_run("gambiarras_pegas", int(Progresso.estado_run.get("gambiarras_pegas", 0)) + 1)
+	if m.raridade == ModificadorArma.Raridade.EPICA:
+		Progresso.definir_run("gambiarra_epica", true)
+	Progresso.definir_flag("1a_gambiarra_pega")  # destrava "arsenal_aprimoramento" na nave
+	if m.id == &"prego_do_rato" and Dialogos.tocar("gambiarra_prego"):
+		return
+	if m.raridade == ModificadorArma.Raridade.EPICA and Dialogos.tocar("gambiarra_epica_primeira"):
+		return
+	if not Dialogos.tocar("campo_aprimoramento_primeiro"):
+		Dialogos.tocar("campo_aprimoramento")
 
 
 ## Treino com Garrak (desbloqueio com Dados): começa a run com 1 Gambiarra Comum à escolha.
