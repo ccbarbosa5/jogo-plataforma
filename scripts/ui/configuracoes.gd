@@ -24,8 +24,8 @@ const NOMES_ACOES: Dictionary = {
 	&"chamado": "Chamado",
 	&"interagir": "Interagir",
 }
-## Teclas que não podem ir para uma ação trocável (abrem a pausa ou a árvore).
-const TECLAS_RESERVADAS: Array[Key] = [KEY_ESCAPE, KEY_TAB]
+## Teclas que não podem ir para uma ação trocável (Esc abre a pausa).
+const TECLAS_RESERVADAS: Array[Key] = [KEY_ESCAPE]
 const NOMES_MIRA: Array[String] = ["Desligada", "Assistida", "Total"]
 
 var caminho: String = CAMINHO_PADRAO

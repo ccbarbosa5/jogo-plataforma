@@ -192,7 +192,7 @@ func opcoes_arsenal() -> Array[Dictionary]:
 		var liberada: bool = Ciclo.arma_liberada(id)
 		var escolhida: bool = Ciclo.arma_escolhida == id
 		lista.append({
-			"nome": dados.nome, "descricao": dados.assinatura_descricao if liberada else "Ainda não liberada.",
+			"nome": dados.nome, "descricao": dados.descricao if liberada else "Ainda não liberada.",
 			"direita": "EQUIPADA" if escolhida else ("ESCOLHER" if liberada else "—"), "ativo": escolhida,
 			"pode": liberada and not escolhida, "motivo": "Equipada." if escolhida else "Ainda não liberada.",
 			"feito": "%s equipada." % dados.nome,

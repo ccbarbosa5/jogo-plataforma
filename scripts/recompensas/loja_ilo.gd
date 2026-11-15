@@ -1,21 +1,66 @@
 class_name LojaIlo
 extends Area2D
-## Loja do Mercador Ilo na run (GD-05 §2.2): por enquanto vende só o "Aprimoramento de Arma"
-## (90 Créditos, no máximo 1 por loja). Encoste na banca e aperte Interagir para comprar.
-## Os outros itens da loja (cura, upgrades, reroll) entram com o gerador de salas.
+## Uma banca da loja do Mercador Ilo na run (GD-02 §6.5). Cada banca vende um item; a sala de
+## loja põe três lado a lado (cura, dádiva Kharn, dádiva Vesh). Encoste e aperte Interagir.
+## GD-07: o "Aprimoramento de Arma" saiu da loja (as Gambiarras vêm ao limpar as salas).
 
 signal comprou(jogador: Jogador, item: StringName)
 
-const ITEM_APRIMORAMENTO: StringName = &"aprimoramento_de_arma"
+## item -> [nome, preço, limite por loja]
+const ITENS: Dictionary = {
+	&"cura": ["Cura (1 bloco)", 40, 2],
+	&"dadiva_kharn": ["Dádiva Kharn", 80, 1],
+	&"dadiva_vesh": ["Dádiva Vesh", 80, 1],
+}
 
-@export var preco_aprimoramento: int = 90
-@export var limite_aprimoramento: int = 1
+@export var item: StringName = &"cura"
 
-var vendidos: Dictionary = {}
+var vendidos: int = 0
 var _cliente: Jogador
-var _icone: Texture2D = FolhaSprite.carregar("res://assets/sprites/ui/arvore/ponto_aprimoramento.png")
 var _aviso: String = ""
 var _timer_aviso: float = 0.0
+
+
+func nome_item() -> String:
+	return ITENS[item][0]
+
+
+func preco() -> int:
+	return ITENS[item][1]
+
+
+func restantes() -> int:
+	return int(ITENS[item][2]) - vendidos
+
+
+func pode_comprar(jogador: Jogador) -> bool:
+	return restantes() > 0 and jogador.creditos >= preco()
+
+
+## Desconta os Créditos e entrega o item. A dádiva abre a tela de oferta da facção.
+func comprar(jogador: Jogador) -> bool:
+	if restantes() <= 0:
+		_avisar("Esgotado.")
+		return false
+	if jogador.creditos < preco():
+		_avisar("Créditos insuficientes.")
+		Dialogos.tocar("loja_sem_creditos")
+		return false
+	if item == &"cura" and jogador.vida.atual >= jogador.vida.maxima:
+		_avisar("Vida cheia.")
+		return false
+	jogador.creditos -= preco()
+	vendidos += 1
+	match item:
+		&"cura":
+			jogador.vida.curar(1)
+		&"dadiva_kharn", &"dadiva_vesh":
+			Dialogos.tocar("loja_compra_upgrade")
+			var run := get_tree().get_first_node_in_group(&"run_ato")
+			if run != null and run.has_method("abrir_dadiva"):
+				run.abrir_dadiva(jogador, "kharn" if item == &"dadiva_kharn" else "vesh")
+	comprou.emit(jogador, item)
+	return true
 
 
 func _ready() -> void:
@@ -30,31 +75,6 @@ func _ready() -> void:
 		add_child(forma)
 	body_entered.connect(_ao_entrar)
 	body_exited.connect(_ao_sair)
-
-
-func restantes(item: StringName = ITEM_APRIMORAMENTO) -> int:
-	return limite_aprimoramento - int(vendidos.get(item, 0))
-
-
-func pode_comprar(jogador: Jogador, item: StringName = ITEM_APRIMORAMENTO) -> bool:
-	return restantes(item) > 0 and jogador.creditos >= preco_aprimoramento
-
-
-## Compra o Aprimoramento: desconta os Créditos e dá +1 ponto (a tela da árvore abre).
-func comprar(jogador: Jogador, item: StringName = ITEM_APRIMORAMENTO) -> bool:
-	if restantes(item) <= 0:
-		_avisar("Esgotado.")
-		return false
-	if jogador.creditos < preco_aprimoramento:
-		_avisar("Créditos insuficientes.")
-		Dialogos.tocar("loja_sem_creditos")
-		return false
-	jogador.creditos -= preco_aprimoramento
-	vendidos[item] = int(vendidos.get(item, 0)) + 1
-	Dialogos.tocar("loja_compra_upgrade")
-	jogador.ganhar_aprimoramento(1)
-	comprou.emit(jogador, item)
-	return true
 
 
 func _ao_entrar(corpo: Node2D) -> void:
@@ -94,11 +114,9 @@ func _draw() -> void:
 	var fonte: Font = Fontes.pequena()
 	var tam: int = Fontes.TAMANHO_PEQUENA
 	if restantes() > 0:
-		if _icone != null:
-			draw_texture(_icone, Vector2(-6, -30))
-		var cor: Color = Color("eceff4") if _cliente == null or _cliente.creditos >= preco_aprimoramento else Color("ff8a6a")
-		draw_string(fonte, Vector2(-40, -34), "Aprimoramento de Arma", HORIZONTAL_ALIGNMENT_CENTER, 80, tam, cor)
-		draw_string(fonte, Vector2(-40, -6), "%d Créditos" % preco_aprimoramento, HORIZONTAL_ALIGNMENT_CENTER, 80, tam, Color("1a1c22"))
+		var cor: Color = Color("eceff4") if _cliente == null or _cliente.creditos >= preco() else Color("ff8a6a")
+		draw_string(fonte, Vector2(-40, -34), nome_item(), HORIZONTAL_ALIGNMENT_CENTER, 80, tam, cor)
+		draw_string(fonte, Vector2(-40, -6), "%d Créditos" % preco(), HORIZONTAL_ALIGNMENT_CENTER, 80, tam, Color("1a1c22"))
 		if _cliente != null:
 			draw_string(fonte, Vector2(-40, -44), "E: comprar", HORIZONTAL_ALIGNMENT_CENTER, 80, tam, Color("a7adba"))
 	else:

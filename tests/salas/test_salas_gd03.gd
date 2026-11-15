@@ -155,36 +155,20 @@ func test_3_portas_sem_repetir_e_garantia_de_faccao() -> void:
 		p.free()
 
 
-func test_6_aprimoramento_maximo_3_nunca_na_sala_1_e_garantia_da_sala_5() -> void:
-	var viu_garantia: bool = false
-	for semente in 400:
+func test_6_sem_porta_de_aprimoramento() -> void:
+	# GD-07 §5.1: a porta "Aprimoramento de Arma" saiu; as Gambiarras vêm ao limpar a sala.
+	afirmar(not "aprimoramento" in RegrasRecompensas.TIPOS, "tipo removido")
+	for semente in 100:
 		var p := _progresso(["queda_completa_vista"])
 		var g := GeradorAto.new(p, semente)
-		var total: int = 0
-		var ate_5: int = 0
 		var vidas: int = 0
 		for plano in _planejar_run(g):
-			var n: int = plano["numero"]
-			if "aprimoramento" in plano["portas"]:
-				afirmar(n != 1, "nunca na sala 1")
-				total += 1
-				if n <= 5:
-					ate_5 += 1
+			afirmar(not "aprimoramento" in plano["portas"], "semente %d sala %d" % [semente, plano["numero"]])
 			if "vida_maxima" in plano["portas"]:
 				vidas += 1
-			if n == 5:
-				afirmar(ate_5 >= 1, "semente %d: garantia até a sala 5" % semente)
-		afirmar(total <= 3, "semente %d: %d portas de Aprimoramento" % [semente, total])
 		afirmar(vidas <= 1, "no máximo 1 vida máxima por ato")
-		viu_garantia = viu_garantia or ate_5 >= 1
 		p.free()
-	var estado := EstadoAto.new()
-	var rng := RandomNumberGenerator.new()
-	var portas := RegrasRecompensas.sortear(5, estado, rng, {"kharn": 1, "vesh": 1, "creditos": 100})
-	afirmar("aprimoramento" in portas, "sala 5 sem nenhuma antes: mostra Aprimoramento")
 
-
-# --- 1. Surgimento justo na arena ---
 
 func test_1_ninguem_surge_perto_nem_ataca_na_entrada() -> void:
 	var p := _progresso(["queda_completa_vista"])

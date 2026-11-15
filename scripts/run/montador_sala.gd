@@ -76,9 +76,14 @@ static func montar(plano: Dictionary, banco: BancoBlocos) -> SalaRun:
 					"G", "T", "W", "Z", "C", "N", "S":
 						sala.inimigos_fixos.append({"tipo": MARCADORES_INIMIGOS[c], "posicao": pe})
 					"M":
-						var loja := LojaIlo.new()
-						loja.position = pe
-						sala.add_child(loja)
+						# Loja do Ilo (GD-02 §6.5): três bancas lado a lado.
+						var deslocamento: float = -52.0
+						for item: StringName in [&"cura", &"dadiva_kharn", &"dadiva_vesh"]:
+							var loja := LojaIlo.new()
+							loja.item = item
+							loja.position = pe + Vector2(deslocamento, 0.0)
+							sala.add_child(loja)
+							deslocamento += 52.0
 					"+", "*":
 						sala.estacoes_reparo.append({"tipo": "cura" if c == "+" else "dadiva", "posicao": pe})
 					"3":

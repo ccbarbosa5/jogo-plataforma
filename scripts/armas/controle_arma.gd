@@ -1,10 +1,16 @@
 class_name ControleArma
 extends RefCounted
-## Comportamento da arma do jogador durante a run (GD-05 §4): quando e como dispara,
-## as assinaturas (Embalo da Mordida, Coice do Bramido) e os 18 marcadores da árvore.
-## O Jogador chama processar() todo frame; o Projetil chama antes/depois_do_acerto().
+## Comportamento da arma do jogador durante a run (GD-07). No nível 1 a arma só atira; os
+## marcadores dos ModificadorArma (ramo da arma na árvore de Combate e Gambiarras) ligam os
+## comportamentos abaixo. Números em ParametrosArmas. O Jogador chama processar() todo frame;
+## o Projetil chama antes/depois_do_acerto(). A Marca do Grilhão também mora aqui.
+##
+## Marcadores:
+##  tres_golpes · grande_arena · rebite_duplo (acumula) · incandescente · leque · cacador_marca
+##  tiro_aviso · guiado · prego_do_rato · abre_couraca · cano_duplo · carregador_arena
+##  recuo · bala_central · empurrao · estilhaco_vivo (acumula) · queima_roupa · artilharia
 
-## Cada disparo (cada bala da rajada) conta `peso` tiros (GD-05 §2.3).
+## Cada disparo conta `peso` tiros para os efeitos de facção (GD-05 §2.3).
 signal disparou(peso: float)
 signal acertou(inimigo: Inimigo, info: InfoDano, matou: bool)
 
@@ -14,24 +20,22 @@ var jogador: Jogador
 var p: ParametrosArmas
 var rng: RandomNumberGenerator = RandomNumberGenerator.new()
 
-## Embalo (Mordida): 0 até o máximo.
-var embalo: float = 0.0
-## Carga do Bramido (Artilharia), em segundos.
+## Carga da Artilharia, em segundos.
 var carga: float = 0.0
-## Disparos no carregador (Cano Duplo).
+## Disparos no carregador (Cano Duplo / Carregador de Arena).
 var balas: int = 0
-## Alvos marcados pelo Grilhão (Marca do Escravo): Inimigo -> segundos restantes.
+## Alvos marcados pelo Grilhão: Inimigo -> {"tempo": s, "bonus": fração}.
 var marcas: Dictionary = {}
-## Tiros dados com o Embalo cheio (Golpe do Campeão a cada 10).
-var tiros_embalo_cheio: int = 0
+## Tiros dados nesta sala (Grande Arena, Prego do Rato, Rebite Duplo).
+var tiros: int = 0
 
 var _cooldown: float = 0.0
-var _sem_acertar: float = 999.0
-var _rajada_restantes: int = 0
-var _timer_rajada: float = 0.0
-var _rajada: Disparo
 var _carregando: bool = false
 var _recuo_no_ar_usado: bool = false
+var _ultimo_alvo: Inimigo
+var _seguidos: int = 0
+var _bonus_proximo: float = 0.0
+var _timer_bonus_proximo: float = 0.0
 var _texturas: Dictionary = {}
 
 
@@ -50,41 +54,29 @@ func tem(marcador: StringName) -> bool:
 	return arma() != null and arma().tem_marcador(marcador)
 
 
-func assinatura() -> StringName:
-	return arma().base.assinatura if arma() != null and arma().base != null else &""
+func contar(marcador: StringName) -> int:
+	return arma().contar_marcador(marcador) if arma() != null else 0
 
 
 ## Começo de sala ou troca de arma.
 func reiniciar() -> void:
-	embalo = 0.0
 	carga = 0.0
 	_carregando = false
 	_cooldown = 0.0
-	_rajada_restantes = 0
-	balas = p.carregador_tamanho
-	tiros_embalo_cheio = 0
+	tiros = 0
+	_ultimo_alvo = null
+	_seguidos = 0
+	balas = tamanho_carregador()
 
 
-# --- Embalo ---
-
-func embalo_maximo() -> float:
-	return p.embalo_maximo_estendido if tem(&"embalo_estendido") else p.embalo_maximo
-
-
-func embalo_cheio() -> bool:
-	return assinatura() == &"embalo" and embalo >= embalo_maximo()
+## 1 = sem carregador. Cano Duplo ou Carregador de Arena: 2; os dois juntos: 3.
+func tamanho_carregador() -> int:
+	return 1 + contar(&"cano_duplo") + contar(&"carregador_arena")
 
 
-func fracao_embalo() -> float:
-	return embalo / embalo_maximo() if assinatura() == &"embalo" else 0.0
-
-
-## Cadência efetiva: base × modificadores × Embalo (+1,25% por ponto).
+## Cadência efetiva: arma × modificadores × efeitos de facção.
 func cadencia() -> float:
-	var c: float = arma().cadencia() * jogador.efeitos.mult_cadencia()
-	if assinatura() == &"embalo":
-		c *= 1.0 + embalo * p.embalo_cadencia_por_ponto
-	return c
+	return arma().cadencia() * jogador.efeitos.mult_cadencia()
 
 
 func carregando() -> bool:
@@ -95,28 +87,39 @@ func fracao_carga() -> float:
 	return clampf(carga / p.carga_s, 0.0, 1.0) if _carregando else 0.0
 
 
-# --- Ganchos chamados pelo Jogador ---
+# --- Ganchos chamados pelo Jogador e pelo Grilhão ---
 
 func ao_levar_dano() -> void:
-	if assinatura() != &"embalo":
-		return
-	embalo = floorf(embalo * 0.5) if tem(&"embalo_estendido") else 0.0
+	pass
 
 
 func ao_dash() -> void:
-	if tem(&"recarga_no_dash"):
-		_cooldown = 0.0
-		balas = p.carregador_tamanho
+	pass
 
 
-## O Grilhão acertou: Marca do Escravo.
+## O próximo tiro (em até `segundos`) causa `bonus` a mais (Esquiva de Arena, ramo do Dash).
+func armar_bonus_proximo_tiro(bonus: float, segundos: float) -> void:
+	_bonus_proximo = bonus
+	_timer_bonus_proximo = segundos
+
+
+## Marca do Grilhão (GD-07 §2): +25% de dano dos tiros por 4 s (Marca Funda: +40% por 6 s).
 func marcar(inimigo: Inimigo) -> void:
-	if tem(&"marca_grilhao") and inimigo != null:
-		marcas[inimigo] = p.marca_duracao
+	if inimigo == null:
+		return
+	var funda: bool = jogador.tem_no(&"grilhao_marca_funda")
+	marcas[inimigo] = {
+		"tempo": p.marca_funda_duracao if funda else p.marca_duracao,
+		"bonus": p.marca_funda_bonus if funda else p.marca_bonus_dano,
+	}
 
 
 func esta_marcado(inimigo: Inimigo) -> bool:
-	return marcas.get(inimigo, 0.0) > 0.0
+	return marcas.has(inimigo) and marcas[inimigo]["tempo"] > 0.0
+
+
+func bonus_da_marca(inimigo: Inimigo) -> float:
+	return marcas[inimigo]["bonus"] if esta_marcado(inimigo) else 0.0
 
 
 ## `manual`: botão de tiro segurado. `automatico`: o tiro automático quer atirar (sem o botão).
@@ -124,14 +127,7 @@ func processar(delta: float, manual: bool, automatico: bool) -> void:
 	_atualizar_timers(delta)
 	if arma() == null or arma().base == null or arma().base.cena_projetil == null:
 		return
-	if _rajada_restantes > 0:
-		_timer_rajada -= delta
-		if _timer_rajada <= 0.0:
-			_disparar(&"", _rajada, p.rajada_balas - _rajada_restantes + 1)
-			_rajada_restantes -= 1
-			_timer_rajada = p.rajada_intervalo
-		return
-	if tem(&"carga_explosiva"):
+	if tem(&"artilharia"):
 		_processar_carga(delta, manual, automatico)
 		return
 	if not (manual or automatico):
@@ -144,22 +140,22 @@ func processar(delta: float, manual: bool, automatico: bool) -> void:
 
 func _atualizar_timers(delta: float) -> void:
 	_cooldown -= delta
-	_sem_acertar += delta
-	if assinatura() == &"embalo" and _sem_acertar > p.embalo_atraso_queda:
-		embalo = maxf(embalo - p.embalo_queda_por_segundo * delta, 0.0)
+	_timer_bonus_proximo -= delta
+	if _timer_bonus_proximo <= 0.0:
+		_bonus_proximo = 0.0
 	for alvo in marcas.keys():
-		marcas[alvo] -= delta
-		if marcas[alvo] <= 0.0 or not is_instance_valid(alvo):
+		marcas[alvo]["tempo"] -= delta
+		if marcas[alvo]["tempo"] <= 0.0 or not is_instance_valid(alvo):
 			marcas.erase(alvo)
 	if jogador.is_on_floor():
 		_recuo_no_ar_usado = false
-	# Cano Duplo: recarrega o carregador quando a recarga longa termina.
-	if tem(&"carregador_2") and balas <= 0 and _cooldown <= 0.0:
-		balas = p.carregador_tamanho
+	# Carregador: volta cheio quando a recarga longa termina.
+	if balas <= 0 and _cooldown <= 0.0:
+		balas = tamanho_carregador()
 
 
 ## Artilharia: segurar carrega; soltar antes de 1 s = tiro normal; carga cheia = explosivo.
-## Com o tiro automático (botão solto), dispara sozinho quando a carga completa (GD-05 §2.4).
+## Com o tiro automático (botão solto), dispara sozinho quando a carga completa.
 func _processar_carga(delta: float, manual: bool, automatico: bool) -> void:
 	if _cooldown > 0.0:
 		return
@@ -178,33 +174,30 @@ func _soltar_carga(delta: float) -> void:
 	_carregando = false
 	carga = 0.0
 	if cheia:
-		_disparar(&"carregado", Disparo.new())
+		_disparar(&"carregado", false)
 		_depois_do_disparo(delta)
 	else:
 		_puxar_gatilho(delta)
 
 
 func _puxar_gatilho(delta: float) -> void:
-	if tem(&"rajada_3"):
-		_rajada = Disparo.new()
-		_disparar(&"", _rajada, 1)
-		_rajada_restantes = p.rajada_balas - 1
-		_timer_rajada = p.rajada_intervalo
-		# Pausa entre rajadas, mais curta com Embalo.
-		var bonus: float = 1.0 + embalo * p.embalo_cadencia_por_ponto
-		_cooldown = maxf(_cooldown, -delta) + (p.rajada_intervalo * (p.rajada_balas - 1) + p.rajada_pausa / bonus)
-		return
+	tiros += 1
 	var especial: StringName = &""
-	if tem(&"golpe_do_campeao") and embalo_cheio():
-		tiros_embalo_cheio += 1
-		if tiros_embalo_cheio % p.campeao_a_cada == 0:
-			especial = &"campeao"
-	_disparar(especial, Disparo.new())
+	if tem(&"prego_do_rato") and tiros % p.prego_a_cada == 0:
+		especial = &"prego"
+	elif tem(&"grande_arena") and tiros % p.grande_arena_a_cada == 0:
+		especial = &"arena"
+	var duplo: bool = false
+	var acumulos_duplo: int = contar(&"rebite_duplo")
+	if acumulos_duplo > 0:
+		var a_cada: int = maxi(p.rebite_duplo_a_cada - (acumulos_duplo - 1), 2)
+		duplo = tiros % a_cada == 0
+	_disparar(especial, duplo)
 	_depois_do_disparo(delta)
 
 
 func _depois_do_disparo(delta: float) -> void:
-	if tem(&"carregador_2"):
+	if tamanho_carregador() > 1:
 		balas -= 1
 		var espera: float = p.carregador_intervalo if balas > 0 else p.carregador_recarga
 		_cooldown = maxf(_cooldown, -delta) + espera
@@ -212,60 +205,82 @@ func _depois_do_disparo(delta: float) -> void:
 		_cooldown = maxf(_cooldown, -delta) + 1.0 / cadencia()
 
 
-## Cria os projéteis de um disparo (ou de uma bala da rajada).
-func _disparar(especial: StringName, disparo: Disparo, ordem_rajada: int = 0) -> void:
+## Cria os projéteis de um disparo.
+func _disparar(especial: StringName, duplo: bool) -> void:
 	var a: ArmaEquipada = arma()
-	var base: DadosArma = a.base
 	var direcao: Vector2 = jogador.direcao_mira()
 	var origem: Vector2 = jogador.ponto_de_tiro() + direcao * 10.0
-	var destino: Node = jogador.container_projeteis if jogador.container_projeteis != null else jogador.get_parent()
-	var unica: bool = tem(&"bala_unica")
-	var quantos: int = 1 if especial == &"campeao" else a.projeteis_por_tiro()
-	var espalhamento: float = 0.0 if especial == &"campeao" else a.espalhamento_graus()
-	for i in quantos:
-		var desvio: float = deg_to_rad(rng.randf_range(-espalhamento, espalhamento))
-		var projetil: Projetil = base.cena_projetil.instantiate()
-		destino.add_child(projetil)
-		var dano: int = p.campeao_dano if especial == &"campeao" else a.dano()
-		var info := InfoDano.criar(dano, jogador)
-		info.fator_efeito = 1.0 if unica else base.fator_efeito
-		projetil.configurar(origem, direcao.rotated(desvio), Unidades.px(a.velocidade_projetil()), info,
-				a.duracao_projetil(), Camadas.PROJETEIS_JOGADOR, Camadas.MUNDO | Camadas.INIMIGOS | Camadas.PONTOS_FRACOS)
-		projetil.controle = self
-		projetil.disparo = disparo
-		projetil.ordem_rajada = ordem_rajada
-		projetil.especial = especial
-		projetil.textura = _textura_do_projetil(especial, unica, ordem_rajada > 0)
-		if not unica:
-			projetil.queda_dano_px = base.queda_dano_px
-			projetil.mult_queda_dano = base.mult_queda_dano
-		if tem(&"perfura_com_embalo_cheio") and embalo_cheio():
-			projetil.perfuracoes = 1
-		projetil.perfura_leves = tem(&"perfura_leves")
-		if especial == &"carregado":
-			projetil.raio_explosao = p.explosao_raio
-			projetil.dano_explosao = p.explosao_dano
-		jogador.efeitos.ao_criar_projetil(projetil, i)
-		jogador.atirou.emit(projetil)
-	disparou.emit(base.peso_disparo)
-	if tem(&"recuo_jogador"):
+	var disparo := Disparo.new()
+	var bonus: float = _bonus_proximo
+	_bonus_proximo = 0.0
+	if especial == &"prego" or especial == &"arena":
+		var dano: int = p.prego_dano if especial == &"prego" else p.grande_arena_dano
+		var proj: Projetil = _criar(origem, direcao, dano, disparo, especial, bonus)
+		proj.perfuracoes = 999
+		proj.textura = _textura("golpe_do_campeao.png")
+	elif especial == &"carregado":
+		var proj: Projetil = _criar(origem, direcao, a.dano(), disparo, especial, bonus)
+		proj.raio_explosao = p.explosao_raio
+		proj.dano_explosao = p.explosao_dano
+		proj.textura = _textura("bala_carregada.png")
+	else:
+		var espalhamento: float = a.espalhamento_graus()
+		var lado: Vector2 = direcao.orthogonal()
+		for i in a.projeteis_por_tiro():
+			var dir: Vector2 = direcao.rotated(deg_to_rad(rng.randf_range(-espalhamento, espalhamento)))
+			if duplo:  # Rebite Duplo: dois projéteis lado a lado
+				for sinal: float in [-1.0, 1.0]:
+					_criar(origem + lado * sinal * p.rebite_duplo_distancia_px, dir, a.dano(), disparo, &"", bonus, i)
+			else:
+				_criar(origem, dir, a.dano(), disparo, &"", bonus, i)
+		if tem(&"leque"):
+			for sinal: float in [-1.0, 1.0]:
+				var dano_leque: int = maxi(roundi(a.dano() * p.leque_mult_dano), 1)
+				_criar(origem, direcao.rotated(deg_to_rad(sinal * p.leque_graus)), dano_leque, disparo, &"", bonus)
+		if tem(&"bala_central"):
+			var central: Projetil = _criar(origem, direcao, p.bala_central_dano, disparo, &"central", bonus)
+			central.tempo_restante = p.bala_central_alcance_px / maxf(Unidades.px(a.velocidade_projetil()), 1.0)
+			central.queda_dano_px = 0.0
+			central.textura = _textura("bala_cerco.png")
+	disparou.emit(a.base.peso_disparo)
+	if tem(&"recuo"):
 		_recuar(direcao)
 
 
-func _textura_do_projetil(especial: StringName, unica: bool, rajada: bool) -> Texture2D:
-	var arquivo: String = ""
-	match especial:
-		&"campeao":
-			arquivo = "golpe_do_campeao.png"
-		&"carregado":
-			arquivo = "bala_carregada.png"
-		_:
-			if unica:
-				arquivo = "bala_cerco.png"
-			elif rajada:
-				arquivo = "rebite_rajada.png"
-	if arquivo.is_empty():
-		return arma().base.textura_projetil
+func _criar(origem: Vector2, direcao: Vector2, dano: int, disparo: Disparo, especial: StringName,
+		bonus: float, indice: int = 0) -> Projetil:
+	var a: ArmaEquipada = arma()
+	var base: DadosArma = a.base
+	var destino: Node = jogador.container_projeteis if jogador.container_projeteis != null else jogador.get_parent()
+	var projetil: Projetil = base.cena_projetil.instantiate()
+	destino.add_child(projetil)
+	var info := InfoDano.criar(dano, jogador)
+	info.fator_efeito = base.fator_efeito
+	if bonus > 0.0:
+		info.multiplicador *= 1.0 + bonus
+	projetil.configurar(origem, direcao, Unidades.px(a.velocidade_projetil()), info, a.duracao_projetil(),
+			Camadas.PROJETEIS_JOGADOR, Camadas.MUNDO | Camadas.INIMIGOS | Camadas.PONTOS_FRACOS)
+	projetil.controle = self
+	projetil.disparo = disparo
+	projetil.especial = especial
+	projetil.textura = base.textura_projetil
+	projetil.queda_dano_px = a.queda_dano_px()
+	projetil.mult_queda_dano = base.mult_queda_dano
+	projetil.perfuracoes = a.perfuracoes()
+	projetil.ricochetes = a.ricochetes()
+	var tamanho: float = a.tamanho_projetil()
+	if not is_equal_approx(tamanho, 1.0):
+		projetil.scale = Vector2(tamanho, tamanho)
+	if tem(&"guiado"):
+		projetil.guiado_graus = p.guiado_graus
+		projetil.guiado_graus_por_s = p.guiado_graus_por_s
+		projetil.guiado_alcance_px = p.guiado_alcance_px
+	jogador.efeitos.ao_criar_projetil(projetil, indice)
+	jogador.atirou.emit(projetil)
+	return projetil
+
+
+func _textura(arquivo: String) -> Texture2D:
 	if not _texturas.has(arquivo):
 		_texturas[arquivo] = FolhaSprite.carregar(PASTA_PROJETEIS + arquivo)
 	return _texturas[arquivo]
@@ -273,73 +288,81 @@ func _textura_do_projetil(especial: StringName, unica: bool, rajada: bool) -> Te
 
 ## Recuo de Gladiador: empurra o Ryker para trás; no ar, um impulso para cima (1 vez por pulo).
 func _recuar(direcao: Vector2) -> void:
-	var lado: float = signf(direcao.x) if direcao.x != 0.0 else float(jogador.olhando)
-	if direcao.x != 0.0 or direcao.y == 0.0:
-		jogador.move_and_collide(Vector2(-lado * p.recuo_px, 0.0))
+	var lado: float = signf(direcao.x) if absf(direcao.x) > 0.01 else float(jogador.olhando)
+	jogador.move_and_collide(Vector2(-lado * p.recuo_px, 0.0))
 	if not jogador.is_on_floor() and not _recuo_no_ar_usado:
 		_recuo_no_ar_usado = true
 		jogador.velocity.y = minf(jogador.velocity.y, -p.recuo_impulso_ar)
 
 
-func _devolver_disparo() -> void:
-	_cooldown = 0.0
-	if tem(&"carregador_2"):
-		balas = mini(balas + 1, p.carregador_tamanho)
-
-
 # --- Ganchos chamados pelo Projetil ---
 
+## Acertos seguidos neste alvo antes deste (Três Golpes, Incandescente).
+func _seguidos_antes(inimigo: Inimigo) -> int:
+	return _seguidos if inimigo == _ultimo_alvo else 0
+
+
 func antes_do_acerto(projetil: Projetil, inimigo: Inimigo, golpe: InfoDano) -> void:
+	if projetil.fragmento:
+		return
 	var elite: bool = inimigo.categoria != Inimigo.Categoria.COMUM
 	var distancia: float = projetil.global_position.distance_to(jogador.ponto_de_tiro())
-	if projetil.especial == &"campeao" and elite:
-		golpe.multiplicador *= p.campeao_mult_elite
-	if tem(&"marca_grilhao") and esta_marcado(inimigo):
-		golpe.multiplicador *= 1.0 + p.marca_bonus_dano
-	if tem(&"bonus_perto") and distancia < p.perto_px:
-		golpe.multiplicador *= 1.0 + p.perto_bonus_dano
-	if tem(&"quebra_armadura_perto") and distancia <= p.quebra_armadura_px:
-		inimigo.quebrar_armadura(p.quebra_armadura_s)
-	# Três Golpes: a 3ª bala da rajada é crítica se as 3 acertarem o mesmo alvo.
-	if tem(&"rajada_critico_3") and projetil.ordem_rajada == p.rajada_balas and projetil.disparo != null:
-		var mesmos: bool = true
-		for ordem in range(1, p.rajada_balas):
-			if projetil.disparo.alvos_rajada.get(ordem) != inimigo:
-				mesmos = false
-		if mesmos:
-			golpe.critico = true
-			if tem(&"execucao") and elite:
-				golpe.multiplicador *= p.critico_mult_execucao_elite
-			elif tem(&"execucao") and inimigo.vida.atual < inimigo.vida.maxima * p.execucao_limite_vida:
-				golpe.valor = inimigo.vida.atual
-				golpe.multiplicador = 1000.0  # mata na hora, mesmo com armadura
-			else:
-				golpe.multiplicador *= p.critico_mult
+	if projetil.especial == &"arena" and elite:
+		golpe.multiplicador *= p.grande_arena_mult_elite
+	if esta_marcado(inimigo):
+		golpe.multiplicador *= 1.0 + bonus_da_marca(inimigo)
+		if tem(&"cacador_marca"):
+			golpe.multiplicador *= 1.0 + p.cacador_marca_bonus
+	if distancia <= p.perto_px:
+		if tem(&"abre_couraca"):
+			inimigo.quebrar_armadura(p.abre_couraca_s)
+		if tem(&"queima_roupa"):
+			golpe.multiplicador *= 1.0 + p.queima_roupa_bonus
+	if tem(&"tiro_aviso") and inimigo.esta_anunciando():
+		golpe.multiplicador *= 1.0 + p.tiro_aviso_bonus
+	var antes: int = _seguidos_antes(inimigo)
+	if tem(&"incandescente"):
+		golpe.multiplicador *= 1.0 + minf(antes * p.incandescente_por_acerto, p.incandescente_maximo)
+	if tem(&"tres_golpes") and (antes + 1) % 3 == 0:
+		golpe.critico = true
+		golpe.multiplicador *= p.critico_mult
 
 
 func depois_do_acerto(projetil: Projetil, inimigo: Inimigo, golpe: InfoDano, matou: bool) -> void:
-	_sem_acertar = 0.0
-	if assinatura() == &"embalo":
-		embalo = minf(embalo + 1.0, embalo_maximo())
-	if projetil.ordem_rajada > 0 and projetil.disparo != null:
-		projetil.disparo.alvos_rajada[projetil.ordem_rajada] = inimigo
+	if not projetil.fragmento:
+		if inimigo == _ultimo_alvo:
+			_seguidos += 1
+		else:
+			_ultimo_alvo = inimigo
+			_seguidos = 1
 	if not matou:
-		# Coice: um empurrão por alvo por disparo (os balins não somam).
-		if assinatura() == &"coice" and projetil.disparo != null and not inimigo in projetil.disparo.empurrados:
+		# Empurrão de Campeão: um empurrão por alvo por disparo (os balins não somam).
+		if tem(&"empurrao") and inimigo.peso != Inimigo.Peso.PESADO and projetil.disparo != null \
+				and not inimigo in projetil.disparo.empurrados:
 			projetil.disparo.empurrados.append(inimigo)
 			var lado: float = signf(projetil.velocidade.x) if projetil.velocidade.x != 0.0 else float(jogador.olhando)
-			inimigo.deslocar(Vector2(lado * p.coice_px, 0.0))
-		# Algema Viva: chance de prender o alvo marcado (leves e médios comuns).
-		if tem(&"algema_viva") and esta_marcado(inimigo) and inimigo.categoria == Inimigo.Categoria.COMUM \
-				and inimigo.peso != Inimigo.Peso.PESADO and rng.randf() < p.algema_chance * golpe.fator_efeito:
-			inimigo.atordoar(p.algema_leve_s if inimigo.peso == Inimigo.Peso.LEVE else p.algema_medio_s)
+			inimigo.deslocar(Vector2(lado * p.empurrao_px, 0.0))
 	else:
-		if tem(&"marca_devolve_grilhao") and esta_marcado(inimigo):
-			var grilhao := jogador.ferramenta as Grilhao
-			if grilhao != null:
-				grilhao.reduzir_recarga(p.cacada_devolve_s)
-		if tem(&"devolve_disparo_ao_matar"):
-			_devolver_disparo()
 		marcas.erase(inimigo)
+		if tem(&"estilhaco_vivo") and not projetil.fragmento:
+			# Fora do callback de física: cria os estilhaços no próximo quadro ocioso.
+			_soltar_estilhacos.call_deferred(projetil.get_parent(), inimigo.centro(), inimigo,
+					contar(&"estilhaco_vivo") * p.estilhacos_por_acumulo)
 	jogador.efeitos.ao_acertar(projetil, inimigo, golpe, matou)
 	acertou.emit(inimigo, golpe, matou)
+
+
+## Estilhaço Vivo: o balim que mata solta estilhaços em volta.
+func _soltar_estilhacos(destino: Node, centro: Vector2, morto: Object, quantos: int) -> void:
+	if destino == null or not is_instance_valid(destino) or arma() == null:
+		return
+	for i in quantos:
+		var dir: Vector2 = Vector2.RIGHT.rotated(TAU * (float(i) + rng.randf()) / float(quantos))
+		var e: Projetil = arma().base.cena_projetil.instantiate()
+		destino.add_child(e)
+		var info := InfoDano.criar(p.estilhaco_dano, jogador)
+		e.configurar(centro, dir, 200.0, info, 0.25, Camadas.PROJETEIS_JOGADOR, Camadas.MUNDO | Camadas.INIMIGOS)
+		e.fragmento = true
+		e.controle = self
+		if is_instance_valid(morto):
+			e.ignorar(morto as Node)

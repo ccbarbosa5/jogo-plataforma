@@ -2,8 +2,8 @@ class_name Projetil
 extends Area2D
 ## Projétil genérico: anda em linha reta e entrega um InfoDano a quem tiver receber_ataque().
 ## Quem atira define camada, máscara e o InfoDano. Tiros do jogador também acertam pontos fracos.
-## Tiros da arma do jogador avisam a ControleArma antes e depois de cada acerto (assinaturas e
-## nós da árvore: Embalo, Coice, crítico, marca...).
+## Tiros da arma do jogador avisam a ControleArma antes e depois de cada acerto (Marca, crítico,
+## empurrão...). Ricochete e curva (Rebite Guiado) vêm das Gambiarras e da árvore (GD-07).
 
 @export var cor: Color = Color.WHITE
 @export var tamanho: Vector2 = Vector2(6, 2)
@@ -17,8 +17,14 @@ var faccao_autor: StringName = &""
 var textura: Texture2D
 ## Quantos inimigos ainda pode atravessar.
 var perfuracoes: int = 0
-## Atravessa todo inimigo leve e para no primeiro médio ou pesado (Bramido A2).
+## Atravessa todo inimigo leve e para no primeiro médio ou pesado.
 var perfura_leves: bool = false
+## Quantas vezes ainda quica em parede ou chão (Ricochete, Balins Quicantes).
+var ricochetes: int = 0
+## Rebite Guiado: quanto ainda pode curvar (graus), a que velocidade e até que distância busca.
+var guiado_graus: float = 0.0
+var guiado_graus_por_s: float = 120.0
+var guiado_alcance_px: float = 160.0
 ## Queda de dano por distância percorrida (0 = sem queda).
 var queda_dano_px: float = 0.0
 var mult_queda_dano: float = 1.0
@@ -27,11 +33,10 @@ var raio_explosao: float = 0.0
 var dano_explosao: int = 0
 ## Quem trata os acertos (ControleArma). Pode ser null.
 var controle: Object
-## Disparo ao qual este projétil pertence (Coice: um empurrão por alvo por disparo).
+## Disparo ao qual este projétil pertence (Empurrão: um empurrão por alvo por disparo).
 var disparo: Disparo
-## Ordem do projétil na rajada (1, 2, 3) ou 0.
-var ordem_rajada: int = 0
-## &"" normal, &"campeao" (Golpe do Campeão) ou &"carregado" (Artilharia).
+## &"" normal, &"arena" (Grande Arena), &"prego" (Prego do Rato), &"carregado" (Artilharia)
+## ou &"central" (Bala Central).
 var especial: StringName = &""
 ## Fragmento do Ferrão Partido (não se divide de novo).
 var fragmento: bool = false
@@ -61,10 +66,34 @@ func _ready() -> void:
 
 
 func _physics_process(delta: float) -> void:
+	if guiado_graus > 0.0:
+		_curvar(delta)
 	position += velocidade * delta
 	tempo_restante -= delta
 	if tempo_restante <= 0.0:
 		queue_free()
+
+
+## Rebite Guiado: vira aos poucos para o inimigo vivo mais próximo à frente.
+func _curvar(delta: float) -> void:
+	var melhor: Inimigo = null
+	var menor: float = guiado_alcance_px
+	for no in get_tree().get_nodes_in_group("inimigos"):
+		var inimigo := no as Inimigo
+		if inimigo == null or not inimigo.esta_vivo() or inimigo in _ja_acertados:
+			continue
+		var para: Vector2 = inimigo.centro() - global_position
+		if para.length() < menor and velocidade.dot(para) > 0.0:
+			menor = para.length()
+			melhor = inimigo
+	if melhor == null:
+		return
+	var diferenca: float = velocidade.angle_to(melhor.centro() - global_position)
+	var giro: float = clampf(diferenca, -deg_to_rad(guiado_graus_por_s) * delta, deg_to_rad(guiado_graus_por_s) * delta)
+	giro = clampf(giro, -deg_to_rad(guiado_graus), deg_to_rad(guiado_graus))
+	velocidade = velocidade.rotated(giro)
+	rotation = velocidade.angle()
+	guiado_graus = maxf(guiado_graus - rad_to_deg(absf(giro)), 0.0)
 
 
 ## Não acerta este inimigo (fragmentos nascem dentro do alvo que dividiu o tiro).
@@ -99,6 +128,8 @@ func _acertar(alvo: Node) -> void:
 	if inimigo != null and inimigo in _ja_acertados:
 		return
 	if not alvo.has_method("receber_ataque"):
+		if ricochetes > 0 and _quicar():
+			return
 		_explodir()
 		_destruir()
 		return
@@ -123,7 +154,22 @@ func _acertar(alvo: Node) -> void:
 	_destruir()
 
 
-## Explosão no impacto (Bramido A3): dano em área, sem armadura frontal.
+## Ricochete: reflete na superfície (normal achada com um raio curto para trás e para a frente).
+func _quicar() -> bool:
+	var dir: Vector2 = velocidade.normalized()
+	var consulta := PhysicsRayQueryParameters2D.create(global_position - dir * 10.0, global_position + dir * 6.0, Camadas.MUNDO)
+	var resultado: Dictionary = get_world_2d().direct_space_state.intersect_ray(consulta)
+	if resultado.is_empty():
+		return false
+	var normal: Vector2 = resultado["normal"]
+	ricochetes -= 1
+	velocidade = velocidade.bounce(normal)
+	rotation = velocidade.angle()
+	global_position = (resultado["position"] as Vector2) + normal * 2.0
+	return true
+
+
+## Explosão no impacto (Artilharia): dano em área, sem armadura frontal.
 func _explodir() -> void:
 	if raio_explosao <= 0.0:
 		return

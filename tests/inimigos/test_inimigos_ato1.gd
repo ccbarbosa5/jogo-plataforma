@@ -268,12 +268,14 @@ func test_ceifadora_some_e_reaparece_do_outro_lado() -> void:
 	afirmar_proximo(c.global_position.x, c.ponto_reaparecer.x, 2.0, "no lugar do sinal")
 
 
-func test_ceifadora_grilhao_atordoa_1_segundo() -> void:
+func test_ceifadora_e_elite_e_puxa_o_ryker() -> void:
+	# GD-07 §2: elite = gancho (o Grilhão puxa o Ryker até ela).
 	var j := _antes()
 	var c: Ceifadora = _criar("ceifadora", Vector2(60, 0))
 	await esperar_frames(2)
 	(j.ferramenta as Grilhao)._ao_acertar(c)
-	afirmar_proximo(c._timer_atordoado, 1.0, 0.05, "atordoada por 1,0 s")
+	afirmar(j.esta_sendo_puxado(), "Ryker é puxado até a elite")
+	afirmar(j.controle_arma.esta_marcado(c) or not c.esta_vivo(), "e ela fica Marcada")
 
 
 # --- Fichas e zona de guerra ---

@@ -2,21 +2,20 @@ class_name PortaSaida
 extends Area2D
 ## Saída de uma sala com a recompensa mostrada em cima (GD-01 §7.1 e §7.4).
 ## Encostar escolhe esta saída: as outras somem e a run aplica a recompensa e segue.
-## Ícones: o da ART para o Aprimoramento; os outros são provisórios (losango + texto).
+## Ícones provisórios (losango + texto).
 
 signal escolhida(porta: PortaSaida)
 
 const CORES: Dictionary = {
-	"kharn": Color("ff5a2e"), "vesh": Color("a3e23c"), "aprimoramento": Color("e8742c"),
+	"kharn": Color("ff5a2e"), "vesh": Color("a3e23c"),
 	"creditos": Color("d9b26a"), "nucleos": Color("4fb0a6"), "dados": Color("b8d4e0"),
 	"vida_maxima": Color("dca07a"), "chefe": Color("ff5a2e"), "seguir": Color("eceff4"),
 }
 ## Rótulo curto em cima da porta (o nome completo fica em RegrasRecompensas.NOMES).
 const ROTULOS: Dictionary = {
-	"aprimoramento": "Aprimoramento", "vida_maxima": "+1 de vida", "dados": "Dados",
+	"vida_maxima": "+1 de vida", "dados": "Dados",
 	"kharn": "Dádiva Kharn", "vesh": "Dádiva Vesh", "chefe": "Ur-Kesh",
 }
-const ICONE_APRIMORAMENTO: String = "res://assets/sprites/ui/portas/porta_aprimoramento_de_arma.png"
 
 var tipo: String = "seguir"
 var _usada: bool = false
@@ -33,8 +32,6 @@ func _ready() -> void:
 	forma.shape = r
 	forma.position = Vector2(0, -20)
 	add_child(forma)
-	if tipo == "aprimoramento":
-		_icone = FolhaSprite.carregar(ICONE_APRIMORAMENTO)
 	body_entered.connect(_ao_entrar)
 
 
