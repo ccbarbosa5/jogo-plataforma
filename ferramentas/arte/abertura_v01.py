@@ -117,22 +117,25 @@ def q1():
 
 
 def urkesh_caido():
-    """Silhueta de Ur-Kesh de joelhos (gigante vencido), 96×80, origem nos joelhos (48, 80)."""
-    im = camada(96, 80); d = ImageDraw.Draw(im); c = hx('#16111c')
-    d.ellipse((16, 14, 84, 66), fill=c)            # costas curvadas
-    d.rectangle((58, 6, 76, 26), fill=c)           # cabeça baixa
-    d.polygon([(58, 8), (52, 0), (62, 6)], fill=c)  # chifres
-    d.polygon([(76, 8), (84, 0), (74, 6)], fill=c)
-    d.rectangle((10, 56, 40, 80), fill=c)          # perna dobrada
-    d.rectangle((60, 50, 74, 80), fill=c)          # braço apoiado no chão
-    d.line((40, 50, 2, 74), fill=c, width=5)       # machado caído
-    d.rectangle((0, 66, 10, 80), fill=c)
-    im.putpixel((70, 18), rgb('f')); im.putpixel((71, 18), rgb('O'))  # um olho de brasa ainda aceso
-    for y in range(14, 66):                         # luz do holofote na borda de cima
-        for x in range(16, 84):
+    """Silhueta de Ur-Kesh de joelhos (gigante vencido), 96×80, virado para a ESQUERDA (para o Ryker), base em y = 80."""
+    im = camada(96, 80); d = ImageDraw.Draw(im); c = hx('#20141d')
+    d.polygon([(26, 56), (28, 26), (46, 10), (68, 10), (82, 24), (80, 46), (66, 58)], fill=c)  # tronco curvado
+    d.polygon([(26, 52), (40, 58), (30, 74), (6, 79), (4, 74), (20, 68)], fill=c)              # perna de joelho
+    d.polygon([(46, 54), (62, 56), (60, 79), (44, 79)], fill=c)                                 # joelho da frente
+    d.polygon([(72, 26), (88, 30), (92, 44), (80, 48), (70, 40)], fill=c)                       # cabeça baixa
+    d.polygon([(76, 28), (72, 18), (80, 26)], fill=c); d.polygon([(88, 32), (95, 24), (91, 34)], fill=c)  # chifres
+    d.line((70, 30, 84, 78), fill=c, width=9)                                                   # braço apoiado
+    d.line((36, 36, 16, 74), fill=c, width=6)                                                   # braço solto
+    d.line((16, 74, 0, 60), fill=c, width=3)                                                    # cabo do machado
+    d.polygon([(0, 54), (8, 50), (10, 64), (2, 68)], fill=c)                                    # lâmina caída
+    im.putpixel((86, 40), rgb('f')); im.putpixel((87, 40), rgb('O'))  # um olho de brasa ainda aceso
+    for y in range(1, 79):                          # luz do holofote na borda de cima
+        for x in range(0, 96):
             if im.getpixel((x, y))[3] and not im.getpixel((x, y - 1))[3]:
-                im.putpixel((x, y), hx('#3a1f30'))
-    return im
+                im.putpixel((x, y), hx('#6a3030'))
+                if y + 1 < 80 and im.getpixel((x, y + 1))[3]:
+                    im.putpixel((x, y + 1), hx('#3a1f30'))
+    return outline(im, 'k').transpose(Image.FLIP_LEFT_RIGHT)  # virado para a esquerda, para o Ryker
 
 
 # =====================================================================
