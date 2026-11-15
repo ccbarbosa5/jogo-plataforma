@@ -15,7 +15,7 @@ func test_guerreiro_tem_os_numeros_do_gd02() -> void:
 	CenarioTeste.criar_chao(self)
 	var g := CenarioTeste.criar_guerreiro(self, Vector2(CenarioTeste.tiles(30), 0))
 	await esperar_frames(1)
-	afirmar_igual(g.vida.maxima, 120, "vida")
+	afirmar_igual(g.vida.maxima, 100, "vida (GD-08 §2)")
 	afirmar_igual(g.tamanho, Vector2(32, 64), "tamanho ~2× Ryker")
 	afirmar_igual(g.peso, Inimigo.Peso.MEDIO, "peso médio")
 	afirmar(g.armadura_frontal, "armadura frontal")
@@ -72,7 +72,7 @@ func test_fuzil_pela_frente_causa_metade() -> void:
 	await esperar_frames(1)
 	j.entrada.atirar_segurado = false
 	await esperar_frames(20)
-	afirmar_igual(g.vida.atual, 115, "10 de dano pela frente vira 5")
+	afirmar_igual(g.vida.atual, 93, "14 de dano pela frente vira 7")
 	Combate.reiniciar()
 
 

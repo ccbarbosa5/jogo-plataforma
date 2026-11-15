@@ -1,11 +1,13 @@
 {
- "_nota": "GD-07 §4 (D-058). Progressão permanente do Ryker: XP, nível e árvore de Combate. Ajuste aqui, não no código.",
+ "_nota": "GD-07 §4 (D-058) + GD-08 §4 (curva 150+50n, XP do enxame). Progressão permanente do Ryker: XP, nível e árvore de Combate. Ajuste aqui, não no código.",
  "xp": {
-  "base": 60,
-  "por_nivel": 20,
+  "base": 150,
+  "por_nivel": 50,
   "nivel_maximo": 25,
   "por_inimigo": {
-   "zangao": 2,
+   "zangao": 1,
+   "roedor": 1,
+   "chacal": 2,
    "cuspidor": 3,
    "guerreiro_cla": 6,
    "artilheiro_kharn": 6,
@@ -38,9 +40,9 @@
       "id": "mordida_gatilho_de_mina",
       "nome": "Gatilho de Mina",
       "custo": 1,
-      "descricao": "+15% de cadência.",
+      "descricao": "+20% de cadência.",
       "modificador": {
-       "mult_cadencia": 1.15
+       "mult_cadencia": 1.2
       }
      },
      {

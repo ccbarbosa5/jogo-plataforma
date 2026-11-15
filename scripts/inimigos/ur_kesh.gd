@@ -1,12 +1,12 @@
 class_name UrKesh
 extends Inimigo
 ## Chefe do Ato 1 — Ur-Kesh, Campeão do Clã Kesh (GD-02 §5). Três fases num só nó:
-## 1. Andador de guerra (vida 1500, Pesado): varredura do Bramido (laser 0,8 s), salto com
+## 1. Andador de guerra (vida 1200, GD-08; Pesado): varredura do Bramido (laser 0,8 s), salto com
 ##    pisão [PESADO] (sombra 1,0 s + onda de choque), saraivada de mísseis (5 alvos, 1,2 s).
 ##    Ponto fraco: o radiador nas costas.
 ## 2. Andador danificado (a partir de 66%): ataques 15% mais rápidos (os avisos NÃO diminuem);
 ##    a cada 12 s ajoelha por 3 s e expõe o núcleo (dano ×3); uma nave deixa 2 Guerreiros.
-## 3. A pé (vida 600, Médio): avanço com machado [PESADO] (ergue 0,7 s), machado bumerangue
+## 3. A pé (vida 500, GD-08; Médio): avanço com machado [PESADO] (ergue 0,7 s), machado bumerangue
 ##    (gira 0,8 s), rugido do clã (bate no peito 1,0 s, chama 4 Zangões).
 ##    Contra-ataque: o Grilhão enquanto ele ergue o machado quebra a guarda (2,0 s atordoado,
 ##    dano dobrado).
@@ -22,7 +22,7 @@ enum Estado {
 }
 
 @export_group("Fase 1 e 2: andador")
-@export var vida_andador: int = 1500
+@export var vida_andador: int = 1200
 @export var tamanho_andador: Vector2 = Vector2(80, 112)
 @export var velocidade_andador: float = 0.75
 @export var tempo_aviso_varredura: float = 0.8
@@ -42,7 +42,7 @@ enum Estado {
 @export var tempo_ajoelhado: float = 3.0
 @export var intervalo_reforcos: float = 20.0
 @export_group("Fase 3: a pé")
-@export var vida_a_pe: int = 600
+@export var vida_a_pe: int = 500
 @export var tamanho_a_pe: Vector2 = Vector2(32, 70)
 @export var velocidade_a_pe: float = 2.5
 @export var tempo_aviso_avanco: float = 0.7

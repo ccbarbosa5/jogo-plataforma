@@ -153,7 +153,7 @@ func test_tiro_municao_de_cla_conta_o_peso_do_bramido() -> void:
 	await esperar_frames(2)
 	await _um_disparo(j)
 	afirmar(not j.efeitos.proximo_disparo_explode(), "1º disparo: 2,5")
-	await esperar_frames(45)
+	await esperar_frames(62)  # Bramido: 1 disparo/s (GD-08)
 	await _um_disparo(j)
 	afirmar(j.efeitos.proximo_disparo_explode(), "2º disparo: 5 → o próximo explode")
 
@@ -186,7 +186,7 @@ func test_tiro_ferrao_partido_divide_em_2_fragmentos() -> void:
 				fragmentos.append(f)
 	afirmar_igual(fragmentos.size(), 2, "2 fragmentos")
 	if fragmentos.size() == 2:
-		afirmar_igual(fragmentos[0].info.valor, 4, "35% de 10")
+		afirmar_igual(fragmentos[0].info.valor, 5, "35% de 14")
 
 
 func test_tiro_ferrao_acido_aplica_acido() -> void:

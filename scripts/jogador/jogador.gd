@@ -423,7 +423,7 @@ func _pose_da_mira(direcao: Vector2, no_chao: bool) -> Vector2i:
 func _aplicar_mira_automatica(no_chao: bool) -> void:
 	match assistencias.modo_mira:
 		Assistencias.ModoMira.TOTAL:
-			var alvo: Node2D = mira_automatica.escolher_alvo(ponto_de_tiro(), assistencias, get_tree())
+			var alvo: Node2D = mira_automatica.escolher_alvo(ponto_de_tiro(), assistencias, get_tree(), olhando)
 			if alvo == null:
 				return
 			if mira_livre:  # mira livre: aponta exatamente no alvo

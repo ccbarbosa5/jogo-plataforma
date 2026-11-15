@@ -191,4 +191,4 @@ func test_tiro_acerta_o_ponto_fraco() -> void:
 	await esperar_frames(1)
 	j.entrada.atirar_segurado = false
 	await esperar_frames(20)
-	afirmar_igual(b.vida.atual, 480, "o tiro no ponto fraco causa 20")
+	afirmar_igual(b.vida.atual, 472, "o tiro no ponto fraco causa 28 (14 × 2)")

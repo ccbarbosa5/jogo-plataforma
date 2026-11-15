@@ -41,6 +41,9 @@ func test_atira_durante_a_puxada() -> void:
 	CenarioTeste.criar_boneco(self, Vector2(CenarioTeste.tiles(5), 0), Inimigo.Peso.PESADO, Vector2(40, 64))
 	var tiros: Array[int] = [0]
 	j.atirou.connect(func(_p: Projetil) -> void: tiros[0] += 1)
+	var rapida := ModificadorArma.new()
+	rapida.mult_cadencia = 3.0  # vários tiros cabem na puxada curta
+	j.arma_equipada.adicionar(rapida)
 	await esperar_frames(3)
 	j.entrada.atirar_segurado = true
 	j.entrada.ferramenta_pressionada = true
