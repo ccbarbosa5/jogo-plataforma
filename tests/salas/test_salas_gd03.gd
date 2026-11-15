@@ -186,7 +186,7 @@ func test_1_ninguem_surge_perto_nem_ataca_na_entrada() -> void:
 	afirmar(not sala.vivos_da_onda.is_empty(), "1ª onda surgiu")
 	for i in sala.vivos_da_onda:
 		afirmar(i.global_position.distance_to(j.global_position) >= Unidades.px(6.0) - 0.5, "longe do jogador (%.0f px)" % i.global_position.distance_to(j.global_position))
-		afirmar(i.esta_entrando(), "animação de entrada")
+		afirmar(i.esta_entrando() or i is InimigoEnxame, "animação de entrada (o enxame vem de fora da tela, GD-08)")
 		afirmar(not i.esta_anunciando(), "não ataca na entrada")
 	p.free()
 
@@ -294,7 +294,7 @@ func test_inimigo_morto_da_creditos() -> void:
 	var run: RunAto = instanciar(CENA_RUN)
 	await esperar_frames(3)
 	var antes: int = run.jogador.creditos
-	var z: Inimigo = run.sala._criar_inimigo("zangao", Vector2(300, 100), false)
+	var z: Inimigo = run.sala._criar_inimigo("guerreiro", Vector2(300, 100), false)
 	await esperar_frames(2)
 	z.receber_ataque(InfoDano.criar(999, run.jogador))
 	await esperar_frames(2)

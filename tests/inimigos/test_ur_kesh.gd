@@ -92,7 +92,7 @@ func test_fase_2_em_66_por_cento_com_reforcos_e_avisos_iguais() -> void:
 	afirmar_igual(c.fase, 2, "fase 2 abaixo de 66%")
 	afirmar_proximo(c.fator_velocidade(), 0.85, 0.001, "15% mais rápido")
 	afirmar_proximo(c.tempo_aviso_varredura, aviso, 0.001, "os avisos não diminuem")
-	afirmar_igual(c.trazer_reforcos(), 2, "a nave deixa 2 Guerreiros")
+	afirmar_igual(c.trazer_reforcos(), 4, "a nave deixa 4 Chacais (GD-08)")
 	afirmar_igual(c.trazer_reforcos(), 0, "só repõe quando morrem")
 
 
@@ -147,7 +147,7 @@ func test_rugido_chama_4_zangoes_e_o_machado_volta() -> void:
 	await esperar_frames(2)
 	c.vida.receber_dano(1500, true)
 	await esperar_frames(1)
-	afirmar_igual(c.chamar_zangoes(), 4, "4 Zangões")
+	afirmar_igual(c.chamar_zangoes(), 8, "8 Zangões (GD-08)")
 	var m := MachadoBumerangue.lancar(self, c.centro(), -1.0, c)
 	await esperar_frames(60)
 	afirmar(is_instance_valid(m) and m.voltando, "o machado vai e volta")

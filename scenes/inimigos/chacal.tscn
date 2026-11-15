@@ -1,0 +1,26 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/inimigos/chacal.gd" id="1"]
+[ext_resource type="Script" path="res://scripts/comum/vida.gd" id="2"]
+
+[sub_resource type="RectangleShape2D" id="corpo"]
+size = Vector2(14, 10)
+
+[node name="Chacal" type="CharacterBody2D"]
+collision_layer = 4
+collision_mask = 33
+script = ExtResource("1")
+peso = 0
+faccao = &"kharn"
+tamanho = Vector2(14, 10)
+creditos = Vector2i(1, 1)
+chance_creditos = 0.1
+velocidade = 6.0
+
+[node name="Forma" type="CollisionShape2D" parent="."]
+position = Vector2(0, -5)
+shape = SubResource("corpo")
+
+[node name="Vida" type="Node" parent="."]
+script = ExtResource("2")
+maxima = 22

@@ -13,8 +13,10 @@ script = ExtResource("1")
 peso = 0
 faccao = &"vesh"
 voa = true
-creditos = Vector2i(1, 2)
 tamanho = Vector2(12, 12)
+creditos = Vector2i(1, 1)
+chance_creditos = 0.1
+velocidade = 5.0
 
 [node name="Forma" type="CollisionShape2D" parent="."]
 position = Vector2(0, -6)
