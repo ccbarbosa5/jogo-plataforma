@@ -51,6 +51,8 @@ var volume: float = 0.8
 var tela_cheia: bool = false
 var modo_mira: int = Assistencias.ModoMira.DESLIGADA
 var tiro_automatico: bool = false
+## Números de dano na tela (D-067).
+var numeros_dano: bool = true
 
 ## ação -> teclas e botões de mouse de fábrica (para "Restaurar padrão").
 var _padrao: Dictionary = {}
@@ -254,6 +256,12 @@ func definir_modo_mira(modo: int) -> void:
 	mudou.emit()
 
 
+func definir_numeros_dano(sim: bool) -> void:
+	numeros_dano = sim
+	salvar()
+	mudou.emit()
+
+
 func definir_tiro_automatico(sim: bool) -> void:
 	tiro_automatico = sim
 	_aplicar_nos_jogadores()
@@ -285,6 +293,7 @@ func salvar() -> void:
 	cfg.set_value("opcoes", "tela_cheia", tela_cheia)
 	cfg.set_value("opcoes", "modo_mira", modo_mira)
 	cfg.set_value("opcoes", "tiro_automatico", tiro_automatico)
+	cfg.set_value("opcoes", "numeros_dano", numeros_dano)
 	cfg.save(caminho)
 
 
@@ -313,6 +322,7 @@ func carregar() -> void:
 		tela_cheia = cfg.get_value("opcoes", "tela_cheia", tela_cheia)
 		modo_mira = cfg.get_value("opcoes", "modo_mira", modo_mira)
 		tiro_automatico = cfg.get_value("opcoes", "tiro_automatico", tiro_automatico)
+		numeros_dano = cfg.get_value("opcoes", "numeros_dano", numeros_dano)
 	_aplicar_volume()
 	if tela_cheia:
 		_aplicar_tela_cheia()
@@ -328,6 +338,7 @@ func redefinir_sem_salvar() -> void:
 	tela_cheia = false
 	modo_mira = Assistencias.ModoMira.DESLIGADA
 	tiro_automatico = false
+	numeros_dano = true
 	_aplicar_volume()
 
 
