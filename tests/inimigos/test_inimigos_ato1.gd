@@ -133,25 +133,19 @@ func test_muralha_investida_pesada_depois_do_aviso() -> void:
 
 # --- Zangão ---
 
-func test_zangao_voa_e_mergulha_depois_do_aviso() -> void:
+func test_zangao_voa_ate_o_jogador_e_machuca_so_por_contato() -> void:
 	var j := _antes()
-	var z: Zangao = _criar("zangao", Vector2(40, -60))
-	z._proximo_ataque = 0.1
+	var z: Zangao = _criar("zangao", Vector2(80, -60))
 	var vida: int = j.vida.atual
 	await esperar_frames(ENTRADA)
-	afirmar(z.global_position.y < -20.0, "voa (não caiu)")
-	var viu_aviso: bool = false
-	var viu_mergulho: bool = false
+	afirmar(z.global_position.y < -10.0, "voa (não caiu)")
 	for i in 120:
 		await esperar_frames(1)
-		viu_aviso = viu_aviso or z.estado == Zangao.Estado.AVISO
-		if z.estado == Zangao.Estado.MERGULHO:
-			viu_mergulho = true
-			afirmar(viu_aviso, "o aviso vem antes do mergulho")
+		afirmar_igual(Combate.fichas_em_uso(), 0, "não usa ficha (GD-08)")
 		if j.vida.atual < vida:
 			break
-	afirmar(viu_mergulho, "mergulhou")
-	afirmar(j.vida.atual < vida, "o mergulho acerta quem fica parado")
+	afirmar(j.vida.atual < vida, "chegou voando e machucou no contato")
+	afirmar(not z.esta_anunciando(), "sem mergulho anunciado")
 
 
 func test_zangao_e_leve_para_o_grilhao() -> void:

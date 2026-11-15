@@ -119,9 +119,9 @@ func _tocar_fala_de_entrada(plano: Dictionary) -> void:
 				Dialogos.tocar("loja_entrada")
 
 
-## Créditos por inimigo (GD-02 §6.5) e +5 quando a facção rival mata (§4.4).
+## Créditos por inimigo (GD-02 §6.5; enxame: 10% de 1, GD-08 §4) e +5 quando a facção rival mata (§4.4).
 func _ao_inimigo_morrer(inimigo: Inimigo, pela_rival: bool) -> void:
-	var ganho: int = randi_range(inimigo.creditos.x, inimigo.creditos.y)
+	var ganho: int = randi_range(inimigo.creditos.x, inimigo.creditos.y) if randf() < inimigo.chance_creditos else 0
 	if pela_rival:
 		ganho += 5
 	jogador.creditos += ganho

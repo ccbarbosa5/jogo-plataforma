@@ -5,7 +5,7 @@ extends Inimigo
 ##    pisão [PESADO] (sombra 1,0 s + onda de choque), saraivada de mísseis (5 alvos, 1,2 s).
 ##    Ponto fraco: o radiador nas costas.
 ## 2. Andador danificado (a partir de 66%): ataques 15% mais rápidos (os avisos NÃO diminuem);
-##    a cada 12 s ajoelha por 3 s e expõe o núcleo (dano ×3); uma nave deixa 2 Guerreiros.
+##    a cada 12 s ajoelha por 3 s e expõe o núcleo (dano ×3); uma nave deixa 4 Chacais (GD-08).
 ## 3. A pé (vida 500, GD-08; Médio): avanço com machado [PESADO] (ergue 0,7 s), machado bumerangue
 ##    (gira 0,8 s), rugido do clã (bate no peito 1,0 s, chama 4 Zangões).
 ##    Contra-ataque: o Grilhão enquanto ele ergue o machado quebra a guarda (2,0 s atordoado,
@@ -40,7 +40,9 @@ enum Estado {
 @export var acelerar_fase_2: float = 0.85
 @export var intervalo_ajoelhar: float = 12.0
 @export var tempo_ajoelhado: float = 3.0
-@export var intervalo_reforcos: float = 20.0
+## GD-08 §3.3: 4 Chacais a cada 10 s (no lugar dos 2 Guerreiros).
+@export var intervalo_reforcos: float = 10.0
+@export var reforcos_por_vez: int = 4
 @export_group("Fase 3: a pé")
 @export var vida_a_pe: int = 500
 @export var tamanho_a_pe: Vector2 = Vector2(32, 70)
@@ -50,11 +52,12 @@ enum Estado {
 @export var velocidade_avanco: float = 360.0
 @export var tempo_aviso_arremesso: float = 0.8
 @export var tempo_aviso_rugido: float = 1.0
-@export var zangoes_rugido: int = 4
+## GD-08 §3.3: o rugido chama 8 Zangões.
+@export var zangoes_rugido: int = 8
 @export var guarda_quebrada: float = 2.0
 @export_group("Cenas")
 @export var cena_projetil: PackedScene
-@export var cena_guerreiro: PackedScene
+@export var cena_reforco: PackedScene
 @export var cena_zangao: PackedScene
 
 var fase: int = 1
@@ -439,21 +442,20 @@ func ajoelhar() -> void:
 	Dialogos.tocar("urkesh_ajoelha")
 
 
-## A nave Kharn deixa 2 Guerreiros (até haver 2 vivos). Param quando o andador cai.
+## A nave Kharn deixa 4 Chacais (até haver 4 vivos; GD-08). Param quando o andador cai.
 func trazer_reforcos() -> int:
 	var vivos: Array[Inimigo] = []
 	for r in reforcos:
 		if is_instance_valid(r) and r.esta_vivo():
 			vivos.append(r)
 	reforcos = vivos
-	if cena_guerreiro == null or get_parent() == null or not andador():
+	if cena_reforco == null or get_parent() == null or not andador():
 		return 0
 	var n: int = 0
-	while reforcos.size() < 2:
-		var g: Inimigo = cena_guerreiro.instantiate()
-		g.position = global_position + Vector2((n * 2 - 1) * 120.0, -150.0)
+	while reforcos.size() < reforcos_por_vez:
+		var g: Inimigo = cena_reforco.instantiate()
+		g.position = global_position + Vector2((n - 1.5) * 80.0, -150.0)
 		g.container_projeteis = container_projeteis
-		g.creditos = Vector2i(2, 5)
 		get_parent().add_child(g)
 		reforcos.append(g)
 		n += 1
@@ -473,7 +475,7 @@ func _ferir_no_contato(dano: int) -> void:
 			corpo.receber_ataque(InfoDano.criar(dano, self, Vector2(_direcao, 0)))
 
 
-## Rugido do clã: 4 Zangões atraídos pelo barulho (não dão Créditos).
+## Rugido do clã: 8 Zangões atraídos pelo barulho (não dão Créditos).
 func chamar_zangoes() -> int:
 	if cena_zangao == null or get_parent() == null:
 		return 0

@@ -38,6 +38,8 @@ enum Categoria { COMUM, ELITE, CHEFE }
 @export var voa: bool = false
 ## Créditos que dá ao morrer (GD-02 §6.5: 2 a 5 por comum, 25 por elite).
 @export var creditos: Vector2i = Vector2i(2, 5)
+## Chance de soltar os Créditos (o enxame tem 10%, GD-08 §4).
+@export var chance_creditos: float = 1.0
 
 @onready var vida: Vida = $Vida
 @onready var forma: CollisionShape2D = $Forma
