@@ -1,10 +1,11 @@
 {
- "fonte": "GD-01 §9.2 (melhorias com Núcleos, Vossa Margem) e GD-03 §3.3 (desbloqueios com Dados, Ponte e Arsenal)",
+ "fonte": "Árvore Passiva: GD-07 §3 (D-058), no Vossa Margem, com Núcleos. Desbloqueios: GD-03 §3.3, com Dados.",
  "melhorias": [
   {
    "id": "blindagem",
    "nome": "Blindagem",
-   "descricao": "+1 bloco de vida máximo.",
+   "ramo": "Corpo",
+   "descricao": "+1 bloco de vida máximo por nível.",
    "custos": [
     40,
     90
@@ -15,20 +16,35 @@
   {
    "id": "sinal_emergencia",
    "nome": "Sinal de Emergência",
-   "descricao": "Volta 1 vez por run, com metade da vida.",
+   "ramo": "Corpo",
+   "descricao": "Volta 1 vez por run com 2 blocos de vida.",
    "custos": [
     120
+   ],
+   "moeda": "nucleos",
+   "onde": "vossa",
+   "requer": "blindagem"
+  },
+  {
+   "id": "passada",
+   "nome": "Passada",
+   "ramo": "Movimento",
+   "descricao": "+5% de velocidade de corrida por nível.",
+   "custos": [
+    30,
+    60
    ],
    "moeda": "nucleos",
    "onde": "vossa"
   },
   {
-   "id": "cinto_granadas",
-   "nome": "Cinto de Granadas",
-   "descricao": "+1 granada por sala.",
+   "id": "pernas_de_mineiro",
+   "nome": "Pernas de Mineiro",
+   "ramo": "Movimento",
+   "descricao": "+6% de altura do pulo por nível.",
    "custos": [
     30,
-    70
+    60
    ],
    "moeda": "nucleos",
    "onde": "vossa"
@@ -36,8 +52,10 @@
   {
    "id": "propulsores",
    "nome": "Propulsores",
-   "descricao": "+1 carga de dash.",
+   "ramo": "Movimento",
+   "descricao": "−0,1 s na recarga do dash por nível.",
    "custos": [
+    40,
     80
    ],
    "moeda": "nucleos",
@@ -46,7 +64,8 @@
   {
    "id": "contato_mercado",
    "nome": "Contato no Mercado",
-   "descricao": "Começa a run com 30 Créditos por nível.",
+   "ramo": "Fortuna",
+   "descricao": "Começa a run com +30 Créditos por nível.",
    "custos": [
     20,
     40,
@@ -58,10 +77,36 @@
   {
    "id": "recalibrar",
    "nome": "Recalibrar",
-   "descricao": "1 reroll de recompensa por run por nível.",
+   "ramo": "Fortuna",
+   "descricao": "+1 reroll por run (portas e Gambiarras) por nível.",
    "custos": [
     50,
     100
+   ],
+   "moeda": "nucleos",
+   "onde": "vossa"
+  },
+  {
+   "id": "memoria_da_ancora",
+   "nome": "Memória da Âncora",
+   "ramo": "Fortuna",
+   "descricao": "+10% de XP por nível.",
+   "custos": [
+    40,
+    70,
+    100
+   ],
+   "moeda": "nucleos",
+   "onde": "vossa"
+  },
+  {
+   "id": "coleta_fina",
+   "nome": "Coleta Fina",
+   "ramo": "Fortuna",
+   "descricao": "+10% de Núcleos por nível.",
+   "custos": [
+    60,
+    120
    ],
    "moeda": "nucleos",
    "onde": "vossa"

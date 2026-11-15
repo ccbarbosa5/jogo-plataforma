@@ -26,6 +26,8 @@ var tela_recompensa: TelaRecompensa
 var tela_gambiarras: TelaGambiarras
 var banco_gambiarras: BancoGambiarras
 var rng_gambiarras: RandomNumberGenerator = RandomNumberGenerator.new()
+## XP, nível e árvore de Combate do Ryker (GD-07 §4).
+var progressao: ProgressaoPersonagem
 var _trocando: bool = false
 var barra_chefe: BarraChefe
 
@@ -39,6 +41,10 @@ func _ready() -> void:
 	# Arma do Arsenal e melhorias da Vossa Margem (GD-01 §9).
 	jogador.equipar(Ciclo.dados_da_arma())
 	MelhoriasPermanentes.aplicar(jogador, Progresso)
+	progressao = ProgressaoPersonagem.new("ryker")
+	progressao.aplicar(jogador, Progresso)
+	Progresso.definir_run("nivel_inicial", progressao.nivel(Progresso))
+	Progresso.definir_run("xp_ganho", 0)
 	jogador.voltou.connect(func(_j: Jogador) -> void: hud.mostrar_mensagem("SINAL DE EMERGÊNCIA: A ECO TE PUXOU DE VOLTA", 1.5))
 	jogador.morreu.connect(_ao_jogador_morrer)
 	var grilhao := jogador.ferramenta as Grilhao
@@ -119,6 +125,22 @@ func _ao_inimigo_morrer(inimigo: Inimigo, pela_rival: bool) -> void:
 	if pela_rival:
 		ganho += 5
 	jogador.creditos += ganho
+	ganhar_xp(progressao.xp_do_inimigo(inimigo))
+
+
+## XP permanente (GD-07 §4.1), com a Memória da Âncora. Fica salvo mesmo se o Ryker morrer;
+## o total da run aparece na nave, na reconstrução.
+func ganhar_xp(valor: int) -> void:
+	var xp: int = roundi(valor * MelhoriasPermanentes.mult_xp(Progresso))
+	progressao.ganhar_xp(Progresso, xp)
+	Progresso.definir_run("xp_ganho", Progresso.valor("xp_ganho") + xp)
+
+
+## Núcleos com a Coleta Fina (árvore Passiva).
+func ganhar_nucleos(valor: int) -> int:
+	var total: int = roundi(valor * MelhoriasPermanentes.mult_nucleos(Progresso))
+	Progresso.incrementar("nucleos", total)
+	return total
 
 
 func _ao_comecar_arena() -> void:
@@ -149,14 +171,16 @@ func _fim_do_ato() -> void:
 	var primeira: bool = not Progresso.tem_flag("bramido_liberado")
 	Progresso.incrementar("urkesh_vitorias")
 	Progresso.incrementar("vitorias_ato1")
-	Progresso.incrementar("nucleos", 50)
+	var nucleos: int = ganhar_nucleos(50)
+	if primeira:
+		ganhar_xp(int(progressao.xp["chefe_primeira_vitoria"]))  # +100 só na 1ª vitória
 	Progresso.incrementar("dados", 25 if primeira else 10)
 	Progresso.incrementar("duvida")  # D-034: vitórias também contam
 	Dialogos.tocar("vitoria")
 	Progresso.definir_flag("bramido_liberado")
 	Progresso.salvar()
 	barra_chefe.chefe = null
-	var texto: String = "VITÓRIA SOBRE UR-KESH\n+50 Núcleos · +%d Dados" % (25 if primeira else 10)
+	var texto: String = "VITÓRIA SOBRE UR-KESH\n+%d Núcleos · +%d Dados" % [nucleos, 25 if primeira else 10]
 	if primeira:
 		texto += "\nBramido liberado no Arsenal"
 	hud.mostrar_mensagem(texto + "\nContinua no Ato 2")
@@ -191,7 +215,10 @@ func aplicar_recompensa(tipo: String) -> void:
 			hud.mostrar_mensagem("+%d Créditos" % v, 1.2)
 		"nucleos", "dados":
 			var v: int = gerador.valor_recompensa(tipo)
-			Progresso.incrementar(tipo, v)
+			if tipo == "nucleos":
+				v = ganhar_nucleos(v)
+			else:
+				Progresso.incrementar(tipo, v)
 			Progresso.salvar()
 			hud.mostrar_mensagem("+%d %s" % [v, "Núcleos" if tipo == "nucleos" else "Dados de Inteligência"], 1.2)
 		"vida_maxima":

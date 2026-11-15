@@ -39,6 +39,8 @@ var arma_equipada: ArmaEquipada
 ## Nós da árvore de Combate ativos nesta run (GD-07 §4), escolhidos na nave.
 var nos_combate: Array[StringName] = []
 var controle_arma: ControleArma
+## Nós de Granada e Dash da árvore de Combate que precisam de código na run.
+var efeitos_arvore: EfeitosArvore
 ## Moeda da run (loja Ilo).
 var creditos: int = 0
 ## Rerolls de recompensa nesta run (melhoria Recalibrar).
@@ -125,6 +127,8 @@ func _ready() -> void:
 	controle_arma = ControleArma.new(self, parametros_armas)
 	efeitos = EfeitosUpgrades.new(self)
 	efeitos.conectar()
+	efeitos_arvore = EfeitosArvore.new(self)
+	efeitos_arvore.conectar()
 	var grilhao := ferramenta as Grilhao
 	if grilhao != null:
 		grilhao.acertou.connect(func(alvo: Node) -> void: controle_arma.marcar(alvo as Inimigo))
@@ -213,6 +217,8 @@ func ponto_de_tiro() -> Vector2:
 
 
 func receber_ataque(info: InfoDano) -> bool:
+	if esta_em_dash() and vida.esta_invulneravel():
+		efeitos_arvore.ao_atravessar_no_dash()  # Esquiva de Arena
 	if _couro_anulou():
 		return false
 	return vida.receber_dano(info.valor)
@@ -622,9 +628,9 @@ func _ao_levar_dano(_quantidade: int) -> void:
 
 func _ao_morrer() -> void:
 	if retornos > 0:
-		# Sinal de Emergência (GD-01 §9.2): volta com metade da vida, na última posição segura.
+		# Sinal de Emergência (árvore Passiva, GD-07 §3): volta com 2 blocos de vida.
 		retornos -= 1
-		vida.reviver(ceili(vida.maxima / 2.0))
+		vida.reviver(mini(2, vida.maxima))
 		vida.tornar_invulneravel(2.0)
 		_timer_pisca = 2.0
 		voltou.emit(self)
