@@ -16,6 +16,16 @@ var _ja_tocados: Array[Inimigo] = []
 var _total: float = 0.0
 
 
+## D-069: um rastro de chão nasce no chão logo abaixo de `pos` (até `alcance` px). Devolve o
+## ponto do chão, ou Vector2.INF se embaixo é buraco (aí não nasce poça nenhuma).
+static func ponto_no_chao(mundo: Node2D, pos: Vector2, alcance: float = 48.0) -> Vector2:
+	var espaco := mundo.get_world_2d().direct_space_state
+	var consulta := PhysicsRayQueryParameters2D.create(pos + Vector2(0, -4), pos + Vector2(0, alcance),
+			Camadas.MUNDO | Camadas.PLATAFORMAS)
+	var r: Dictionary = espaco.intersect_ray(consulta)
+	return (r["position"] as Vector2).round() if not r.is_empty() else Vector2.INF
+
+
 static func criar(pai: Node, posicao: Vector2, tamanho_: Vector2, duracao_: float, autor_: Node) -> AreaAcido:
 	var a := AreaAcido.new()
 	a.position = posicao

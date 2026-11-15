@@ -219,7 +219,10 @@ func _investida(u: DadosUpgrade) -> void:
 
 ## Rastro de Enxame: pedaços de trilha ácida por onde o dash passa.
 func _rastro(u: DadosUpgrade) -> void:
-	var pos: Vector2 = jogador.global_position
+	# D-069: a trilha fica no chão logo abaixo; sobre buraco, sem trilha.
+	var pos: Vector2 = AreaAcido.ponto_no_chao(jogador, jogador.global_position)
+	if is_inf(pos.x):
+		return
 	if _ultimo_rastro != Vector2.INF and pos.distance_to(_ultimo_rastro) < 12.0:
 		return
 	_ultimo_rastro = pos
@@ -388,7 +391,13 @@ func _ao_morrer_inimigo(inimigo: Inimigo) -> void:
 		ativou.emit(&"colmeia_faminta")
 
 
-func _criar_poca(pos: Vector2, raio: float, u: DadosUpgrade) -> void:
+func _criar_poca(pos_morte: Vector2, raio: float, u: DadosUpgrade) -> void:
+	if jogador == null or not is_instance_valid(jogador):
+		return
+	# D-069: a poça nasce no chão abaixo de onde o inimigo morreu (Zangão no ar também).
+	var pos: Vector2 = AreaAcido.ponto_no_chao(jogador, pos_morte, 200.0)
+	if is_inf(pos.x):
+		return
 	var poca := AreaAcido.criar(_pai(), pos, Vector2(raio * 2.0, 10.0), u.extra("duracao", 3.0), jogador)
 	poca.uma_vez_por_inimigo = true
 	poca.acidos = roundi(u.valor())
