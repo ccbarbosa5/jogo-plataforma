@@ -97,3 +97,16 @@ Cores do texto: claro `#fff6ea`; apagado `#7d7886`; dica `#a7a1ae`; nome no Ápi
 | `raridade.png` | 3 quadros 12×12: **1, 2 e 3 losangos** para C, R e É (lê sem depender da cor). |
 
 Layout (`conceito/mockup_v11_gambiarras.png`, com as medidas do `tela_gambiarras.gd`: cartas de 132×124, espaço de 12, y = 70): gema + "COMUM / RARA / ÉPICA" na faixa; ícone da arma ×2; nome (32 px em 1080p); efeito (26 px, até 3 linhas); embaixo "1 de 3" (acumulável), "novo" ou "única". Botão "Recalibrar (n)" embaixo das cartas. Cores do nome da raridade: `#c9c3cf`, `#9fd0ff`, `#f2a65a`.
+
+## Logo animado (D-073A, ART-6) — `titulo/logo_animado.png` · `ferramentas/arte/logo_animado_v01.py`
+Folha em grade: **8 colunas × 7 linhas**, quadros de **279×86** (o logo 259×66 + 10 px de folga em volta, para as faíscas). **56 quadros a 12 qps (≈ 4,7 s)**; o último é o logo normal e fica parado.
+
+| Quadros | Parte | O que acontece |
+|---|---|---|
+| 0–9 | surge | a silhueta escura do logo aparece em pontilhado |
+| 10–29 | acende | uma linha de brasa corre da esquerda para a direita e deixa o metal aceso |
+| 30–41 | quebra | clarão e faíscas na corrente partida: **momento do som curto** (quadro 30) e de um tremor de tela de 2 px por 0,2 s |
+| 42–55 | brilho | um reflexo branco atravessa as letras e termina no logo limpo |
+
+**Montagem (DEV 27):** tela preta `#16111c`; `AnimatedSprite2D` com esta folha (`hframes = 8`, `vframes = 7`, 56 quadros, sem repetir), centralizado, **×1 na arte** (= ×4 em 1080p), na mesma posição do logo do menu, para a troca ficar sem salto; brasas (`brasa.png`) subindo a partir do quadro 30. Depois do último quadro, segurar ~1 s e fazer *fade* para o menu (total 6–7 s). Qualquer tecla, clique ou Esc pula para o menu.
+Prévia: `ferramentas/arte/previas/logo_animado_previa.gif`.
