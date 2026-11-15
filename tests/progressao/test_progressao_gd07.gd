@@ -44,10 +44,10 @@ func _fechar_falas() -> void:
 
 # --- XP e nível ---
 
-func test_curva_de_xp_60_mais_20n_ate_o_nivel_25() -> void:
+func test_curva_de_xp_150_mais_50n_ate_o_nivel_25() -> void:
 	var prog := ProgressaoPersonagem.new("ryker")
-	afirmar_igual([prog.xp_para_subir(1), prog.xp_para_subir(9)], [80, 240], "1→2: 80; 9→10: 240")
-	afirmar_igual([prog.nivel_de(0), prog.nivel_de(79), prog.nivel_de(80), prog.nivel_de(80 + 99), prog.nivel_de(80 + 100)],
+	afirmar_igual([prog.xp_para_subir(1), prog.xp_para_subir(9)], [200, 600], "GD-08: 1→2: 200; 9→10: 600")
+	afirmar_igual([prog.nivel_de(0), prog.nivel_de(199), prog.nivel_de(200), prog.nivel_de(200 + 249), prog.nivel_de(200 + 250)],
 			[1, 1, 2, 2, 3], "níveis pela curva")
 	afirmar_igual(prog.nivel_de(_xp_do_nivel(prog, 10)), 10, "nível 10")
 	afirmar_igual(prog.nivel_de(999999), 25, "nível máximo 25")
@@ -59,12 +59,12 @@ func test_curva_de_xp_60_mais_20n_ate_o_nivel_25() -> void:
 func test_xp_e_nivel_ficam_depois_da_morte() -> void:
 	var prog := ProgressaoPersonagem.new("ryker")
 	var p := _progresso()
-	afirmar_igual(prog.ganhar_xp(p, 100), 1, "subiu 1 nível")
-	p.definir_run("xp_ganho", 100)
+	afirmar_igual(prog.ganhar_xp(p, 250), 1, "subiu 1 nível")
+	p.definir_run("xp_ganho", 250)
 	p.limpar_run()  # morte: o estado da run zera
 	p.salvar()
 	p.carregar()
-	afirmar_igual(prog.xp_total(p), 100, "XP salvo")
+	afirmar_igual(prog.xp_total(p), 250, "XP salvo")
 	afirmar_igual(prog.nivel(p), 2, "nível salvo")
 	p.apagar()
 	p.free()
@@ -72,7 +72,7 @@ func test_xp_e_nivel_ficam_depois_da_morte() -> void:
 
 func test_xp_por_inimigo() -> void:
 	var prog := ProgressaoPersonagem.new("ryker")
-	var esperado: Dictionary = {"zangao": 2, "cuspidor": 3, "guerreiro_cla": 6, "artilheiro_kharn": 6, "muralha": 8,
+	var esperado: Dictionary = {"zangao": 1, "cuspidor": 3, "guerreiro_cla": 6, "artilheiro_kharn": 6, "muralha": 8,
 			"ninho": 10, "ceifadora": 30, "brutamontes": 30, "ur_kesh": 120}
 	for nome: String in esperado:
 		var inimigo: Inimigo = (load(PASTA_INIMIGOS + nome + ".tscn") as PackedScene).instantiate()
@@ -132,7 +132,7 @@ func test_aplicar_na_run_so_o_ramo_da_arma_levada() -> void:
 	var recarga: float = j.parametros.recarga_dash
 	var cargas: int = j.parametros.cargas_dash
 	prog.aplicar(j, p)
-	afirmar_igual(j.arma_equipada.dano(), 12, "Rebite Afiado: 10 × 1,15 ≈ 12")
+	afirmar_igual(j.arma_equipada.dano(), 16, "Rebite Afiado: 14 × 1,15 ≈ 16")
 	afirmar(not j.arma_equipada.permanentes.has(&"bramido_balins_pesados"), "ramo do Bramido inativo com a Mordida")
 	afirmar(j.tem_no(&"grilhao_corrente_longa"), "nó do Grilhão ativo")
 	afirmar_igual([j.granada.por_sala, j.granadas], [granadas + 1, granadas + 1], "Cinto: +1 granada")
@@ -227,9 +227,9 @@ func test_nave_mostra_o_xp_da_run_e_abre_a_arvore_no_arsenal() -> void:
 	var nave: NaveEco = instanciar("res://scenes/nave/nave_eco.tscn")
 	await esperar_frames(3)
 	_fechar_falas()
-	Ciclo.ultima_run = {"xp_ganho": 150, "nivel_inicial": 1}
-	Progresso.contadores["xp_ryker"] = 150
-	afirmar_igual(nave.texto_xp_da_run(), "\n+150 XP · Nível 2 — novos pontos no Arsenal!", "XP na reconstrução")
+	Ciclo.ultima_run = {"xp_ganho": 250, "nivel_inicial": 1}
+	Progresso.contadores["xp_ryker"] = 250
+	afirmar_igual(nave.texto_xp_da_run(), "\n+250 XP · Nível 2 — novos pontos no Arsenal!", "XP na reconstrução")
 	nave.abrir_arvore_combate()
 	afirmar(nave.tela_arvore.esta_aberta(), "a árvore abre no Arsenal")
 	var b: Button = nave.tela_arvore.botao_do_no(&"mordida_rebite_afiado")

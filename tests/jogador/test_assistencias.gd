@@ -81,5 +81,5 @@ func test_tiro_automatico_so_atira_com_inimigo_na_linha() -> void:
 	await esperar_frames(10)
 	afirmar_igual(tiros[0], 0, "sem inimigo, sem tiro")
 	_alvo(j.ponto_de_tiro() + Vector2(150, 0))
-	await esperar_frames(30)
-	afirmar(tiros[0] >= 3, "atirou sozinho no inimigo na linha (%d)" % tiros[0])
+	await esperar_frames(40)
+	afirmar(tiros[0] >= 2, "atirou sozinho no inimigo na linha (%d)" % tiros[0])

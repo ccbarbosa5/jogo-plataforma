@@ -1,11 +1,14 @@
 class_name MiraAutomatica
 extends RefCounted
 ## Escolha de alvo para as assistências de mira e tiro (GD-01, 3.1).
-## Prioridade: (1) inimigo anunciando ataque, (2) o mais próximo.
+## Prioridade: (1) inimigo anunciando ataque, (2) o mais próximo dentro de 6 tiles à frente
+## (GD-08 §4: na horda, a mira não fica presa num inimigo atrás), (3) o mais próximo.
 ## Alvo "grudento": só troca quando o atual morre, sai do alcance
 ## ou quando outro está bem mais perto (Assistencias.fator_troca_alvo).
 
 const GRUPO_INIMIGOS: StringName = &"inimigos"
+## Janela "à frente" (GD-08 §4), em tiles.
+const FRENTE_TILES: float = 6.0
 
 var alvo_atual: Node2D
 
@@ -33,7 +36,13 @@ static func centro_de(inimigo: Node2D) -> Vector2:
 	return inimigo.global_position
 
 
-func escolher_alvo(origem: Vector2, opcoes: Assistencias, arvore: SceneTree) -> Node2D:
+static func esta_a_frente(origem: Vector2, alvo: Vector2, frente: int) -> bool:
+	var dx: float = alvo.x - origem.x
+	return frente != 0 and signf(dx) == signf(frente) and absf(dx) <= Unidades.px(FRENTE_TILES)
+
+
+## frente = para onde o jogador olha (1 ou −1); 0 = sem preferência.
+func escolher_alvo(origem: Vector2, opcoes: Assistencias, arvore: SceneTree, frente: int = 0) -> Node2D:
 	var candidatos: Array[Node2D] = _candidatos(origem, opcoes, arvore)
 	if candidatos.is_empty():
 		alvo_atual = null
@@ -44,10 +53,17 @@ func escolher_alvo(origem: Vector2, opcoes: Assistencias, arvore: SceneTree) -> 
 		var nota: float = origem.distance_to(centro_de(inimigo))
 		if inimigo.has_method("esta_anunciando") and inimigo.esta_anunciando():
 			nota -= 100000.0  # quem está anunciando ataque vem primeiro
+		elif esta_a_frente(origem, centro_de(inimigo), frente):
+			nota -= 10000.0
 		if nota < melhor_nota:
 			melhor_nota = nota
 			melhor = inimigo
 	if alvo_atual != null and is_instance_valid(alvo_atual) and alvo_atual in candidatos:
+		var melhor_frente: bool = esta_a_frente(origem, centro_de(melhor), frente)
+		if melhor_frente and not esta_a_frente(origem, centro_de(alvo_atual), frente) \
+				and not (alvo_atual.has_method("esta_anunciando") and alvo_atual.esta_anunciando()):
+			alvo_atual = melhor
+			return alvo_atual
 		var dist_atual: float = origem.distance_to(centro_de(alvo_atual))
 		var dist_melhor: float = origem.distance_to(centro_de(melhor))
 		if dist_melhor >= dist_atual * opcoes.fator_troca_alvo:

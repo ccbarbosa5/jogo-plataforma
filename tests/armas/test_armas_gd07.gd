@@ -45,9 +45,9 @@ func test_numeros_base_do_gd07() -> void:
 	var m: DadosArma = load(MORDIDA)
 	var b: DadosArma = load(BRAMIDO)
 	afirmar_igual([m.cadencia, m.dano, m.projeteis_por_tiro, m.velocidade_projetil, m.duracao_projetil, m.espalhamento_graus],
-			[8.0, 10, 1, 37.5, 1.0, 0.0], "Mordida")
+			[3.5, 14, 1, 37.5, 1.0, 0.0], "Mordida (GD-08 §1)")
 	afirmar_igual([b.cadencia, b.dano, b.projeteis_por_tiro, b.velocidade_projetil, b.duracao_projetil, b.espalhamento_graus],
-			[1.5, 9, 6, 25.0, 0.2, 15.0], "Bramido")
+			[1.0, 10, 6, 25.0, 0.2, 15.0], "Bramido (GD-08 §1)")
 	afirmar_igual([b.queda_dano_px, b.mult_queda_dano], [48.0, 0.5], "queda de dano do Bramido")
 	afirmar_igual([m.peso_disparo, m.fator_efeito, b.peso_disparo, b.fator_efeito], [1.0, 1.0, 2.5, 0.35],
 			"peso e fator continuam (facções)")
@@ -59,7 +59,7 @@ func test_sem_assinatura_a_cadencia_nao_muda_atirando() -> void:
 	var j := _jogador()
 	await esperar_frames(2)
 	var tiros: Array[Projetil] = await _atirar(j, 120)  # 2 s
-	afirmar(tiros.size() >= 15 and tiros.size() <= 17, "8 tiros/s sem Embalo (%d em 2 s)" % tiros.size())
+	afirmar(tiros.size() >= 6 and tiros.size() <= 8, "3,5 tiros/s sem Embalo (%d em 2 s)" % tiros.size())
 
 
 func test_numeros_dos_modificadores_somam() -> void:
@@ -77,7 +77,7 @@ func test_numeros_dos_modificadores_somam() -> void:
 	afirmar_igual(p.perfuracoes, 1, "atravessa 1")
 	afirmar_igual(p.ricochetes, 2, "quica 2")
 	afirmar_proximo(p.scale.x, 1.25, 0.001, "projétil 25% maior")
-	afirmar_igual(p.info.valor, 11, "10 × 1,1")
+	afirmar_igual(p.info.valor, 15, "14 × 1,1")
 
 
 func test_gambiarras_somem_no_fim_da_run_e_a_arvore_fica() -> void:
@@ -113,7 +113,7 @@ func test_grande_arena_cada_10o_tiro_e_um_rebite_de_40() -> void:
 	var j := _jogador()
 	j.arma_equipada.adicionar(_mod([&"grande_arena"]))
 	await esperar_frames(2)
-	var tiros: Array[Projetil] = await _atirar(j, 80)
+	var tiros: Array[Projetil] = await _atirar(j, 175)
 	afirmar(tiros.size() >= 10, "deu 10 tiros")
 	afirmar_igual(tiros[9].especial, &"arena", "o 10º é especial")
 	afirmar_igual(tiros[9].info.valor, 40, "40 de dano")
@@ -125,13 +125,13 @@ func test_rebite_duplo_a_cada_5_e_a_cada_4_com_2_acumulos() -> void:
 	var j := _jogador()
 	j.arma_equipada.adicionar(_mod([&"rebite_duplo"], &"rebite_duplo"))
 	await esperar_frames(2)
-	var tiros: Array[Projetil] = await _atirar(j, 40)  # ~5 disparos
+	var tiros: Array[Projetil] = await _atirar(j, 80)  # ~5 disparos
 	afirmar(tiros.size() >= 6, "o 5º disparo saiu duplo (%d projéteis)" % tiros.size())
 	afirmar_igual(j.controle_arma.tiros >= 5, true, "5 disparos")
 	afirmar_igual(tiros.size(), j.controle_arma.tiros + j.controle_arma.tiros / 5, "um extra a cada 5")
 	j.arma_equipada.adicionar(_mod([&"rebite_duplo"], &"rebite_duplo"))
 	j.controle_arma.reiniciar()
-	var mais: Array[Projetil] = await _atirar(j, 32)
+	var mais: Array[Projetil] = await _atirar(j, 75)
 	afirmar_igual(mais.size(), j.controle_arma.tiros + j.controle_arma.tiros / 4, "um extra a cada 4")
 
 
@@ -163,7 +163,7 @@ func test_bala_central_e_leque() -> void:
 	await esperar_frames(2)
 	var leque: Array[Projetil] = await _atirar(m, 2)
 	afirmar_igual(leque.size(), 3, "1 + 2 do leque")
-	afirmar_igual(leque[1].info.valor, 5, "50% do dano")
+	afirmar_igual(leque[1].info.valor, 7, "50% do dano")
 
 
 func test_marca_do_grilhao_da_25_por_cento_so_na_arma() -> void:

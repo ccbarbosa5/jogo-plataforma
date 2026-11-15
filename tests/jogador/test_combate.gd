@@ -10,16 +10,16 @@ func _projeteis() -> Array[Projetil]:
 	return lista
 
 
-func test_fuzil_atira_8_vezes_por_segundo() -> void:
+func test_mordida_atira_3_e_meio_por_segundo() -> void:
 	CenarioTeste.criar_chao(self)
 	var j := CenarioTeste.criar_jogador(self)
 	var tiros: Array[int] = [0]
 	j.atirou.connect(func(_p: Projetil) -> void: tiros[0] += 1)
 	await esperar_frames(3)
 	j.entrada.atirar_segurado = true
-	await esperar_frames(60)
+	await esperar_frames(120)
 	j.entrada.atirar_segurado = false
-	afirmar(tiros[0] >= 7 and tiros[0] <= 9, "esperado ~8 tiros em 1 s, saíram %d" % tiros[0])
+	afirmar(tiros[0] >= 6 and tiros[0] <= 8, "esperado ~7 tiros em 2 s (GD-08), saíram %d" % tiros[0])
 
 
 func test_tiro_sai_na_direcao_da_mira_a_600_px_por_segundo() -> void:
@@ -37,7 +37,7 @@ func test_tiro_sai_na_direcao_da_mira_a_600_px_por_segundo() -> void:
 		afirmar_proximo(ultimo[0].velocidade.y, -600.0, 0.5, "tiro para cima a 600 px/s")
 
 
-func test_fuzil_causa_10_de_dano() -> void:
+func test_mordida_causa_14_de_dano() -> void:
 	CenarioTeste.criar_chao(self)
 	var j := CenarioTeste.criar_jogador(self)
 	var b := CenarioTeste.criar_boneco(self, Vector2(CenarioTeste.tiles(6), 0))
@@ -46,7 +46,7 @@ func test_fuzil_causa_10_de_dano() -> void:
 	await esperar_frames(1)
 	j.entrada.atirar_segurado = false
 	await esperar_frames(15)
-	afirmar_igual(b.vida.atual, 490, "vida do boneco depois de 1 tiro")
+	afirmar_igual(b.vida.atual, 486, "vida do boneco depois de 1 tiro")
 
 
 func test_golpe_corpo_a_corpo_substitui_o_tiro_de_perto() -> void:
@@ -151,21 +151,21 @@ func test_modificador_de_arma_muda_cadencia_e_projeteis() -> void:
 	j.atirou.connect(func(_p: Projetil) -> void: tiros[0] += 1)
 	await esperar_frames(2)
 	var m := ModificadorArma.new()
-	m.mult_cadencia = 0.5
+	m.mult_cadencia = 2.0
 	m.soma_projeteis_por_tiro = 2
 	m.soma_espalhamento_graus = 10.0
 	j.arma_equipada.adicionar(m)
-	afirmar_proximo(j.arma_equipada.cadencia(), 4.0, 0.001, "cadência pela metade")
+	afirmar_proximo(j.arma_equipada.cadencia(), 7.0, 0.001, "cadência dobrada")
 	j.entrada.atirar_segurado = true
 	await esperar_frames(60)
 	j.entrada.atirar_segurado = false
-	afirmar(tiros[0] >= 10 and tiros[0] <= 15, "~4 disparos × 3 projéteis em 1 s, saíram %d" % tiros[0])
+	afirmar(tiros[0] >= 18 and tiros[0] <= 24, "~7 disparos × 3 projéteis em 1 s, saíram %d" % tiros[0])
 
 
 func test_arma_equipada_soma_e_multiplica_e_zera_na_run_nova() -> void:
 	var dados: DadosArma = load("res://scenes/armas/mordida.tres")
 	var a := ArmaEquipada.new(dados)
-	afirmar_igual(a.dano(), 10, "dano-base do fuzil")
+	afirmar_igual(a.dano(), 14, "dano-base da Mordida")
 	var m1 := ModificadorArma.new()
 	m1.soma_dano = 5
 	var m2 := ModificadorArma.new()
@@ -173,10 +173,10 @@ func test_arma_equipada_soma_e_multiplica_e_zera_na_run_nova() -> void:
 	m2.marcadores = [&"perfurante"] as Array[StringName]
 	a.adicionar(m1)
 	a.adicionar(m2)
-	afirmar_igual(a.dano(), 30, "(10 + 5) × 2")
+	afirmar_igual(a.dano(), 38, "(14 + 5) × 2")
 	afirmar(a.tem_marcador(&"perfurante"), "marcador de comportamento")
 	a.limpar()
-	afirmar_igual(a.dano(), 10, "fim da run: árvore zerada")
+	afirmar_igual(a.dano(), 14, "fim da run: árvore zerada")
 	afirmar(not a.tem_marcador(&"perfurante"), "marcador some")
 
 

@@ -38,8 +38,8 @@
    "nome": "Gatilho Leve",
    "raridade": "comum",
    "maximo": 3,
-   "descricao": "+8% de cadência.",
-   "mult_cadencia": 1.08
+   "descricao": "+12% de cadência.",
+   "mult_cadencia": 1.12
   },
   {
    "id": "cano_longo",
@@ -157,8 +157,8 @@
    "nome": "Engatilho Rápido",
    "raridade": "comum",
    "maximo": 3,
-   "descricao": "+10% de cadência.",
-   "mult_cadencia": 1.1
+   "descricao": "+15% de cadência.",
+   "mult_cadencia": 1.15
   },
   {
    "id": "bala_central",

@@ -23,4 +23,4 @@ shape = SubResource("corpo")
 
 [node name="Vida" type="Node" parent="."]
 script = ExtResource("3")
-maxima = 120
+maxima = 100

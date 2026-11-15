@@ -118,7 +118,7 @@ func test_grilhao_sai_na_direcao_do_mouse_sem_parar_o_tiro() -> void:
 	afirmar(g.estado != Grilhao.Estado.PRONTO, "Grilhão lançado")
 	var direcao_corrente: Vector2 = (g.ponta - j.ponto_de_tiro()).normalized()
 	afirmar_proximo(rad_to_deg(direcao_corrente.angle()), -40.0, 1.0, "corrente no ângulo do mouse")
-	await esperar_frames(20)
+	await esperar_frames(38)
 	j.entrada.atirar_segurado = false
 	afirmar(tiros[0] - antes >= 2, "continuou atirando com o Grilhão no ar (%d tiros)" % (tiros[0] - antes))
 

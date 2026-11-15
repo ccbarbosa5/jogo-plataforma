@@ -32,12 +32,12 @@ func test_fase_1_andador_pesado_com_radiador_nas_costas() -> void:
 	_antes()
 	var c := _chefe()
 	await esperar_frames(2)
-	afirmar_igual([c.fase, c.vida.maxima, c.peso, c.categoria], [1, 1500, Inimigo.Peso.PESADO, Inimigo.Categoria.CHEFE], "fase 1")
+	afirmar_igual([c.fase, c.vida.maxima, c.peso, c.categoria], [1, 1200, Inimigo.Peso.PESADO, Inimigo.Categoria.CHEFE], "fase 1")
 	c.olhando = -1
 	c._posicionar_pontos()
 	afirmar(c.radiador.position.x > 0.0, "radiador nas costas")
 	c.radiador.receber_ataque(InfoDano.criar(10, null))
-	afirmar_igual(c.vida.atual, 1480, "radiador: dano dobrado")
+	afirmar_igual(c.vida.atual, 1180, "radiador: dano dobrado")
 
 
 func test_varredura_tem_laser_de_0_8_s() -> void:
@@ -119,7 +119,7 @@ func test_andador_cai_e_vem_a_fase_3_a_pe() -> void:
 	c.vida.receber_dano(1500, true)
 	await esperar_frames(1)
 	afirmar(is_instance_valid(c) and c.esta_vivo(), "o andador cai, Ur-Kesh não")
-	afirmar_igual([c.fase, c.vida.maxima, c.peso, c.tamanho], [3, 600, Inimigo.Peso.MEDIO, Vector2(32, 70)], "fase 3 a pé")
+	afirmar_igual([c.fase, c.vida.maxima, c.peso, c.tamanho], [3, 500, Inimigo.Peso.MEDIO, Vector2(32, 70)], "fase 3 a pé")
 	c.vida.receber_dano(600, true)
 	await esperar_frames(1)
 	afirmar(not is_instance_valid(c) or not c.esta_vivo(), "na fase 3, morre")

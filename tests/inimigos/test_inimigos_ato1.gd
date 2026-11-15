@@ -30,15 +30,16 @@ func _de_tipo(classe: String) -> Array[Node]:
 
 # --- Fichas da tabela do GD-02 ---
 
+## Vidas do GD-08 §2 (os pesados com −20%; o Zangão com 8).
 func test_fichas_dos_inimigos_batem_com_o_gd02() -> void:
 	var esperado: Dictionary = {
-		"artilheiro_kharn": [Vector2(32, 56), 80, Inimigo.Peso.MEDIO, Inimigo.Categoria.COMUM],
-		"muralha": [Vector2(40, 64), 150, Inimigo.Peso.MEDIO, Inimigo.Categoria.COMUM],
-		"zangao": [Vector2(12, 12), 10, Inimigo.Peso.LEVE, Inimigo.Categoria.COMUM],
+		"artilheiro_kharn": [Vector2(32, 56), 70, Inimigo.Peso.MEDIO, Inimigo.Categoria.COMUM],
+		"muralha": [Vector2(40, 64), 130, Inimigo.Peso.MEDIO, Inimigo.Categoria.COMUM],
+		"zangao": [Vector2(12, 12), 8, Inimigo.Peso.LEVE, Inimigo.Categoria.COMUM],
 		"cuspidor": [Vector2(20, 14), 25, Inimigo.Peso.LEVE, Inimigo.Categoria.COMUM],
-		"ninho": [Vector2(48, 48), 200, Inimigo.Peso.PESADO, Inimigo.Categoria.COMUM],
-		"brutamontes": [Vector2(48, 72), 400, Inimigo.Peso.PESADO, Inimigo.Categoria.ELITE],
-		"ceifadora": [Vector2(32, 40), 250, Inimigo.Peso.MEDIO, Inimigo.Categoria.ELITE],
+		"ninho": [Vector2(48, 48), 160, Inimigo.Peso.PESADO, Inimigo.Categoria.COMUM],
+		"brutamontes": [Vector2(48, 72), 320, Inimigo.Peso.PESADO, Inimigo.Categoria.ELITE],
+		"ceifadora": [Vector2(32, 40), 200, Inimigo.Peso.MEDIO, Inimigo.Categoria.ELITE],
 	}
 	for nome: String in esperado:
 		var i: Inimigo = (load(PASTA + nome + ".tscn") as PackedScene).instantiate()
@@ -95,13 +96,13 @@ func test_muralha_escudo_bloqueia_100_pela_frente() -> void:
 	m.olhando = -1
 	await esperar_frames(2)
 	m.receber_ataque(InfoDano.criar(30, null, Vector2(1, 0)))  # vindo da esquerda, de frente
-	afirmar_igual(m.vida.atual, 150, "escudo segura tudo pela frente")
+	afirmar_igual(m.vida.atual, 130, "escudo segura tudo pela frente")
 	m.receber_ataque(InfoDano.criar(30, null, Vector2(-1, 0)))
-	afirmar_igual(m.vida.atual, 120, "pelas costas passa")
+	afirmar_igual(m.vida.atual, 100, "pelas costas passa")
 	var explosao := InfoDano.criar(20, null, Vector2(1, 0))
 	explosao.explosao = true
 	m.receber_ataque(explosao)
-	afirmar_igual(m.vida.atual, 100, "explosão passa (granada)")
+	afirmar_igual(m.vida.atual, 80, "explosão passa (granada)")
 
 
 func test_muralha_grilhao_arranca_o_escudo_e_derruba() -> void:
@@ -192,7 +193,7 @@ func test_ninho_gera_zangoes_ate_6_e_tem_ponto_fraco() -> void:
 	afirmar(n.gerar_zangao() == null, "não passa de 6")
 	var pf: PontoFraco = n.get_node("PontoFraco")
 	pf.receber_ataque(InfoDano.criar(10, null))
-	afirmar_igual(n.vida.atual, 180, "ponto fraco: dobro de dano")
+	afirmar_igual(n.vida.atual, 140, "ponto fraco: dobro de dano")
 	afirmar_igual(n.peso, Inimigo.Peso.PESADO, "Pesado: o Grilhão puxa o Ryker")
 
 
@@ -235,7 +236,7 @@ func test_brutamontes_pesado_com_tanque_nas_costas() -> void:
 	afirmar(b.ponto_fraco.position.x > 0.0, "olhando para a esquerda, o tanque fica à direita (costas)")
 	afirmar_igual(b.peso, Inimigo.Peso.PESADO, "Pesado: o Grilhão puxa o Ryker")
 	b.ponto_fraco.receber_ataque(InfoDano.criar(10, null, Vector2(-1, 0)))
-	afirmar_igual(b.vida.atual, 380, "ponto fraco: dobro")
+	afirmar_igual(b.vida.atual, 300, "ponto fraco: dobro")
 
 
 # --- Ceifadora ---
