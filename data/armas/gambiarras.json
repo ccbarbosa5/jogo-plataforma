@@ -1,0 +1,232 @@
+{
+ "_nota": "GD-07 §5 (D-058). Gambiarras: 1 entre 3 ao limpar cada sala de Combate ou Elite; somem na morte. Campos iguais aos de ModificadorArma.",
+ "chances": {
+  "comum": 65,
+  "rara": 28,
+  "epica": 7
+ },
+ "mordida": [
+  {
+   "id": "rebite_duplo",
+   "nome": "Rebite Duplo",
+   "raridade": "comum",
+   "maximo": 2,
+   "descricao": "A cada 5 tiros, o próximo sai duplo (2 rebites lado a lado). No 2º: a cada 4.",
+   "marcadores": [
+    "rebite_duplo"
+   ]
+  },
+  {
+   "id": "ricochete",
+   "nome": "Ricochete",
+   "raridade": "comum",
+   "maximo": 2,
+   "descricao": "O tiro ricocheteia 1 vez em parede ou chão.",
+   "soma_ricochetes": 1
+  },
+  {
+   "id": "rebite_grosso",
+   "nome": "Rebite Grosso",
+   "raridade": "comum",
+   "maximo": 3,
+   "descricao": "+10% de dano e projétil 25% maior.",
+   "mult_dano": 1.1,
+   "mult_tamanho_projetil": 1.25
+  },
+  {
+   "id": "gatilho_leve",
+   "nome": "Gatilho Leve",
+   "raridade": "comum",
+   "maximo": 3,
+   "descricao": "+8% de cadência.",
+   "mult_cadencia": 1.08
+  },
+  {
+   "id": "cano_longo",
+   "nome": "Cano Longo",
+   "raridade": "comum",
+   "maximo": 1,
+   "descricao": "+30% de velocidade e de alcance do projétil.",
+   "mult_velocidade_projetil": 1.3
+  },
+  {
+   "id": "rebite_incandescente",
+   "nome": "Rebite Incandescente",
+   "raridade": "rara",
+   "maximo": 1,
+   "descricao": "Cada acerto seguido no mesmo alvo dá +3% de dano (até +30%). Zera ao trocar de alvo.",
+   "marcadores": [
+    "incandescente"
+   ]
+  },
+  {
+   "id": "perfura_casco",
+   "nome": "Perfura-Casco",
+   "raridade": "rara",
+   "maximo": 2,
+   "descricao": "Atravessa +1 inimigo.",
+   "soma_perfuracoes": 1
+  },
+  {
+   "id": "leque",
+   "nome": "Leque",
+   "raridade": "rara",
+   "maximo": 1,
+   "descricao": "+2 projéteis a ±6°, com 50% do dano cada.",
+   "marcadores": [
+    "leque"
+   ]
+  },
+  {
+   "id": "cacador_de_marca",
+   "nome": "Caçador de Marca",
+   "raridade": "rara",
+   "maximo": 1,
+   "descricao": "+20% de dano em alvos Marcados (soma com a Marca).",
+   "marcadores": [
+    "cacador_marca"
+   ]
+  },
+  {
+   "id": "tiro_de_aviso",
+   "nome": "Tiro de Aviso",
+   "raridade": "rara",
+   "maximo": 1,
+   "descricao": "+50% de dano em inimigo que está anunciando um ataque.",
+   "marcadores": [
+    "tiro_aviso"
+   ]
+  },
+  {
+   "id": "rebite_guiado",
+   "nome": "Rebite Guiado",
+   "raridade": "epica",
+   "maximo": 1,
+   "descricao": "O projétil curva até 15° na direção do inimigo mais próximo.",
+   "marcadores": [
+    "guiado"
+   ]
+  },
+  {
+   "id": "prego_do_rato",
+   "nome": "Prego do Rato",
+   "raridade": "epica",
+   "maximo": 1,
+   "descricao": "A cada 20 tiros, um rebite gigante: 60 de dano, atravessa tudo.",
+   "marcadores": [
+    "prego_do_rato"
+   ]
+  }
+ ],
+ "bramido": [
+  {
+   "id": "balim_extra",
+   "nome": "Balim Extra",
+   "raridade": "comum",
+   "maximo": 3,
+   "descricao": "+1 balim.",
+   "soma_projeteis_por_tiro": 1
+  },
+  {
+   "id": "polvora_kharn",
+   "nome": "Pólvora Kharn",
+   "raridade": "comum",
+   "maximo": 3,
+   "descricao": "+10% de dano.",
+   "mult_dano": 1.1
+  },
+  {
+   "id": "choque_concentrado",
+   "nome": "Choque Concentrado",
+   "raridade": "comum",
+   "maximo": 2,
+   "descricao": "−5° de dispersão.",
+   "soma_espalhamento_graus": -5.0
+  },
+  {
+   "id": "alcance_de_cerco",
+   "nome": "Alcance de Cerco",
+   "raridade": "comum",
+   "maximo": 2,
+   "descricao": "+25% de alcance; a queda de dano começa 16 px mais longe.",
+   "mult_duracao_projetil": 1.25,
+   "soma_queda_px": 16.0
+  },
+  {
+   "id": "engatilho_rapido",
+   "nome": "Engatilho Rápido",
+   "raridade": "comum",
+   "maximo": 3,
+   "descricao": "+10% de cadência.",
+   "mult_cadencia": 1.1
+  },
+  {
+   "id": "bala_central",
+   "nome": "Bala Central",
+   "raridade": "rara",
+   "maximo": 1,
+   "descricao": "Cada disparo solta também 1 projétil reto de 30 de dano que alcança a tela inteira.",
+   "marcadores": [
+    "bala_central"
+   ]
+  },
+  {
+   "id": "balins_quicantes",
+   "nome": "Balins Quicantes",
+   "raridade": "rara",
+   "maximo": 1,
+   "descricao": "Os balins ricocheteiam 1 vez.",
+   "soma_ricochetes": 1
+  },
+  {
+   "id": "empurrao_de_campeao",
+   "nome": "Empurrão de Campeão",
+   "raridade": "rara",
+   "maximo": 1,
+   "descricao": "Acertos empurram inimigos leves e médios 16 px (uma vez por disparo).",
+   "marcadores": [
+    "empurrao"
+   ]
+  },
+  {
+   "id": "estilhaco_vivo",
+   "nome": "Estilhaço Vivo",
+   "raridade": "rara",
+   "maximo": 2,
+   "descricao": "O balim que mata solta 2 estilhaços de 5 de dano.",
+   "marcadores": [
+    "estilhaco_vivo"
+   ]
+  },
+  {
+   "id": "queima_roupa",
+   "nome": "Queima-Roupa",
+   "raridade": "rara",
+   "maximo": 1,
+   "descricao": "+40% de dano a 24 px ou menos.",
+   "marcadores": [
+    "queima_roupa"
+   ]
+  },
+  {
+   "id": "carregador_de_arena",
+   "nome": "Carregador de Arena",
+   "raridade": "epica",
+   "maximo": 1,
+   "descricao": "Carregador de 2 (0,15 s entre os disparos, 0,9 s para recarregar). Com o Cano Duplo da árvore, vira carregador de 3.",
+   "marcadores": [
+    "carregador_arena"
+   ]
+  },
+  {
+   "id": "artilharia",
+   "nome": "Artilharia",
+   "raridade": "epica",
+   "maximo": 1,
+   "descricao": "Segurar o tiro por 1 s carrega um disparo que explode (90 de dano, 40 px). Soltar antes dispara normal.",
+   "marcadores": [
+    "artilharia"
+   ]
+  }
+ ]
+}

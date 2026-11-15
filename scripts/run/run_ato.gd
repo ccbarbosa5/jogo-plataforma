@@ -22,6 +22,10 @@ var gerador: GeradorAto
 var sala: SalaRun
 var numero_sala: int = -1
 var tela_recompensa: TelaRecompensa
+## Gambiarras (GD-07 §5): 1 entre 3 ao limpar cada sala de Combate ou Elite.
+var tela_gambiarras: TelaGambiarras
+var banco_gambiarras: BancoGambiarras
+var rng_gambiarras: RandomNumberGenerator = RandomNumberGenerator.new()
 var _trocando: bool = false
 var barra_chefe: BarraChefe
 
@@ -48,7 +52,16 @@ func _ready() -> void:
 	tela_recompensa.entrada = jogador.entrada
 	barra_chefe = BarraChefe.new()
 	hud.add_child(barra_chefe)
+	banco_gambiarras = BancoGambiarras.new()
+	if semente >= 0:
+		rng_gambiarras.seed = semente
+	else:
+		rng_gambiarras.randomize()
+	tela_gambiarras = TelaGambiarras.new()
+	add_child(tela_gambiarras)
 	carregar_sala(0)
+	if Progresso.tem_flag("treino_garrak"):
+		_treino_com_garrak.call_deferred()
 
 
 ## Monta e entra na sala `n` do mapa.
@@ -120,6 +133,9 @@ func _ao_comecar_arena() -> void:
 
 func _ao_concluir_sala() -> void:
 	hud.mostrar_mensagem("SALA LIMPA!", 1.2)
+	var tipo: String = sala.plano.get("tipo", "")
+	if tipo == "combate" or tipo == "elite":
+		oferecer_gambiarra.call_deferred(tipo == "elite")
 	if numero_sala == 0:
 		Progresso.definir_flag("queda_completa_vista")
 		Progresso.salvar()
@@ -182,6 +198,25 @@ func aplicar_recompensa(tipo: String) -> void:
 			jogador.vida.maxima += 1
 			jogador.vida.curar(1)
 			hud.mostrar_mensagem("+1 bloco de vida máximo", 1.2)
+
+
+## Gambiarra (GD-07 §5.1): 3 cartas da arma em uso; Elite garante 1 Rara ou melhor.
+## `so_comuns`: Treino com Garrak. Espera a escolha.
+func oferecer_gambiarra(elite: bool = false, so_comuns: bool = false, titulo: String = "GAMBIARRA") -> void:
+	var sortear := func() -> Array[ModificadorArma]:
+		return banco_gambiarras.sortear(jogador.arma_equipada, rng_gambiarras, elite, so_comuns)
+	tela_gambiarras.ao_recalibrar = sortear
+	if tela_gambiarras.abrir(jogador, sortear.call(), titulo):
+		await tela_gambiarras.fechou
+
+
+## Treino com Garrak (desbloqueio com Dados): começa a run com 1 Gambiarra Comum à escolha.
+## Espera as falas da queda terminarem.
+func _treino_com_garrak() -> void:
+	var caixa := get_tree().get_first_node_in_group("caixa_dialogo") as CaixaDialogo
+	while caixa != null and caixa.esta_ativa():
+		await caixa.terminou
+	await oferecer_gambiarra(false, true, "TREINO COM GARRAK")
 
 
 ## Loja do Ilo: dádiva da facção escolhida na banca (GD-02 §6.5).
