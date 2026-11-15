@@ -490,3 +490,34 @@ func test_porta_de_faccao_abre_a_oferta_e_fecha_as_outras() -> void:
 	await tree.process_frame
 	await tree.process_frame
 	afirmar(not is_instance_valid(outra) or outra.is_queued_for_deletion(), "escolheu: as outras saídas somem")
+
+
+# --- D-069: rastro de chão sempre no chão ---
+
+func test_rastro_do_dash_no_ar_fica_no_chao_e_sobre_buraco_nao_nasce() -> void:
+	var j := _jogador()
+	_dar(j, &"rastro_de_enxame")
+	await esperar_frames(3)
+	j.global_position.y = -30.0  # no ar, 30 px acima do chão
+	j.velocity = Vector2.ZERO
+	j.efeitos._rastro(j.upgrades.no_slot(DadosUpgrade.Slot.DASH))
+	var pocas: Array[Node] = _nos("AreaAcido")
+	afirmar_igual(pocas.size(), 1, "uma poça")
+	afirmar_proximo((pocas[0] as Node2D).global_position.y, 0.0, 1.0, "nasceu no chão, não no ar")
+	j.global_position = Vector2(5000, -10)  # fora do chão: buraco
+	j.efeitos._ultimo_rastro = Vector2.INF
+	j.efeitos._rastro(j.upgrades.no_slot(DadosUpgrade.Slot.DASH))
+	afirmar_igual(_nos("AreaAcido").size(), 1, "sobre o buraco, sem poça")
+
+
+func test_poca_da_colmeia_de_inimigo_voador_cai_no_chao() -> void:
+	var j := _jogador()
+	_dar(j, &"colmeia_faminta")
+	var morto := CenarioTeste.criar_boneco(self, Vector2(80, -60), Inimigo.Peso.LEVE, Vector2(12, 12), false, 10)
+	await esperar_frames(2)
+	morto.adicionar_acido(1, j)
+	morto.receber_ataque(InfoDano.criar(50, j))
+	await esperar_frames(3)
+	var pocas: Array[Node] = _nos("AreaAcido")
+	afirmar_igual(pocas.size(), 1, "poça")
+	afirmar_proximo((pocas[0] as Node2D).global_position.y, 0.0, 1.0, "no chão embaixo do voador")
