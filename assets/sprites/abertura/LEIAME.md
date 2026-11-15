@@ -1,7 +1,18 @@
-# Abertura da história (D-073B) — quadros v0.1, PROVISÓRIOS (ART-5)
+# Abertura da história (D-073B) — quadros v0.2 (ART-5): IA nos quadros 1, 4, 8 e 9 e nas naves
 
 Gerado por `ferramentas/arte/abertura_v01.py`, seguindo o roteiro **NAR-07**. Resolução 480×270, **Nearest**. Todos os PNG estão nesta pasta. Montagem de conferência: `assets/sprites/conceito/mockup_v13_abertura.png`.
-**Provisório (D-043):** os fundos dos quadros 1, 4, 8 e 9 e as naves serão trocados pelas imagens do pacote de prompt 10 (IA) **com o mesmo nome terminado em `_ia`** e o mesmo tamanho. O código feito para estes arquivos continua servindo.
+**v0.2: chegaram as imagens do pacote 10 (IA)**, tratadas por `ferramentas/arte/abertura_ia_v01.py` (originais em `ferramentas/arte/originais_ia/10*`). **Use as versões `_ia` sempre que existirem:**
+
+| Arquivo da IA | Substitui | Tamanho | Observação |
+|---|---|---|---|
+| `q1_fundo_ia.png` | `q1_fundo` **e** as duas camadas `q1_multidao_*` (a plateia já está desenhada) | 480×540 | o holofote vem do alto à direita; círculo de luz com o centro em (244, 455). Ryker com os pés em (238, 456); Ur-Kesh (`q1_urkesh_caido`, virado para a esquerda) com a base em (310, 456). Paralaxe: a câmera desce; as brasas por cima dão a profundidade. |
+| `q4_fundo_ia.png` + `q4_redemoinho_ia.png` | `q4_fundo`, `q4_anel` e `q4_luz` | 480×270 + 190×190 | anel centrado em (240, 135). O redemoinho é um recorte circular da luz: ponha por cima do fundo, centrado em (240, 135), e **gire devagar** (~20°/s) para a luz parecer instável. |
+| `q8_fundo_ia.png` | `q8_fundo` e `q8_nave_eco` | **720×360** | pan da janela 480×270 de (0, 0) até (240, 90): revela a nave e desce um pouco até Varrek. O feixe âmbar volta para dentro da nave perto de (360, 180). |
+| `q9_fundo_ia.png` | `q9_fundo` | 480×270 | maca no centro; a silhueta (`q9_silhueta`) com o canto em (196, 62), sobre a maca. |
+| `nave_ryker_ia.png` | `nave_ryker` | 3 quadros **52×24** | quadro 0 inteira (já com a chama do motor), 1 e 2 rachando (quadro 5). `nave_ryker_chama` pode piscar por cima, atrás do motor. |
+| `nave_kharn_ia.png` | `nave_kharn` | 154×57 | perfil para a direita. |
+
+Os arquivos por código continuam na pasta como reserva.
 
 | Quadro (NAR-07) | Duração | Camadas (de trás para a frente) | Câmera / animação |
 |---|---|---|---|
