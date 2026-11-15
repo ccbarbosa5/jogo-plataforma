@@ -33,6 +33,10 @@ var _conteudo: Control
 var _seletor: TextureRect
 var _botoes: Array[Button] = []
 var _botoes_teclas: Dictionary = {}
+## Botões da coluna "Controle" (gamepad), por ação.
+var _botoes_controle: Dictionary = {}
+## A captura em andamento é de um botão do controle (e não de tecla).
+var capturando_controle: bool = false
 ## Aberto pelo menu inicial (só Opções e Controles, sem pausar nada).
 var _no_titulo: bool = false
 
@@ -143,6 +147,11 @@ func botao_da_acao(acao: StringName) -> Button:
 	return _botoes_teclas.get(acao, null)
 
 
+## Botão do controle (gamepad) de uma ação, na tela de Controles.
+func botao_do_controle(acao: StringName) -> Button:
+	return _botoes_controle.get(acao, null)
+
+
 ## A run atual pode ser abandonada (fora da nave).
 func pode_voltar_a_nave() -> bool:
 	var cena: Node = get_tree().current_scene
@@ -163,15 +172,36 @@ func pode_sair_do_jogo() -> bool:
 func _input(evento: InputEvent) -> void:
 	if esperando_acao == &"":
 		return
-	var pressionou: bool = (evento is InputEventKey and evento.pressed and not evento.echo) \
-			or (evento is InputEventMouseButton and evento.pressed)
+	var tecla: bool = evento is InputEventKey and evento.pressed and not evento.echo
+	if tecla and (evento as InputEventKey).physical_keycode == KEY_ESCAPE:
+		get_viewport().set_input_as_handled()
+		_terminar_captura("")
+		return
+	if capturando_controle:
+		if Config.serve_para_controle(evento):
+			get_viewport().set_input_as_handled()
+			receber_botao(evento)
+		elif tecla or (evento is InputEventMouseButton and evento.pressed):
+			get_viewport().set_input_as_handled()  # esperando o controle: o resto é ignorado
+		return
+	var pressionou: bool = tecla or (evento is InputEventMouseButton and evento.pressed)
 	if not pressionou:
 		return
 	get_viewport().set_input_as_handled()
-	if evento is InputEventKey and (evento as InputEventKey).physical_keycode == KEY_ESCAPE:
-		_terminar_captura("")
-		return
 	receber_tecla(evento)
+
+
+## Recebe o botão novo do controle para a ação que está esperando.
+func receber_botao(evento: InputEvent) -> void:
+	if esperando_acao == &"":
+		return
+	var resultado: StringName = Config.trocar_botao(esperando_acao, evento)
+	if resultado == &"reservada":
+		_terminar_captura("Esse botão é reservado.")
+	elif resultado != &"":
+		_terminar_captura("Trocou com %s." % Config.NOMES_ACOES.get(resultado, String(resultado)))
+	else:
+		_terminar_captura("")
 
 
 ## Recebe a tecla nova para a ação que está esperando (a tela de Controles chama; os testes também).
@@ -238,6 +268,7 @@ func _limpar() -> void:
 		_conteudo.remove_child(filho)
 	_botoes.clear()
 	_botoes_teclas.clear()
+	_botoes_controle.clear()
 
 
 func _montar_principal() -> void:
@@ -260,27 +291,36 @@ func _montar_principal() -> void:
 
 
 func _montar_controles() -> void:
-	var largura: float = 298.0
+	var largura: float = 380.0
 	var acoes: Array[StringName] = Config.ACOES_TROCAVEIS
 	var linhas: int = acoes.size() + 2
-	var altura: float = 30.0 + linhas * 14.0 + 40.0
+	var altura: float = 40.0 + linhas * 14.0 + 40.0
 	_posicionar_painel(Vector2(largura, altura))
 	_titulo("CONTROLES", largura, 6.0)
-	var y: float = 26.0
+	_rotulo("Teclado e mouse", Rect2(150.0, 24.0, 104.0, 9.0), Fontes.TAMANHO_PEQUENA, COR_DICA, true)
+	_rotulo("Controle", Rect2(260.0, 24.0, 100.0, 9.0), Fontes.TAMANHO_PEQUENA, COR_DICA, true)
+	var y: float = 36.0
 	for acao in acoes:
-		_rotulo(Config.NOMES_ACOES[acao], Rect2(24.0, y, 150.0, 11.0), Fontes.TAMANHO_TEXTO, COR_TEXTO)
-		var b: Button = _botao(Config.texto_da_acao(acao), Rect2(180.0, y, 94.0, 11.0),
+		_rotulo(Config.NOMES_ACOES[acao], Rect2(18.0, y, 130.0, 11.0), Fontes.TAMANHO_TEXTO, COR_TEXTO)
+		var b: Button = _botao(Config.texto_da_acao(acao), Rect2(150.0, y, 104.0, 11.0),
 				_comecar_captura.bind(acao), Fontes.TAMANHO_TEXTO)
 		_botoes_teclas[acao] = b
+		if Config.ACOES_CONTROLE.has(acao):
+			var c: Button = _botao(Config.texto_do_controle(acao), Rect2(260.0, y, 100.0, 11.0),
+					_comecar_captura_controle.bind(acao), Fontes.TAMANHO_TEXTO)
+			_botoes_controle[acao] = c
+		else:
+			_rotulo("Analógico", Rect2(260.0, y, 100.0, 11.0), Fontes.TAMANHO_TEXTO, COR_DESATIVADO, true)
 		y += 14.0
-	for fixo in [["Mirar", "Mouse"], ["Pausa", "Esc"]]:
-		_rotulo(fixo[0], Rect2(24.0, y, 150.0, 11.0), Fontes.TAMANHO_TEXTO, COR_DESATIVADO)
-		_rotulo(fixo[1], Rect2(180.0, y, 94.0, 11.0), Fontes.TAMANHO_TEXTO, COR_DESATIVADO, true)
+	for fixo in [["Mirar", "Mouse", "Analógico dir."], ["Pausa", "Esc", "Start"]]:
+		_rotulo(fixo[0], Rect2(18.0, y, 130.0, 11.0), Fontes.TAMANHO_TEXTO, COR_DESATIVADO)
+		_rotulo(fixo[1], Rect2(150.0, y, 104.0, 11.0), Fontes.TAMANHO_TEXTO, COR_DESATIVADO, true)
+		_rotulo(fixo[2], Rect2(260.0, y, 100.0, 11.0), Fontes.TAMANHO_TEXTO, COR_DESATIVADO, true)
 		y += 14.0
 	y += 4.0
-	_botao("Restaurar padrão", Rect2(52.0, y, 94.0, 12.0), _restaurar_teclas, Fontes.TAMANHO_TEXTO)
-	_botao("Voltar", Rect2(152.0, y, 94.0, 12.0), voltar, Fontes.TAMANHO_TEXTO)
-	var dica: Label = _rotulo("Enter ou clique: trocar · Esc: voltar", Rect2(0.0, y + 16.0, largura, 9.0),
+	_botao("Restaurar padrão", Rect2(92.0, y, 94.0, 12.0), _restaurar_teclas, Fontes.TAMANHO_TEXTO)
+	_botao("Voltar", Rect2(194.0, y, 94.0, 12.0), voltar, Fontes.TAMANHO_TEXTO)
+	var dica: Label = _rotulo("Enter, clique ou A: trocar · Esc: voltar", Rect2(0.0, y + 16.0, largura, 9.0),
 			Fontes.TAMANHO_PEQUENA, COR_DICA, true)
 	dica.name = "Dica"
 
@@ -326,6 +366,7 @@ func _focar(botao: Variant) -> void:
 
 func _comecar_captura(acao: StringName) -> void:
 	esperando_acao = acao
+	capturando_controle = false
 	aviso = ""
 	var b: Button = _botoes_teclas.get(acao)
 	if b != null:
@@ -333,11 +374,24 @@ func _comecar_captura(acao: StringName) -> void:
 		b.add_theme_color_override("font_color", COR_FOCO)
 
 
+func _comecar_captura_controle(acao: StringName) -> void:
+	esperando_acao = acao
+	capturando_controle = true
+	aviso = ""
+	var b: Button = _botoes_controle.get(acao)
+	if b != null:
+		b.text = "Aperte um botão…"
+		b.add_theme_color_override("font_color", COR_FOCO)
+
+
 func _terminar_captura(mensagem: String) -> void:
+	var era_controle: bool = capturando_controle
 	esperando_acao = &""
+	capturando_controle = false
 	var foco: StringName = &""
-	for acao: StringName in _botoes_teclas:
-		if _botoes_teclas[acao].has_focus():
+	var mapa: Dictionary = _botoes_controle if era_controle else _botoes_teclas
+	for acao: StringName in mapa:
+		if mapa[acao].has_focus():
 			foco = acao
 	_mostrar(Tela.CONTROLES)
 	aviso = mensagem
@@ -345,8 +399,9 @@ func _terminar_captura(mensagem: String) -> void:
 		var dica := _conteudo.get_node_or_null("Dica") as Label
 		if dica != null:
 			dica.text = mensagem
-	if foco != &"" and _botoes_teclas.has(foco):
-		_focar.call_deferred(_botoes_teclas[foco])
+	var mapa_novo: Dictionary = _botoes_controle if era_controle else _botoes_teclas
+	if foco != &"" and mapa_novo.has(foco):
+		_focar.call_deferred(mapa_novo[foco])
 
 
 func _restaurar_teclas() -> void:
