@@ -4,6 +4,8 @@ extends CanvasLayer
 ## Moldura da facção; cor do nome pela raridade; avisa quando a escolha substitui o upgrade
 ## do mesmo slot (GD-01 §6.1). Antes das opções, a patrona fala (NAR-01: KHAR_*, VESH_*);
 ## a parte marcada "[depois da escolha]" toca depois que o jogador escolhe.
+## D-065: inteira com o mouse (passar destaca, clique pega; "Recalibrar" é clicável). A escolha é
+## obrigatória: Esc não fecha nem abre a pausa.
 
 signal escolheu(upgrade: DadosUpgrade, substituido: DadosUpgrade)
 signal fechou
@@ -19,6 +21,8 @@ const COR_TEXTO: Color = Color("eceff4")
 const COR_APAGADO: Color = Color("a7adba")
 const CORES_RARIDADE: Array[Color] = [Color("eceff4"), Color("6ab0ff"), Color("c58cff")]
 const COR_SUBSTITUI: Color = Color("ff8a6a")
+## Botão clicável de recalibrar, no rodapé.
+const RECALIBRAR: Rect2 = Rect2(344, 232, 84, 13)
 
 var entrada: EntradaJogador
 var jogador: Jogador
@@ -218,6 +222,41 @@ func _atualizar_textos() -> void:
 		_descricoes[i].text = ofertas[i].texto()
 
 
+func carta_no_ponto(ponto: Vector2) -> int:
+	for i in ofertas.size():
+		if Rect2(CARTA_X, CARTA_Y + i * CARTA_PASSO, CARTA_LARGURA, CARTA_ALTURA).has_point(ponto):
+			return i
+	return -1
+
+
+func _input(evento: InputEvent) -> void:
+	if not _aberta:
+		return
+	if evento.is_action_pressed("ui_cancel") or evento.is_action_pressed("pausa"):
+		get_viewport().set_input_as_handled()  # escolha obrigatória: Esc não faz nada
+		return
+	if not _escolhendo:
+		return
+	var movimento := evento as InputEventMouseMotion
+	if movimento != null:
+		var i: int = carta_no_ponto(movimento.position)
+		if i >= 0:
+			selecionada = i
+		return
+	var botao := evento as InputEventMouseButton
+	if botao == null or not botao.pressed or botao.button_index != MOUSE_BUTTON_LEFT:
+		return
+	get_viewport().set_input_as_handled()
+	if _trava > 0.0:
+		return
+	if jogador.rerolls > 0 and RECALIBRAR.has_point(botao.position):
+		recalibrar()
+		return
+	var i: int = carta_no_ponto(botao.position)
+	if i >= 0:
+		escolher(i)
+
+
 func _process(delta: float) -> void:
 	if not _escolhendo:
 		return
@@ -229,12 +268,15 @@ func _process(delta: float) -> void:
 	if entrada != null:
 		entrada.atualizar()
 		direcao = entrada.direcao
-		pegar = entrada.atirar_pressionado or entrada.interagir_pressionado
+		# O clique do mouse (também "atirar") é tratado em _input, na carta sob o cursor.
+		pegar = (entrada.atirar_pressionado and not Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT)) \
+				or entrada.interagir_pressionado
 		reroll = entrada.pular_pressionado
 		entrada.fim_do_frame()
 	else:
 		direcao = Vector2i(0, roundi(Input.get_axis("mirar_cima", "mirar_baixo")))
-		pegar = Input.is_action_just_pressed("atirar") or Input.is_action_just_pressed("interagir")
+		pegar = (Input.is_action_just_pressed("atirar") and not Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT)) \
+				or Input.is_action_just_pressed("interagir")
 	var novo: int = direcao.y if direcao != _direcao_anterior else 0
 	_direcao_anterior = direcao
 	if _trava > 0.0:
@@ -275,5 +317,10 @@ func _desenhar() -> void:
 			c.draw_string(pequena, Vector2(r.position.x + 8.0, r.end.y - 3.0), "Substitui: " + antigo.nome,
 					HORIZONTAL_ALIGNMENT_LEFT, -1, Fontes.TAMANHO_PEQUENA, COR_SUBSTITUI)
 	c.draw_string(pequena, Vector2(PAINEL.position.x + 14.0, PAINEL.end.y - 15.0),
-			"Setas: escolher · Atirar ou E: pegar a dádiva" + ("  ·  Pular: recalibrar (%d)" % jogador.rerolls if jogador.rerolls > 0 else ""),
+			"Mouse ou setas: escolher · Clique, Atirar ou E: pegar" + (" · Pular: recalibrar" if jogador.rerolls > 0 else ""),
 			HORIZONTAL_ALIGNMENT_LEFT, -1, Fontes.TAMANHO_PEQUENA, COR_APAGADO)
+	if jogador.rerolls > 0:
+		c.draw_rect(RECALIBRAR, Color(0, 0, 0, 0.35))
+		c.draw_rect(RECALIBRAR, catalogo.cor, false, 1.0)
+		c.draw_string(pequena, Vector2(RECALIBRAR.position.x, RECALIBRAR.end.y - 3.0), "Recalibrar (%d)" % jogador.rerolls,
+				HORIZONTAL_ALIGNMENT_CENTER, RECALIBRAR.size.x, Fontes.TAMANHO_PEQUENA, COR_TEXTO)

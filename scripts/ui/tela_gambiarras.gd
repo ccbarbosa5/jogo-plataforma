@@ -48,8 +48,17 @@ func abrir(j: Jogador, lista: Array[ModificadorArma], titulo: String = "GAMBIARR
 	get_tree().paused = true
 	visible = true
 	Input.set_default_cursor_shape(Input.CURSOR_ARROW)
+	var caixa := get_tree().get_first_node_in_group("caixa_dialogo") as CaixaDialogo
+	if caixa != null:
+		caixa.calar_rapida()  # a faixa de fala do combate não fica por cima da tela
 	_montar(titulo)
 	return true
+
+
+## D-065: a escolha é obrigatória; Esc não fecha nem abre a pausa.
+func _input(evento: InputEvent) -> void:
+	if _aberta and (evento.is_action_pressed("ui_cancel") or evento.is_action_pressed("pausa")):
+		get_viewport().set_input_as_handled()
 
 
 func escolher(indice: int) -> void:
