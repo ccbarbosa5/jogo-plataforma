@@ -35,11 +35,11 @@ func test_arquivo_do_vs_e_valido() -> void:
 func test_abertura_toca_em_ordem_e_so_uma_vez() -> void:
 	_preparar()
 	var falas := diretor.preparar("abertura")
-	afirmar_igual(falas.size(), 18, "18 falas")
-	afirmar_igual(falas[6].get("aud", ""), "zumbido", "ABER_07 marca o zumbido para o AUD")
-	afirmar(not "AUD" in falas[6]["texto"], "a marcação não aparece no texto")
+	afirmar_igual(falas.size(), 19, "19 falas (ABER_03 dividida, NAR-06)")
+	afirmar_igual(falas[7].get("aud", ""), "zumbido", "ABER_07 marca o zumbido para o AUD")
+	afirmar(not "AUD" in falas[7]["texto"], "a marcação não aparece no texto")
 	afirmar_igual(falas[0]["id"], "ABER_01", "começa na ABER_01")
-	afirmar_igual(falas[17]["id"], "ABER_18", "termina na ABER_18")
+	afirmar_igual(falas[18]["id"], "ABER_18", "termina na ABER_18")
 	afirmar(progresso.tem_flag("abertura_vista"), "liga a flag")
 	afirmar(diretor.preparar("abertura").is_empty(), "não toca de novo")
 
@@ -47,7 +47,7 @@ func test_abertura_toca_em_ordem_e_so_uma_vez() -> void:
 func test_direcao_de_cena_fica_separada_do_texto() -> void:
 	_preparar()
 	var falas := diretor.preparar("abertura")
-	var aber_08: Dictionary = falas[7]
+	var aber_08: Dictionary = falas[8]
 	afirmar(not "[" in aber_08["texto"], "texto sem colchetes")
 	afirmar_igual(aber_08.get("direcao", ""), "olha para o pulso, onde ainda está a algema", "direção guardada à parte")
 

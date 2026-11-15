@@ -1,5 +1,5 @@
 {
- "fonte": "NAR/01-dialogos-primeira-run.md v0.3 + NAR/03-armas.md v0.2 (falas ARSE_* e CAMP_*)",
+ "fonte": "NAR/01-dialogos-primeira-run.md v0.3 + NAR/03-armas.md v0.2 (falas ARSE_* e CAMP_*) + NAR/06 §3.1 (falas longas divididas, D-063)",
  "falantes": {
   "RYKER": {
    "nome": "RYKER",
@@ -137,7 +137,12 @@
     {
      "id": "ABER_03",
      "falante": "ECO",
-     "texto": "Morreu. Com bastante estilo, segundo os registros. Sua nave atravessou um Portão quebrado e caiu aqui em pedaços. Você estava em vários deles."
+     "texto": "Morreu. Com bastante estilo, segundo os registros."
+    },
+    {
+     "id": "ABER_03b",
+     "falante": "ECO",
+     "texto": "Sua nave atravessou um Portão quebrado e caiu aqui em pedaços. Você estava em vários deles."
     },
     {
      "id": "ABER_04",
@@ -259,7 +264,12 @@
     {
      "id": "HANG_05",
      "falante": "ECO",
-     "texto": "Uma regra, Ryker: o que é seu volta. Corpo, memória e o que você me transmitir. Armas e presentes de alienígenas ficam lá embaixo."
+     "texto": "Uma regra, Ryker: o que é seu volta. Corpo, memória e o que você me transmitir."
+    },
+    {
+     "id": "HANG_05b",
+     "falante": "ECO",
+     "texto": "Armas e presentes de alienígenas ficam lá embaixo."
     },
     {
      "id": "HANG_06",
@@ -400,7 +410,12 @@
     {
      "id": "KHAR_03",
      "falante": "TOR-AMA",
-     "texto": "O Clã Ossoferro não acorrenta quem venceu a Grande Arena. Isso é coisa de clã pequeno, como o Clã Kesh. Ur-Kesh está neste planeta e quer a sua cabeça."
+     "texto": "O Clã Ossoferro não acorrenta quem venceu a Grande Arena. Isso é coisa de clã pequeno, como o Clã Kesh."
+    },
+    {
+     "id": "KHAR_03b",
+     "falante": "TOR-AMA",
+     "texto": "Ur-Kesh está neste planeta e quer a sua cabeça."
     },
     {
      "id": "KHAR_04",
@@ -1508,7 +1523,13 @@
     {
      "id": "VOSS_03",
      "falante": "VOSSA",
-     "texto": "Abandonada? Ela tem você. E onde tem um humano que morre muito, tem mercado para melhorias. Eu alugo este compartimento da ECO.",
+     "texto": "Abandonada? Ela tem você. E onde tem um humano que morre muito, tem mercado para melhorias.",
+     "expressao": "ganancioso"
+    },
+    {
+     "id": "VOSS_03b",
+     "falante": "VOSSA",
+     "texto": "Eu alugo este compartimento da ECO.",
      "expressao": "ganancioso"
     },
     {
@@ -1584,7 +1605,12 @@
     {
      "id": "GARR_09",
      "falante": "GARRAK",
-     "texto": "O clã me mandou atrás de você para cortar sua cabeça. Eu te segui até aquele Portão maldito. E não cortei. Agora eu não tenho clã."
+     "texto": "O clã me mandou atrás de você para cortar sua cabeça. Eu te segui até aquele Portão maldito."
+    },
+    {
+     "id": "GARR_09b",
+     "falante": "GARRAK",
+     "texto": "E não cortei. Agora eu não tenho clã."
     },
     {
      "id": "GARR_10",

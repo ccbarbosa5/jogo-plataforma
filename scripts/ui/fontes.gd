@@ -19,6 +19,8 @@ static var _negrito: FontVariation
 const CARACTERES_OBRIGATORIOS: String = "áàâãéêíóôõúçÁÀÂÃÉÊÍÓÔÕÚÇ"
 ## Falas, descrições e nomes de opções.
 const TAMANHO_TEXTO: int = 6
+## Falas nas caixas de diálogo (D-063): 32 px em 1080p, igual em todas as caixas.
+const TAMANHO_FALA: int = 8
 ## HUD, ajuda e rótulos curtos.
 const TAMANHO_PEQUENA: int = 5
 ## Placa de nome (D-057): Bold 44 px em 1080p (ART: 46).
