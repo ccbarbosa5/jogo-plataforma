@@ -55,23 +55,27 @@ func test_1_quase_tudo_vem_da_direita_e_ninguem_surge_perto() -> void:
 
 func test_1_entradas_por_tras_e_de_cima_so_no_pico_e_com_aviso_de_1_s() -> void:
 	var sala := _arena({"duracao": 6.0, "taxa": 2.0, "pico": 16, "fracao_atras_pico": 0.4, "fracao_cima_pico": 0.4,
-			"teto": 60, "teto_pico": 60})
-	var avisos: Dictionary = {}  # posição -> tempo
+			"teto": 60, "teto_pico": 60}, [], ["entrada_varrek", "carcaca_a1", "saida_varrek"], 240.0 + 240.0)
+	var avisos: Dictionary = {}  # posição -> [tempos]
 	var relogio: Array[float] = [0.0]
 	var erros: Array[String] = []
 	var excecoes: Array[int] = [0]
 	sala.diretor.aviso_entrada.connect(func(pos: Vector2, _o: StringName) -> void:
-		avisos[pos] = relogio[0]
+		if not avisos.has(pos):
+			avisos[pos] = []
+		avisos[pos].append(relogio[0])
 		if not sala.diretor.em_pico:
 			erros.append("aviso fora do pico"))
 	sala.diretor.entrou.connect(func(i: Inimigo, o: StringName) -> void:
 		if o == DiretorHorda.DIREITA:
 			return
 		excecoes[0] += 1
-		if not avisos.has(i.position):
+		if not avisos.has(i.position) or avisos[i.position].is_empty():
 			erros.append("entrou por %s sem aviso" % o)
-		elif relogio[0] - avisos[i.position] < 0.95:
-			erros.append("aviso curto (%.2f s)" % (relogio[0] - avisos[i.position])))
+			return
+		var t: float = avisos[i.position].pop_front()
+		if relogio[0] - t < 0.95:
+			erros.append("aviso curto (%.2f s)" % (relogio[0] - t)))
 	var pico_em: Array[float] = [-1.0]
 	sala.diretor.pico_anunciado.connect(func() -> void: pico_em[0] = relogio[0])
 	await esperar_frames(1)

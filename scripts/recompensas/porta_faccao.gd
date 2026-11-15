@@ -1,11 +1,11 @@
 class_name PortaFaccao
-extends Area2D
-## Recompensa de facção (GD-01 §6.3): ao encostar, abre a TelaRecompensa com 3 dádivas da facção.
+extends Interagivel
+## Recompensa de facção (GD-01 §6.3): com E (ou clique), abre a TelaRecompensa com 3 dádivas
+## da facção. Encostar só mostra o nome e o que dá (D-066).
 ## O emblema da facção fica em cima da porta (provisório até a ART: brasa Kharn, verde Vesh).
-## Enquanto o gerador de salas não existe, a porta fica na sala e é pega ao encostar.
 ## Pegar uma porta do grupo "portas_sala" fecha as outras (o jogador escolhe 1 saída).
 
-const GRUPO: StringName = &"portas_sala"
+const GRUPO_PORTAS: StringName = &"portas_sala"
 
 @export var catalogo: CatalogoFaccao
 ## Sala Elite: garante Raro ou melhor.
@@ -15,25 +15,32 @@ var _usada: bool = false
 
 
 func _ready() -> void:
-	add_to_group(GRUPO)
-	collision_layer = 0
-	collision_mask = Camadas.JOGADOR
-	if get_child_count() == 0:
-		var forma := CollisionShape2D.new()
-		var r := RectangleShape2D.new()
-		r.size = Vector2(24, 40)
-		forma.shape = r
-		forma.position = Vector2(0, -20)
-		add_child(forma)
-	body_entered.connect(_ao_entrar)
+	add_to_group(GRUPO_PORTAS)
+	tamanho_area = Vector2(24, 40)
+	super()
 
 
 func foi_usada() -> bool:
 	return _usada
 
 
-func _ao_entrar(corpo: Node2D) -> void:
-	var jogador := corpo as Jogador
+func titulo() -> String:
+	return catalogo.nome if catalogo != null else ""
+
+
+func descricao() -> String:
+	return "Escolha 1 de 3 dádivas" + (" (Rara ou melhor)" if elite else "")
+
+
+func texto_tecla() -> String:
+	return "E: escolher"
+
+
+func pode_interagir() -> bool:
+	return not _usada and catalogo != null
+
+
+func interagir(jogador: Jogador) -> void:
 	if _usada or jogador == null or jogador.esta_morto() or catalogo == null:
 		return
 	var tela := get_tree().get_first_node_in_group(TelaRecompensa.GRUPO) as TelaRecompensa
@@ -41,13 +48,13 @@ func _ao_entrar(corpo: Node2D) -> void:
 		return
 	_usada = true
 	fechar_outras_portas(self)
-	tela.abrir.call_deferred(jogador, catalogo, elite)
+	tela.abrir(jogador, catalogo, elite)
 	queue_redraw()
 
 
 ## O jogador escolheu esta saída: as outras portas da sala somem.
 static func fechar_outras_portas(escolhida: Node) -> void:
-	for p in escolhida.get_tree().get_nodes_in_group(GRUPO):
+	for p in escolhida.get_tree().get_nodes_in_group(GRUPO_PORTAS):
 		if p != escolhida:
 			p.queue_free()
 
@@ -68,3 +75,4 @@ func _draw() -> void:
 	draw_polyline(PackedVector2Array([Vector2(0, y - 10), Vector2(10, y), Vector2(0, y + 10), Vector2(-10, y), Vector2(0, y - 10)]), Color("16111c"), 1.0)
 	var inicial: String = catalogo.nome.substr(catalogo.nome.rfind(" ") + 1, 1) if catalogo != null else "?"
 	draw_string(Fontes.texto(), Vector2(-6, y + 4), inicial, HORIZONTAL_ALIGNMENT_CENTER, 12, Fontes.TAMANHO_TEXTO, Color("16111c"))
+	desenhar_dica(y - 12)

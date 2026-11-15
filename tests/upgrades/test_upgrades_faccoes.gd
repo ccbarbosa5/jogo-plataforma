@@ -476,12 +476,14 @@ func test_porta_de_faccao_abre_a_oferta_e_fecha_as_outras() -> void:
 	add_child(outra)
 	await esperar_frames(3)
 	j.entrada.direcao = Vector2i(1, 0)
-	for i in 30:
-		await esperar_frames(1)
-		if tela.esta_aberta():
-			break
+	await esperar_frames(15)
 	j.entrada.direcao = Vector2i.ZERO
-	afirmar(porta.foi_usada(), "pegou a porta")
+	afirmar(porta.esta_perto() and not porta.foi_usada(), "encostar não pega (D-066)")
+	j.entrada.interagir_pressionado = true
+	await esperar_frames(1)
+	j.entrada.interagir_pressionado = false
+	await esperar_frames(2)
+	afirmar(porta.foi_usada(), "pegou a porta com E")
 	afirmar(tela.esta_aberta(), "oferta Vesh aberta")
 	afirmar(not is_instance_valid(outra) or outra.is_queued_for_deletion(), "as outras saídas somem")
 	tela.escolher(0)

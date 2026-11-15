@@ -1,7 +1,8 @@
 class_name PortaSaida
-extends Area2D
+extends Interagivel
 ## Saída de uma sala com a recompensa mostrada em cima (GD-01 §7.1 e §7.4).
-## Encostar escolhe esta saída: as outras somem e a run aplica a recompensa e segue.
+## D-066: encostar só mostra o nome e o que dá; E (ou clique) escolhe esta saída. Aí as outras
+## somem e a run aplica a recompensa e segue.
 ## Ícones provisórios (losango + texto).
 
 signal escolhida(porta: PortaSaida)
@@ -24,15 +25,8 @@ var _icone: Texture2D
 
 func _ready() -> void:
 	add_to_group(&"portas_saida")
-	collision_layer = 0
-	collision_mask = Camadas.JOGADOR
-	var forma := CollisionShape2D.new()
-	var r := RectangleShape2D.new()
-	r.size = Vector2(24, 40)
-	forma.shape = r
-	forma.position = Vector2(0, -20)
-	add_child(forma)
-	body_entered.connect(_ao_entrar)
+	tamanho_area = Vector2(24, 40)
+	super()
 
 
 func foi_usada() -> bool:
@@ -43,12 +37,29 @@ func nome() -> String:
 	return RegrasRecompensas.NOMES.get(tipo, tipo)
 
 
-func _ao_entrar(corpo: Node2D) -> void:
-	var jogador := corpo as Jogador
+func titulo() -> String:
+	return nome()
+
+
+func descricao() -> String:
+	return RegrasRecompensas.EFEITOS.get(tipo, "")
+
+
+func texto_tecla() -> String:
+	return "E: escolher"
+
+
+func pode_interagir() -> bool:
+	return not _usada
+
+
+func interagir(jogador: Jogador) -> void:
 	if _usada or jogador == null or jogador.esta_morto():
 		return
-	_usada = true
-	escolhida.emit.call_deferred(self)
+	# Ao pegar uma, as outras deixam de valer (a sala as apaga em seguida).
+	for p in get_tree().get_nodes_in_group(&"portas_saida"):
+		(p as PortaSaida)._usada = true
+	escolhida.emit(self)
 
 
 func _process(_delta: float) -> void:
@@ -70,5 +81,8 @@ func _draw() -> void:
 		draw_colored_polygon(pts, Color(cor, 0.85))
 		pts.append(pts[0])
 		draw_polyline(pts, Color("16111c"), 1.0)
-	draw_string(Fontes.pequena(), Vector2(-50, y - 16), ROTULOS.get(tipo, nome()), HORIZONTAL_ALIGNMENT_CENTER, 100,
-			Fontes.TAMANHO_PEQUENA, Color("eceff4"))
+	if e_a_vez():
+		desenhar_dica(y - 14)
+	else:
+		draw_string(Fontes.pequena(), Vector2(-50, y - 16), ROTULOS.get(tipo, nome()), HORIZONTAL_ALIGNMENT_CENTER, 100,
+				Fontes.TAMANHO_PEQUENA, Color("eceff4"))
