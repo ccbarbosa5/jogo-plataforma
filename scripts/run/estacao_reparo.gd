@@ -1,7 +1,8 @@
 class_name EstacaoReparo
-extends Area2D
+extends Interagivel
 ## Sala de Reparo (GD-01 §7.2): cura 2 blocos OU dá um upgrade extra; o jogador escolhe 1.
-## São duas estações lado a lado; usar uma desliga a outra. Desenho provisório.
+## São duas estações lado a lado; usar uma (com E ou clique, D-066) desliga a outra.
+## Desenho provisório.
 
 signal usada(estacao: EstacaoReparo, jogador: Jogador)
 
@@ -28,19 +29,27 @@ static func criar_par(pai: Node, pos_cura: Vector2, pos_dadiva: Vector2) -> Arra
 
 func _ready() -> void:
 	add_to_group(&"estacoes_reparo")
-	collision_layer = 0
-	collision_mask = Camadas.JOGADOR
-	var forma := CollisionShape2D.new()
-	var r := RectangleShape2D.new()
-	r.size = Vector2(24, 24)
-	forma.shape = r
-	forma.position = Vector2(0, -12)
-	add_child(forma)
-	body_entered.connect(_ao_entrar)
+	tamanho_area = Vector2(24, 24)
+	super()
 
 
-func _ao_entrar(corpo: Node2D) -> void:
-	var jogador := corpo as Jogador
+func titulo() -> String:
+	return "Reparo" if tipo == "cura" else "Dádiva extra"
+
+
+func descricao() -> String:
+	return "Cura %d blocos de vida" % CURA_BLOCOS if tipo == "cura" else "Escolha 1 de 3 dádivas"
+
+
+func texto_tecla() -> String:
+	return "E: usar"
+
+
+func pode_interagir() -> bool:
+	return not desligada
+
+
+func interagir(jogador: Jogador) -> void:
 	if desligada or jogador == null or jogador.esta_morto():
 		return
 	usar(jogador)
@@ -72,6 +81,8 @@ func _draw() -> void:
 	draw_rect(Rect2(-10, -8, 20, 8), Color("4b4753"))
 	draw_rect(Rect2(-6, -22, 12, 14), Color(cor, 0.9))
 	var texto: String = "Cura: +2 blocos" if tipo == "cura" else "Dádiva extra"
-	if not desligada:
+	if e_a_vez():
+		desenhar_dica(-28 + roundf(sin(Time.get_ticks_msec() / 400.0)))
+	elif not desligada:
 		draw_string(Fontes.pequena(), Vector2(-50, -28 + roundf(sin(Time.get_ticks_msec() / 400.0))), texto,
 				HORIZONTAL_ALIGNMENT_CENTER, 100, Fontes.TAMANHO_PEQUENA, Color("eceff4"))

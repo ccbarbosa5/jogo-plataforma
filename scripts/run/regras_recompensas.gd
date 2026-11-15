@@ -13,6 +13,13 @@ const NOMES: Dictionary = {
 	"creditos": "Créditos", "nucleos": "Núcleos", "dados": "Dados de Inteligência",
 	"vida_maxima": "+1 bloco de vida", "chefe": "Ur-Kesh", "seguir": "Seguir",
 }
+## O que cada porta dá (aparece perto dela, D-066).
+const EFEITOS: Dictionary = {
+	"kharn": "Escolha 1 de 3 dádivas Kharn", "vesh": "Escolha 1 de 3 dádivas Vesh",
+	"creditos": "Créditos para a loja do Ilo", "nucleos": "Núcleos: ficam depois da morte",
+	"dados": "Dados: desbloqueiam coisas na nave", "vida_maxima": "+1 bloco de vida máximo",
+	"chefe": "A luta contra o chefe", "seguir": "Próxima sala",
+}
 
 
 static func quantas_portas(numero: int) -> int:

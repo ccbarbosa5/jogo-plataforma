@@ -1,7 +1,8 @@
 class_name LojaIlo
-extends Area2D
+extends Interagivel
 ## Uma banca da loja do Mercador Ilo na run (GD-02 §6.5). Cada banca vende um item; a sala de
-## loja põe três lado a lado (cura, dádiva Kharn, dádiva Vesh). Encoste e aperte Interagir.
+## loja põe três lado a lado (cura, dádiva Kharn, dádiva Vesh). Chegue perto e aperte E (ou clique);
+## encostar não compra (D-066).
 ## GD-07: o "Aprimoramento de Arma" saiu da loja (as Gambiarras vêm ao limpar as salas).
 
 signal comprou(jogador: Jogador, item: StringName)
@@ -15,8 +16,14 @@ const ITENS: Dictionary = {
 
 @export var item: StringName = &"cura"
 
+## O que cada item faz (aparece perto da banca, D-066).
+const EFEITOS: Dictionary = {
+	&"cura": "Cura 1 bloco de vida",
+	&"dadiva_kharn": "Escolha 1 de 3 dádivas Kharn",
+	&"dadiva_vesh": "Escolha 1 de 3 dádivas Vesh",
+}
+
 var vendidos: int = 0
-var _cliente: Jogador
 var _aviso: String = ""
 var _timer_aviso: float = 0.0
 
@@ -64,37 +71,28 @@ func comprar(jogador: Jogador) -> bool:
 
 
 func _ready() -> void:
-	collision_layer = 0
-	collision_mask = Camadas.JOGADOR
-	if get_child_count() == 0:
-		var forma := CollisionShape2D.new()
-		var r := RectangleShape2D.new()
-		r.size = Vector2(40, 32)
-		forma.shape = r
-		forma.position = Vector2(0, -16)
-		add_child(forma)
-	body_entered.connect(_ao_entrar)
-	body_exited.connect(_ao_sair)
+	tamanho_area = Vector2(40, 32)
+	super()
 
 
-func _ao_entrar(corpo: Node2D) -> void:
-	var jogador := corpo as Jogador
-	if jogador == null:
-		return
-	_cliente = jogador
-	if not jogador.interagiu.is_connected(_ao_interagir):
-		jogador.interagiu.connect(_ao_interagir)
+func titulo() -> String:
+	return "%s · %d Créditos" % [nome_item(), preco()]
 
 
-func _ao_sair(corpo: Node2D) -> void:
-	if corpo == _cliente:
-		if _cliente.interagiu.is_connected(_ao_interagir):
-			_cliente.interagiu.disconnect(_ao_interagir)
-		_cliente = null
+func descricao() -> String:
+	return EFEITOS.get(item, "")
 
 
-func _ao_interagir(jogador: Jogador) -> void:
-	comprar.call_deferred(jogador)
+func texto_tecla() -> String:
+	return "E: comprar"
+
+
+func pode_interagir() -> bool:
+	return restantes() > 0
+
+
+func interagir(jogador: Jogador) -> void:
+	comprar(jogador)
 
 
 func _avisar(texto: String) -> void:
@@ -114,11 +112,12 @@ func _draw() -> void:
 	var fonte: Font = Fontes.pequena()
 	var tam: int = Fontes.TAMANHO_PEQUENA
 	if restantes() > 0:
-		var cor: Color = Color("eceff4") if _cliente == null or _cliente.creditos >= preco() else Color("ff8a6a")
-		draw_string(fonte, Vector2(-40, -34), nome_item(), HORIZONTAL_ALIGNMENT_CENTER, 80, tam, cor)
 		draw_string(fonte, Vector2(-40, -6), "%d Créditos" % preco(), HORIZONTAL_ALIGNMENT_CENTER, 80, tam, Color("1a1c22"))
-		if _cliente != null:
-			draw_string(fonte, Vector2(-40, -44), "E: comprar", HORIZONTAL_ALIGNMENT_CENTER, 80, tam, Color("a7adba"))
+		if e_a_vez():
+			desenhar_dica(-20)
+		else:
+			var cor: Color = Color("eceff4") if not esta_perto() or jogador_perto.creditos >= preco() else Color("ff8a6a")
+			draw_string(fonte, Vector2(-40, -34), nome_item(), HORIZONTAL_ALIGNMENT_CENTER, 80, tam, cor)
 	else:
 		draw_string(fonte, Vector2(-40, -6), "Esgotado", HORIZONTAL_ALIGNMENT_CENTER, 80, tam, Color("1a1c22"))
 	if _timer_aviso > 0.0:

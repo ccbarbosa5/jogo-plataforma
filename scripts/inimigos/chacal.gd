@@ -57,7 +57,9 @@ func _perseguir(alvo: Node2D, delta: float) -> void:
 			if alvo == null:
 				velocity.x = move_toward(velocity.x, 0.0, Unidades.px(30.0) * delta)
 				return
-			var dx: float = alvo.global_position.x + desvio_x - global_position.x
+			var dx: float = alvo.global_position.x - global_position.x
+			if absf(dx) > 40.0:
+				dx += desvio_x  # espalha o bando na chegada; de perto, vai direto
 			if absf(dx) > 2.0:
 				olhando = 1 if dx > 0.0 else -1
 			velocity.x = olhando * Unidades.px(velocidade)
