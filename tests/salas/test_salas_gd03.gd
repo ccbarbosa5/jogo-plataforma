@@ -294,7 +294,7 @@ func test_inimigo_morto_da_creditos() -> void:
 	var run: RunAto = instanciar(CENA_RUN)
 	await esperar_frames(3)
 	var antes: int = run.jogador.creditos
-	var z: Inimigo = run.sala._criar_inimigo("zangao", Vector2(300, 100), false)
+	var z: Inimigo = run.sala._criar_inimigo("guerreiro", Vector2(300, 100), false)
 	await esperar_frames(2)
 	z.receber_ataque(InfoDano.criar(999, run.jogador))
 	await esperar_frames(2)
