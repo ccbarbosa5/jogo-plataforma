@@ -56,17 +56,18 @@ func interagir(jogador: Jogador) -> void:
 
 
 func usar(jogador: Jogador) -> void:
+	if tipo == "dadiva":
+		# D-068: a Oferta extra abre primeiro; só desliga as estações se o jogador escolher.
+		var run := get_tree().get_first_node_in_group(&"run_ato")
+		if run == null or not await run.oferecer_dadiva_extra(jogador):
+			return
+	else:
+		jogador.vida.curar(CURA_BLOCOS)
 	desligada = true
 	if par != null and is_instance_valid(par):
 		par.desligada = true
 		par.queue_redraw()
-	if tipo == "cura":
-		jogador.vida.curar(CURA_BLOCOS)
 	usada.emit(self, jogador)
-	# A dádiva extra é aberta pela run (TelaRecompensa), que escuta o grupo.
-	var run := get_tree().get_first_node_in_group(&"run_ato")
-	if run != null and tipo == "dadiva":
-		run.oferecer_dadiva_extra(jogador)
 	queue_redraw()
 
 

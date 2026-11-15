@@ -56,16 +56,12 @@ func comprar(jogador: Jogador) -> bool:
 	if item == &"cura" and jogador.vida.atual >= jogador.vida.maxima:
 		_avisar("Vida cheia.")
 		return false
+	if item == &"dadiva_kharn" or item == &"dadiva_vesh":
+		_comprar_oferta(jogador)
+		return true
 	jogador.creditos -= preco()
 	vendidos += 1
-	match item:
-		&"cura":
-			jogador.vida.curar(1)
-		&"dadiva_kharn", &"dadiva_vesh":
-			Dialogos.tocar("loja_compra_upgrade")
-			var run := get_tree().get_first_node_in_group(&"run_ato")
-			if run != null and run.has_method("abrir_dadiva"):
-				run.abrir_dadiva(jogador, "kharn" if item == &"dadiva_kharn" else "vesh")
+	jogador.vida.curar(1)
 	comprou.emit(jogador, item)
 	return true
 
@@ -93,6 +89,19 @@ func pode_interagir() -> bool:
 
 func interagir(jogador: Jogador) -> void:
 	comprar(jogador)
+
+
+## Oferta da loja (D-068): abre a escolha primeiro; os Créditos só saem se o jogador escolher.
+func _comprar_oferta(jogador: Jogador) -> void:
+	var run := get_tree().get_first_node_in_group(&"run_ato")
+	if run == null or not run.has_method("abrir_dadiva"):
+		return
+	if await run.abrir_dadiva(jogador, "kharn" if item == &"dadiva_kharn" else "vesh"):
+		jogador.creditos -= preco()
+		vendidos += 1
+		Dialogos.tocar("loja_compra_upgrade")
+		comprou.emit(jogador, item)
+	queue_redraw()
 
 
 func _avisar(texto: String) -> void:

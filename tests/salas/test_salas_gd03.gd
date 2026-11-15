@@ -228,6 +228,8 @@ func test_sala_montada_tem_chao_portas_e_ondas() -> void:
 	sala.portas[1].escolhida.emit(sala.portas[1])
 	await esperar_frames(2)
 	afirmar_igual(escolhida, ["creditos"], "escolheu a porta de Créditos")
+	afirmar(is_instance_valid(sala.portas[0]) and not sala.portas[0].is_queued_for_deletion(), "a outra só some ao confirmar")
+	sala.confirmar_porta(sala.portas[1])
 	afirmar(not is_instance_valid(sala.portas[0]) or sala.portas[0].is_queued_for_deletion(), "a outra some")
 	p.free()
 

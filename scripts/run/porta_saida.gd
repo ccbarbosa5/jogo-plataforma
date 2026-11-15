@@ -51,6 +51,11 @@ func texto_tecla() -> String:
 	return "E: escolher"
 
 
+func reabrir() -> void:
+	_usada = false
+	queue_redraw()
+
+
 func extra() -> String:
 	return previa
 
