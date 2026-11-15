@@ -18,6 +18,8 @@ signal sala_carregada(sala: SalaRun)
 @onready var hud: Hud = $Hud
 @onready var projeteis: Node2D = $Projeteis
 
+## Plano da sala seguinte, feito antes pela Leitura de Sinal.
+var _plano_seguinte: Dictionary = {}
 var gerador: GeradorAto
 var sala: SalaRun
 var numero_sala: int = -1
@@ -78,7 +80,9 @@ func carregar_sala(n: int) -> SalaRun:
 	for p in projeteis.get_children():
 		p.queue_free()
 	numero_sala = n
-	var plano: Dictionary = gerador.planejar_sala(n)
+	# Leitura de Sinal: a sala seguinte já foi planejada para mostrar nas portas.
+	var plano: Dictionary = _plano_seguinte if int(_plano_seguinte.get("numero", -1)) == n else gerador.planejar_sala(n)
+	_plano_seguinte = {}
 	sala = MontadorSala.montar(plano, gerador.blocos)
 	add_child(sala)
 	move_child(sala, 1)
@@ -88,6 +92,8 @@ func carregar_sala(n: int) -> SalaRun:
 	sala.inimigo_morreu.connect(_ao_inimigo_morrer)
 	sala.arena_comecou.connect(_ao_comecar_arena)
 	sala.chefe_apareceu.connect(func(c: UrKesh) -> void: barra_chefe.chefe = c)
+	if not sala.portas.is_empty():  # loja e reparo: portas desde o começo
+		mostrar_leitura_de_sinal.call_deferred()
 	jogador.global_position = sala.inicio
 	jogador.velocity = Vector2.ZERO
 	jogador.posicao_segura = sala.inicio
@@ -158,6 +164,7 @@ func _ao_comecar_arena() -> void:
 
 func _ao_concluir_sala() -> void:
 	hud.mostrar_mensagem("SALA LIMPA!", 1.2)
+	mostrar_leitura_de_sinal.call_deferred()
 	var tipo: String = sala.plano.get("tipo", "")
 	if tipo == "combate" or tipo == "elite":
 		oferecer_gambiarra.call_deferred(tipo == "elite")
@@ -166,6 +173,33 @@ func _ao_concluir_sala() -> void:
 		Progresso.salvar()
 	if sala.plano["tipo"] == "chefe":
 		_fim_do_ato()
+
+
+## Leitura de Sinal (GD-03 §3.3, Ponte): cada porta mostra o que vem na sala seguinte (o tipo
+## da sala e as recompensas das portas dela). A sala seguinte é planejada agora e usada depois,
+## então a prévia é exata.
+func mostrar_leitura_de_sinal() -> void:
+	if not Progresso.tem_flag("leitura_sinal") or sala == null or sala.portas.is_empty():
+		return
+	if numero_sala + 1 >= gerador.quantidade_de_salas():
+		return
+	_plano_seguinte = gerador.planejar_sala(numero_sala + 1)
+	var texto: String = texto_da_previa(_plano_seguinte)
+	for porta in sala.portas:
+		if is_instance_valid(porta):
+			porta.previa = texto
+
+
+static func texto_da_previa(plano: Dictionary) -> String:
+	var nomes: Array[String] = []
+	for t: String in plano.get("portas", []):
+		nomes.append(RegrasRecompensas.NOMES.get(t, t))
+	var sala_seguinte: String = String(plano.get("nome", ""))
+	if plano.get("elite", false):
+		sala_seguinte += " (Elite)"
+	if nomes.is_empty():
+		return "Depois: %s" % sala_seguinte
+	return "Depois: %s → %s" % [sala_seguinte, ", ".join(nomes)]
 
 
 ## Vitória sobre Ur-Kesh (GD-02 §5): Núcleos, Dados e, na 1ª vez, o Bramido (NAR-03).

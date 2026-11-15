@@ -106,3 +106,40 @@ func test_clique_em_cima_pega() -> void:
 	await esperar_frames(2)
 	afirmar_igual(escolhidas, ["dados"] as Array[String], "clique na porta, com o jogador perto, escolhe")
 	afirmar(is_instance_valid(j), "jogador")
+
+
+# --- Leitura de Sinal (GD-03 §3.3) ---
+
+func test_leitura_de_sinal_mostra_a_sala_seguinte_e_ela_vem_igual() -> void:
+	var tinha: bool = Progresso.tem_flag("leitura_sinal")
+	var tinha_queda: bool = Progresso.tem_flag("queda_completa_vista")
+	Progresso.definir_flag("queda_completa_vista")
+	Progresso.definir_flag("leitura_sinal")
+	var trocar: bool = Ciclo.trocar_cena
+	Ciclo.trocar_cena = false
+	var run: RunAto = instanciar("res://scenes/run/run_ato1.tscn")
+	await esperar_frames(3)
+	var sala: SalaRun = run.carregar_sala(1)
+	await esperar_frames(2)
+	var caixa := tree.get_first_node_in_group("caixa_dialogo") as CaixaDialogo
+	while caixa != null and caixa.esta_ativa():
+		caixa.avancar()
+	tree.paused = false
+	sala.comecar_arena()
+	sala.diretor.encerrar_entradas()
+	for i in sala.inimigos.get_children():
+		i.vida.receber_dano(9999, true)
+	await esperar_frames(4)
+	afirmar(not sala.portas.is_empty(), "portas abertas")
+	var previa: String = sala.portas[0].previa
+	afirmar(previa.begins_with("Depois: "), "a porta mostra a sala seguinte (%s)" % previa)
+	afirmar_igual(sala.portas[0].extra(), previa, "aparece na dica da porta")
+	var esperado: String = RunAto.texto_da_previa(run._plano_seguinte)
+	var seguinte: SalaRun = run.carregar_sala(2)
+	afirmar_igual(RunAto.texto_da_previa(seguinte.plano), esperado, "a sala seguinte é a mesma da prévia")
+	Progresso.definir_flag("leitura_sinal", false)
+	run.mostrar_leitura_de_sinal()
+	Progresso.definir_flag("leitura_sinal", tinha)
+	Progresso.definir_flag("queda_completa_vista", tinha_queda)
+	Ciclo.trocar_cena = trocar
+	tree.paused = false

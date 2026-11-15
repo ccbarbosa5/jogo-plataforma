@@ -19,6 +19,8 @@ const ROTULOS: Dictionary = {
 }
 
 var tipo: String = "seguir"
+## Leitura de Sinal: o que vem na sala seguinte (vazio sem o desbloqueio).
+var previa: String = ""
 var _usada: bool = false
 var _icone: Texture2D
 
@@ -47,6 +49,10 @@ func descricao() -> String:
 
 func texto_tecla() -> String:
 	return "E: escolher"
+
+
+func extra() -> String:
+	return previa
 
 
 func pode_interagir() -> bool:
