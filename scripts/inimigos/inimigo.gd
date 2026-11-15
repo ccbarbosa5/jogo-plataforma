@@ -294,6 +294,7 @@ func receber_ataque(info: InfoDano) -> bool:
 		dano = maxi(dano, 1)
 	if not vida.receber_dano(dano):
 		return false
+	NumerosDano.mostrar(self, dano, NumerosDano.tipo_do_acerto(dano, mult))
 	_timer_flash = 0.08
 	if info.autor != null and is_instance_valid(info.autor):
 		set_meta("ultimo_golpe_de", info.autor)
@@ -468,7 +469,10 @@ func _atualizar_status(delta: float) -> void:
 		if _relogio_acido >= 1.0:
 			_relogio_acido -= 1.0
 			var dano: int = roundi(r.acido_dano_por_segundo * acidos)
-			if vida.receber_dano(dano) and _autor_acido != null and is_instance_valid(_autor_acido) \
+			var pegou: bool = vida.receber_dano(dano)
+			if pegou:
+				NumerosDano.mostrar(self, dano, NumerosDano.Tipo.EFEITO)
+			if pegou and _autor_acido != null and is_instance_valid(_autor_acido) \
 					and _autor_acido.has_method("registrar_dano_causado"):
 				_autor_acido.registrar_dano_causado(dano)
 		if _timer_acido <= 0.0:

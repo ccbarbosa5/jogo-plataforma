@@ -327,11 +327,11 @@ func _montar_controles() -> void:
 
 func _montar_opcoes() -> void:
 	var largura: float = 240.0
-	var linhas: int = 6 if _no_titulo else 5
+	var linhas: int = 7 if _no_titulo else 6
 	_posicionar_painel(Vector2(largura, 34.0 + linhas * 20.0))
 	_titulo("OPÇÕES", largura, 8.0)
 	var itens: Array = [[_texto_volume(), _ajustar_volume], [_texto_tela_cheia(), _ajustar_tela_cheia],
-			[_texto_mira(), _ajustar_mira], [_texto_tiro(), _ajustar_tiro]]
+			[_texto_mira(), _ajustar_mira], [_texto_tiro(), _ajustar_tiro], [_texto_numeros(), _ajustar_numeros]]
 	var y: float = 28.0
 	for item in itens:
 		var b: Button = _botao(item[0], Rect2(20.0, y, largura - 40.0, 15.0), (item[1] as Callable).bind(1))
@@ -450,6 +450,15 @@ func _texto_tela_cheia() -> String:
 
 func _texto_mira() -> String:
 	return "Mira automática: %s" % Config.NOMES_MIRA[Config.modo_mira]
+
+
+func _ajustar_numeros(_direcao: int) -> void:
+	Config.definir_numeros_dano(not Config.numeros_dano)
+	_atualizar_texto_foco(_texto_numeros())
+
+
+func _texto_numeros() -> String:
+	return "Números de dano: %s" % ("Ligados" if Config.numeros_dano else "Desligados")
 
 
 func _texto_tiro() -> String:

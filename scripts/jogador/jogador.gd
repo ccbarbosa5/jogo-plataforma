@@ -95,6 +95,8 @@ var limite_queda_y: float = INF
 
 func _ready() -> void:
 	add_to_group("jogadores")
+	# D-067: o dano no Ryker aparece em vermelho.
+	vida.dano_recebido.connect(func(q: int) -> void: NumerosDano.mostrar(self, q, NumerosDano.Tipo.JOGADOR))
 	if parametros == null:
 		parametros = ParametrosJogador.new()
 	if assistencias == null:
