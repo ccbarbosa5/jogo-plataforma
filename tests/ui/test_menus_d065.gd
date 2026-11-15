@@ -178,7 +178,7 @@ func test_oferta_com_mouse_e_esc_volta_sem_gastar() -> void:
 	tela._input(_clique(TelaRecompensa.RECALIBRAR.get_center()))
 	afirmar_igual(j.rerolls, 0, "Recalibrar é clicável")
 	tela._input(_clique(centro))
-	afirmar(not tela.esta_escolhendo(), "clique pegou a dádiva")
+	afirmar(not tela.esta_escolhendo(), "clique pegou a oferta")
 	for i in 40:
 		if not tela.esta_aberta():
 			break

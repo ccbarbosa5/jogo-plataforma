@@ -1,7 +1,7 @@
 class_name LojaIlo
 extends Interagivel
 ## Uma banca da loja do Mercador Ilo na run (GD-02 §6.5). Cada banca vende um item; a sala de
-## loja põe três lado a lado (cura, dádiva Kharn, dádiva Vesh). Chegue perto e aperte E (ou clique);
+## loja põe três lado a lado (cura, oferta Kharn, oferta Vesh). Chegue perto e aperte E (ou clique);
 ## encostar não compra (D-066).
 ## GD-07: o "Aprimoramento de Arma" saiu da loja (as Gambiarras vêm ao limpar as salas).
 
@@ -10,8 +10,8 @@ signal comprou(jogador: Jogador, item: StringName)
 ## item -> [nome, preço, limite por loja]
 const ITENS: Dictionary = {
 	&"cura": ["Cura (1 bloco)", 40, 2],
-	&"dadiva_kharn": ["Dádiva Kharn", 80, 1],
-	&"dadiva_vesh": ["Dádiva Vesh", 80, 1],
+	&"dadiva_kharn": ["Oferta Kharn", 80, 1],
+	&"dadiva_vesh": ["Oferta Vesh", 80, 1],
 }
 
 @export var item: StringName = &"cura"
@@ -19,8 +19,8 @@ const ITENS: Dictionary = {
 ## O que cada item faz (aparece perto da banca, D-066).
 const EFEITOS: Dictionary = {
 	&"cura": "Cura 1 bloco de vida",
-	&"dadiva_kharn": "Escolha 1 de 3 dádivas Kharn",
-	&"dadiva_vesh": "Escolha 1 de 3 dádivas Vesh",
+	&"dadiva_kharn": "Escolha 1 de 3 ofertas Kharn",
+	&"dadiva_vesh": "Escolha 1 de 3 ofertas Vesh",
 }
 
 var vendidos: int = 0
@@ -44,7 +44,7 @@ func pode_comprar(jogador: Jogador) -> bool:
 	return restantes() > 0 and jogador.creditos >= preco()
 
 
-## Desconta os Créditos e entrega o item. A dádiva abre a tela de oferta da facção.
+## Desconta os Créditos e entrega o item. A oferta abre a tela de oferta da facção.
 func comprar(jogador: Jogador) -> bool:
 	if restantes() <= 0:
 		_avisar("Esgotado.")

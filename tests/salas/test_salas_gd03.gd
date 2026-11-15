@@ -243,7 +243,7 @@ func test_reparo_cura_ou_dadiva() -> void:
 	var antes: int = j.vida.atual
 	par[0].usar(j)
 	afirmar_igual(j.vida.atual, mini(antes + 2, j.vida.maxima), "cura 2 blocos")
-	afirmar(par[1].desligada, "a dádiva extra fica desligada")
+	afirmar(par[1].desligada, "a oferta extra fica desligada")
 
 
 # --- 5. Dados persistem; desbloqueios mudam os sorteios ---

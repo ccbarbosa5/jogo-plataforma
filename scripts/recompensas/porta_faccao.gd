@@ -1,6 +1,6 @@
 class_name PortaFaccao
 extends Interagivel
-## Recompensa de facção (GD-01 §6.3): com E (ou clique), abre a TelaRecompensa com 3 dádivas
+## Recompensa de facção (GD-01 §6.3): com E (ou clique), abre a TelaRecompensa com 3 ofertas
 ## da facção. Encostar só mostra o nome e o que dá (D-066).
 ## O emblema da facção fica em cima da porta (provisório até a ART: brasa Kharn, verde Vesh).
 ## Pegar uma porta do grupo "portas_sala" fecha as outras (o jogador escolhe 1 saída).
@@ -29,7 +29,7 @@ func titulo() -> String:
 
 
 func descricao() -> String:
-	return "Escolha 1 de 3 dádivas" + (" (Rara ou melhor)" if elite else "")
+	return "Escolha 1 de 3 ofertas" + (" (Rara ou melhor)" if elite else "")
 
 
 func texto_tecla() -> String:

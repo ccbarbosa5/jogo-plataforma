@@ -60,7 +60,7 @@ func test_e_pega_so_a_mais_proxima() -> void:
 	await esperar_frames(3)
 	afirmar(portas[0].esta_perto() and portas[1].esta_perto(), "as duas ao alcance")
 	afirmar(portas[0].e_a_vez() and not portas[1].e_a_vez(), "a dica aparece só na mais próxima")
-	afirmar_igual(portas[0].descricao(), "Escolha 1 de 3 dádivas Kharn", "mostra o que dá")
+	afirmar_igual(portas[0].descricao(), "Escolha 1 de 3 ofertas Kharn", "mostra o que dá")
 	await _apertar_e(j)
 	afirmar_igual(escolhidas, ["kharn"] as Array[String], "E pegou só a mais próxima")
 	await _apertar_e(j)

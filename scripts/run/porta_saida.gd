@@ -15,7 +15,7 @@ const CORES: Dictionary = {
 ## Rótulo curto em cima da porta (o nome completo fica em RegrasRecompensas.NOMES).
 const ROTULOS: Dictionary = {
 	"vida_maxima": "+1 de vida", "dados": "Dados",
-	"kharn": "Dádiva Kharn", "vesh": "Dádiva Vesh", "chefe": "Ur-Kesh",
+	"kharn": "Oferta Kharn", "vesh": "Oferta Vesh", "chefe": "Ur-Kesh",
 }
 
 var tipo: String = "seguir"
