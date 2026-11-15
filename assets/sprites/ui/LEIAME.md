@@ -70,3 +70,30 @@ Nine-patch 16×16, margem **4**: fundo escuro e liso (`#16111c`), filete de 1 px
 | `placa_eco.png` | ECO | âmbar `#ffc95c` |
 
 Conferência: `conceito/mockup_v08_dialogo_1080p.png` e `conceito/amostra_placas_1080p.png`. Substitui a placa com moldura e fonte ×2 da D-046.
+
+## Árvores da D-058 (ART-3) — `arvore/` · `ferramentas/arte/ui_arvores_v01.py`
+Substituem as peças da árvore de arma antiga (`no.png`, `no_apice.png`, `destaque*.png`, `conector.png`, `custo.png`, `ponto_aprimoramento.png`, que ficam sem uso).
+
+| Arquivo | Conteúdo |
+|---|---|
+| `no_v2.png` | 5 quadros 16×16, nine-patch margem **4**: **bloqueado · disponível · comprado · Ápice disponível · Ápice comprado**. Use como `StyleBoxTexture` do botão do nó. |
+| `no_foco.png` | 16×16, margem 4, centro vazio: contorno de foco por cima de qualquer estado. |
+| `conector_v2.png` | 2 quadros 4×4 (apagado, aceso): ligação vertical entre nós; repete na vertical. Aceso quando o nó de cima foi comprado. |
+| `ramos.png` | 8 ícones 12×12, nesta ordem: **mordida, bramido, granada, grilhão, dash, corpo, movimento, fortuna** (cabeçalho de cada ramo). |
+| `icone_ponto.png` | 7×7: ponto da árvore de Combate (custo do nó = quantos losangos). |
+| `icone_nucleo.png` | 7×9: Núcleo (preço na árvore Passiva e saldo no topo). |
+| `pip_nivel.png` | 2 quadros 5×5 (vazio, cheio): níveis de um nó da Passiva. |
+
+**Árvore de Combate** (`conceito/mockup_v09_arvore_combate.png`): moldura humana na tela toda; título; linha com nível, pontos livres e Ápices (x de 2); 5 colunas de 84 px (iguais às do `tela_arvore_combate.gd`), nós de 84×22 com o nome em cima e o custo em losangos embaixo; ramo da arma não levada todo apagado, com "arma não levada"; painel de baixo com o nó em foco (nome + efeito) e as teclas.
+Cores do texto: claro `#fff6ea`; apagado `#7d7886`; dica `#a7a1ae`; nome no Ápice comprado em escuro `#16111c` (fundo brasa).
+
+**Árvore Passiva** (`conceito/mockup_v10_arvore_passiva.png`): 3 colunas (Corpo, Movimento, Fortuna) de 140 px, nós de 140×34 com nome, efeito, níveis em `pip_nivel` e o preço do próximo nível em Núcleos (ou "completo").
+
+## Gambiarras (ART-3) — `gambiarras/`
+| Arquivo | Conteúdo |
+|---|---|
+| `carta.png` | 3 quadros 32×32, nine-patch margem **10**: **Comum** (metal), **Rara** (azul), **Épica** (laranja, brasa nos cantos). A faixa de cima (6 px) leva a gema e o nome da raridade. |
+| `carta_foco.png` | 32×32, margem 10: contorno de foco (a carta em foco também sobe 4 px). |
+| `raridade.png` | 3 quadros 12×12: **1, 2 e 3 losangos** para C, R e É (lê sem depender da cor). |
+
+Layout (`conceito/mockup_v11_gambiarras.png`, com as medidas do `tela_gambiarras.gd`: cartas de 132×124, espaço de 12, y = 70): gema + "COMUM / RARA / ÉPICA" na faixa; ícone da arma ×2; nome (32 px em 1080p); efeito (26 px, até 3 linhas); embaixo "1 de 3" (acumulável), "novo" ou "única". Botão "Recalibrar (n)" embaixo das cartas. Cores do nome da raridade: `#c9c3cf`, `#9fd0ff`, `#f2a65a`.
