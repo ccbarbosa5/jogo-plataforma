@@ -18,7 +18,16 @@ var fugindo: bool = false
 var pool: PoolEnxame
 var tipo: String = ""
 
+## Some depois de fugir por este tempo (s), apagando aos poucos.
+const TEMPO_FUGA: float = 2.0
+
+## Abaixo disto (px) caiu num buraco: some sem dar XP.
+const LIMITE_QUEDA_Y: float = 400.0
+
 var _timer_recuo: float = 0.0
+var _timer_fuga: float = 0.0
+## Cada um mira um pouco ao lado do jogador, para o bando se espalhar em vez de virar um bolo.
+var desvio_x: float = 0.0
 var _alvo_recuo: float = 0.0
 
 
@@ -31,6 +40,13 @@ func _init() -> void:
 func _ready() -> void:
 	super()
 	_timer_entrada = 0.0  # vem de fora da tela: sem a pausa de entrada dos pesados
+	desvio_x = randf_range(-14.0, 14.0)
+
+
+func _physics_process(delta: float) -> void:
+	super(delta)
+	if global_position.y > LIMITE_QUEDA_Y and is_inside_tree():
+		sumir()
 
 
 ## Volta ao estado de recém-criado (pool).
@@ -44,6 +60,7 @@ func reiniciar() -> void:
 	_timer_empurrao = 0.0
 	_timer_flash = 0.0
 	_timer_recuo = 0.0
+	_timer_fuga = 0.0
 	_timer_entrada = 0.0
 	_timer_armadura_quebrada = 0.0
 	_puxado_por = null
@@ -84,11 +101,15 @@ func _perseguir(_alvo: Node2D, _delta: float) -> void:
 	pass
 
 
-func _fugir(_delta: float) -> void:
+func _fugir(delta: float) -> void:
 	olhando = 1
 	velocity.x = Unidades.px(velocidade)
 	if voa:
 		velocity.y = -Unidades.px(velocidade) * 0.3
+	_timer_fuga += delta
+	modulate.a = clampf(1.0 - _timer_fuga / TEMPO_FUGA, 0.0, 1.0)
+	if _timer_fuga >= TEMPO_FUGA:
+		sumir()
 
 
 func _ao_reiniciar() -> void:

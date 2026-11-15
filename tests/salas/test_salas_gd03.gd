@@ -119,8 +119,7 @@ func test_mapa_do_ato_1_segue_o_gd01() -> void:
 	afirmar(planos[6]["elite"] and planos[6]["ondas"][0].get("elite", false), "sala 6 começa com a elite")
 	afirmar_igual(planos[7]["portas"], ["chefe"], "sala 7 leva ao chefe")
 	afirmar(planos[0]["blocos"].size() == 4, "sala 0 curta nas runs seguintes")
-	afirmar_igual(planos[0]["ondas"].size(), 1, "1 onda pequena")
-	afirmar(BancoOndas.custo_total(g.ondas, planos[0]["ondas"]) <= 4, "orçamento 4")
+	afirmar_igual(planos[0]["ondas"].size(), 0, "sala 0 repetida: sem pesados, só o enxame (GD-08 §3.3)")
 	p.free()
 	var novato := _progresso()
 	var g2 := GeradorAto.new(novato, 5)
@@ -175,18 +174,25 @@ func test_1_ninguem_surge_perto_nem_ataca_na_entrada() -> void:
 	var g := GeradorAto.new(p, 3)
 	var plano := {"numero": 1, "nome": "teste", "bioma": "carcaca", "tipo": "combate", "elite": false,
 			"blocos": ["entrada_varrek", "carcaca_a1", "saida_varrek"],
-			"ondas": [g.ondas.ondas[0], g.ondas.ondas[5]], "portas": ["kharn", "dados"]}
+			"ondas": [g.ondas.ondas[1]], "portas": ["kharn", "dados"]}
 	var sala := _montar(plano, g.blocos)
 	var j := CenarioTeste.criar_jogador(self, Vector2(sala.arena.position.x + 52.0, 224.0))
 	var camera := CameraJogo.new()
 	add_child(camera)
+	camera.alvos.append(j)
 	sala.iniciar(j, camera, self, g.ondas)
+	var perto: Array[int] = [0]
+	sala.diretor.entrou.connect(func(i: Inimigo, _o: StringName) -> void:
+		if i.global_position.distance_to(j.global_position) < Unidades.px(6.0) - 0.5:
+			perto[0] += 1)
 	await esperar_frames(3)
 	afirmar(sala.arena_ativa, "entrou na arena")
-	afirmar(not sala.vivos_da_onda.is_empty(), "1ª onda surgiu")
+	await esperar_frames(135)  # 2,25 s: enxame e a 1ª onda de pesados (aos 2 s)
+	afirmar(sala.diretor.vivos_enxame() > 0, "o enxame entrou")
+	afirmar_igual(perto[0], 0, "ninguém surge a menos de 6 tiles")
+	afirmar(not sala.vivos_da_onda.is_empty(), "1ª onda de pesados surgiu")
 	for i in sala.vivos_da_onda:
-		afirmar(i.global_position.distance_to(j.global_position) >= Unidades.px(6.0) - 0.5, "longe do jogador (%.0f px)" % i.global_position.distance_to(j.global_position))
-		afirmar(i.esta_entrando() or i is InimigoEnxame, "animação de entrada (o enxame vem de fora da tela, GD-08)")
+		afirmar(i.esta_entrando(), "pesado: animação de entrada")
 		afirmar(not i.esta_anunciando(), "não ataca na entrada")
 	p.free()
 
@@ -210,6 +216,7 @@ func test_sala_montada_tem_chao_portas_e_ondas() -> void:
 	afirmar(j.is_on_floor(), "em pé no chão de tiles")
 	afirmar_proximo(j.global_position.y, 224.0, 1.0, "chão na linha 14 (y = 224)")
 	sala.comecar_arena()
+	sala.diretor.encerrar_entradas()
 	for i in sala.inimigos.get_children():
 		i.vida.receber_dano(9999, true)
 	await esperar_frames(3)

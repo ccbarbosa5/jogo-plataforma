@@ -11,6 +11,14 @@ extends Camera2D
 
 var alvos: Array[Node2D] = []
 var limites: Rect2 = Rect2(0, 0, 480, 270)
+var _tremor: float = 0.0
+var _tremor_tempo: float = 0.0
+
+
+## Treme a tela (aviso do pico da horda, GD-08 §3.2). intensidade em px.
+func tremer(intensidade: float, segundos: float) -> void:
+	_tremor = maxf(_tremor, intensidade)
+	_tremor_tempo = maxf(_tremor_tempo, segundos)
 
 
 func definir_limites(novos: Rect2) -> void:
@@ -24,6 +32,11 @@ func posicionar_imediato() -> void:
 func _physics_process(delta: float) -> void:
 	var alvo: Vector2 = _ponto_alvo()
 	global_position = global_position.lerp(alvo, 1.0 - exp(-suavizacao * delta))
+	if _tremor_tempo > 0.0:
+		_tremor_tempo -= delta
+		offset = Vector2(randf_range(-_tremor, _tremor), randf_range(-_tremor, _tremor)).round()
+		if _tremor_tempo <= 0.0:
+			offset = Vector2.ZERO
 
 
 func _ponto_alvo() -> Vector2:
