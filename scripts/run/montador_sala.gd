@@ -28,6 +28,14 @@ const SUBSTITUTO: String = "guerreiro"
 const FALAS: Dictionary = {"1": "queda_saida", "2": "queda_inimigo_grande", "4": "reliquia"}
 
 
+## Tipos de enxame (GD-08 §2): vêm do DiretorHorda, fora do orçamento das ondas.
+const ENXAME: Array[String] = ["roedor", "chacal", "zangao"]
+
+
+static func e_enxame(tipo: String) -> bool:
+	return tipo in ENXAME
+
+
 static func cena_inimigo(tipo: String) -> PackedScene:
 	return load(CENAS_INIMIGOS.get(tipo, CENAS_INIMIGOS[SUBSTITUTO]))
 

@@ -56,10 +56,12 @@ func test_banco_de_ondas_so_usa_inimigos_que_existem() -> void:
 		for item: Dictionary in o["inimigos"]:
 			tipos[item["tipo"]] = true
 			afirmar(banco.custo_inimigo(item["tipo"]) > 0, "%s tem custo" % item["tipo"])
-	for t: String in ["guerreiro", "artilheiro", "muralha", "zangao", "cuspidor", "ninho", "brutamontes", "ceifadora"]:
+	for t: String in ["guerreiro", "artilheiro", "muralha", "cuspidor", "ninho", "brutamontes", "ceifadora"]:
 		afirmar(tipos.has(t), "%s está no banco de ondas" % t)
 		afirmar(MontadorSala.CENAS_INIMIGOS.has(t) and ResourceLoader.exists(MontadorSala.CENAS_INIMIGOS[t]), "%s tem cena" % t)
 	afirmar(not tipos.has("soldado") and not tipos.has("elite"), "provisórios saíram das ondas")
+	for t: String in MontadorSala.ENXAME:
+		afirmar(not tipos.has(t), "%s (enxame) fica fora do orçamento (GD-08)" % t)
 
 
 # --- Artilheiro Kharn ---

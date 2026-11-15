@@ -1,19 +1,19 @@
 {
- "fonte": "GD-01 §7.3 — mapa do Ato 1 (Varrek, o Cemitério); orçamentos do GD-03 §2.4",
+ "fonte": "GD-01 §7.3 — mapa do Ato 1 (Varrek, o Cemitério); orçamentos do GD-03 §2.4, só dos pesados (GD-08 §3.3)",
  "salas": [
   {
    "numero": 0,
    "tipo": "queda",
    "bioma": "queda",
    "nome": "Campo de queda",
-   "orcamento": 4
+   "orcamento": 0
   },
   {
    "numero": 1,
    "tipo": "combate",
    "bioma": "carcaca",
    "nome": "Carcaça de cruzador",
-   "orcamento": 8
+   "orcamento": 4
   },
   {
    "numero": 2,
@@ -48,7 +48,7 @@
    "tipo": "elite",
    "bioma": "elite",
    "nome": "Elite",
-   "orcamento": 12,
+   "orcamento": 8,
    "bioma_trechos": "zona_guerra"
   },
   {

@@ -30,7 +30,7 @@ func _perseguir(alvo: Node2D, delta: float) -> void:
 	if alvo == null:
 		velocity = velocity.move_toward(Vector2.ZERO, Unidades.px(20.0) * delta)
 		return
-	var para: Vector2 = MiraAutomatica.centro_de(alvo) - centro()
+	var para: Vector2 = MiraAutomatica.centro_de(alvo) + Vector2(desvio_x, 0) - centro()
 	var dir: Vector2 = para.normalized()
 	var lado: Vector2 = Vector2(-dir.y, dir.x) * sin(_fase) * zigue
 	velocity = (dir + lado).normalized() * Unidades.px(velocidade)

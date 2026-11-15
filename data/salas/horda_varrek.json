@@ -1,0 +1,39 @@
+{
+ "fonte": "GD-08 §3 (D-062): ondas contínuas de enxame em Varrek. Ajuste aqui, não no código.",
+ "_nota": "taxa = inimigos de enxame por segundo. 'mistura' por bioma é proposta do DEV (o GD ajusta); salas Kharn e Vesh seguem o GD-08 §3.3.",
+ "geral": {
+  "fora_da_tela_tiles": 2,
+  "distancia_minima_tiles": 6,
+  "pico_em": 0.6,
+  "pico_duracao": 4.0,
+  "aviso_pico": 1.5,
+  "aviso_excecao": 1.0,
+  "teto_pico": 40,
+  "fracao_atras_pico": 0.1,
+  "fracao_cima_pico": 0.1,
+  "intervalo_pesados": [8.0, 10.0],
+  "primeiro_pesado": 2.0,
+  "fuga_depois": 8.0,
+  "parado_segundos": 4.0,
+  "parado_mult": 1.5,
+  "inicio_trecho_tiles": 15,
+  "grupo": {"roedor": 3, "chacal": 2, "zangao": 3}
+ },
+ "biomas": {
+  "queda": {"trecho": 0.0, "duracao": 15.0, "taxa": 1.0, "teto": 15, "pico": 0,
+   "mistura": {"roedor": 0.5, "zangao": 0.5}},
+  "queda_primeira": {"trecho": 0.0, "duracao": 15.0, "taxa": 0.5, "teto": 8, "pico": 0,
+   "mistura": {"roedor": 0.5, "zangao": 0.5}},
+  "carcaca": {"trecho": 1.0, "duracao": 40.0, "taxa": 1.5, "teto": 20, "pico": 12,
+   "mistura": {"roedor": 0.4, "zangao": 0.3, "chacal": 0.3}},
+  "linha_kharn": {"trecho": 1.2, "duracao": 45.0, "taxa": 2.0, "teto": 22, "pico": 12,
+   "mistura": {"chacal": 0.6, "roedor": 0.4}},
+  "ninhos_vesh": {"trecho": 1.5, "duracao": 50.0, "taxa": 2.2, "teto": 25, "pico": 12,
+   "mistura": {"roedor": 0.5, "zangao": 0.5}},
+  "zona_guerra": {"trecho": 2.0, "duracao": 60.0, "taxa": 2.8, "teto": 35, "pico": 20, "fracao_atras_pico": 0.15,
+   "mistura": {"chacal": 0.5, "roedor": 0.25, "zangao": 0.25}},
+  "elite": {"trecho": 1.0, "duracao": 75.0, "taxa": 1.2, "teto": 25, "pico": 12, "ate_a_elite_morrer": true,
+   "mistura": {"chacal": 0.4, "roedor": 0.3, "zangao": 0.3}},
+  "chefe": {"trecho": 0.0, "duracao": 0.0, "taxa": 0.0, "teto": 20, "pico": 0, "mistura": {}}
+ }
+}
