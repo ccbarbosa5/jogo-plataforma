@@ -72,7 +72,7 @@ func test_nenhuma_pagina_do_jogo_passa_do_limite_nem_sai_da_caixa() -> void:
 		var altura: float = caixa.texto.get_line_count() * Fontes.texto().get_height(Fontes.TAMANHO_FALA)
 		if t.length() > PaginasFala.LIMITE or caixa.texto.get_line_count() > PaginasFala.LINHAS \
 				or caixa.rapida_texto.get_line_count() > PaginasFala.LINHAS \
-				or caixa.texto.position.y + altura > caixa.direcao.position.y + 2.0:
+				or caixa.texto.position.y + altura > caixa.caixa.size.y - 6.0:
 			ruins += 1
 			print("    não cabe: ", f.get("id", "?"), " ", t)
 	afirmar_igual(ruins, 0, "todas as páginas cabem nas caixas")
@@ -91,10 +91,11 @@ func test_caixa_mostra_as_paginas_em_sequencia() -> void:
 	caixa.mostrar("teste", falas, "conversa", banco)
 	var n: int = PaginasFala.dividir(LONGA).size()
 	afirmar_igual(caixa.fala_atual()["paginas"], n, "páginas")
-	afirmar(caixa.direcao.text != "", "direção na primeira página")
+	afirmar_igual(caixa.fala_atual().get("direcao", ""), "cansado", "a direção fica nos dados (1ª página)")
+	afirmar(not caixa.direcao.visible or caixa.direcao.text.is_empty(), "mas não aparece na tela (D-064)")
 	for i in n - 1:
 		caixa.avancar()
-	afirmar(caixa.esta_ativa() and caixa.direcao.text == "", "última página, sem repetir a direção")
+	afirmar(caixa.esta_ativa() and not caixa.fala_atual().has("direcao"), "última página, sem repetir a direção")
 	caixa.avancar()
 	afirmar(not caixa.esta_ativa(), "terminou depois da última página")
 	tree.paused = false

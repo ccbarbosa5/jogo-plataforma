@@ -33,6 +33,8 @@ const PLACAS: Dictionary = {
 const MARGEM_PLACA: int = 4
 ## Altura da placa (ART: 19 px de arte = 76 px em 1080p) e respiro de cada lado do nome.
 const ALTURA_PLACA: float = 19.0
+## Margem do texto dentro da caixa, em cima e nos lados (D-064).
+const MARGEM_TEXTO: float = 14.0
 const RESPIRO_PLACA: float = 8.0
 
 ## Segundos por caractere no modo rápido (com um mínimo).
@@ -104,6 +106,12 @@ func mostrar(id_cena: String, falas: Array[Dictionary], modo: String, banco: Ban
 	_exibir()
 
 
+## Encerra a faixa de fala rápida (uma tela cheia vai abrir por cima).
+func calar_rapida() -> void:
+	if _ativa and _modo == "rapida":
+		_encerrar()
+
+
 func avancar() -> void:
 	if not _ativa:
 		return
@@ -136,13 +144,14 @@ func _exibir() -> void:
 	caixa.moldura = moldura
 	texto.text = fala.get("texto", "")
 	texto.add_theme_color_override("font_color", COR_TEXTO)
+	# D-064: a direção de cena ("[chiado, voz falhando]") não aparece mais embaixo da fala; fica
+	# nos dados só como nota para o áudio (AUD).
 	var dir: String = fala.get("direcao", "")
-	direcao.text = "[%s]" % dir if not dir.is_empty() else ""
+	direcao.text = ""
 	if falante.is_empty():
-		# Só direção de cena: vira o texto principal, em tom apagado, sem placa.
+		# Fala só de narração (sem falante): é o texto principal, em tom apagado, sem placa.
 		texto.text = dir
 		texto.add_theme_color_override("font_color", COR_DIRECAO)
-		direcao.text = ""
 		placa.visible = false
 		retrato_esquerda.ativo = false
 		retrato_direita.ativo = false
@@ -251,12 +260,14 @@ func _montar() -> void:
 	add_child(caixa)
 	texto = _rotulo(caixa, Fontes.texto(), Fontes.TAMANHO_FALA, COR_TEXTO)
 	texto.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	texto.position = Vector2(14, 9)
-	texto.size = Vector2(PaginasFala.LARGURA, 38)
+	# D-064: margem de cima igual à dos lados (14).
+	texto.position = Vector2(MARGEM_TEXTO, MARGEM_TEXTO)
+	texto.size = Vector2(PaginasFala.LARGURA, 40)
 	direcao = _rotulo(caixa, Fontes.pequena(), Fontes.TAMANHO_PEQUENA, COR_DIRECAO)
 	direcao.position = Vector2(14, caixa.size.y - 18)
 	direcao.size = Vector2(caixa.size.x - 44, 12)
 	direcao.clip_text = true
+	direcao.visible = false  # D-064
 
 	placa = NinePatchRect.new()
 	placa.patch_margin_left = MARGEM_PLACA
