@@ -21,6 +21,8 @@ const ARQUIVO: String = "res://data/salas/horda_varrek.json"
 const DIREITA: StringName = &"direita"
 const ATRAS: StringName = &"atras"
 const CIMA: StringName = &"cima"
+## Roedores saindo de buracos no chão (GD-08 §3.1: dentro dos 10% "de cima", só no pico).
+const TOCA: StringName = &"toca"
 
 enum Fase { PARADO, TRECHO, ARENA, ESPERA_PESADOS, ESPERA_FUGA, FUGA, FIM }
 
@@ -37,7 +39,7 @@ var pesados_pendentes: Array[Dictionary] = []
 var pesados: Array[Inimigo] = []
 var em_pico: bool = false
 ## Contagem por origem (para o teste de ~80% pela direita).
-var entradas: Dictionary = {DIREITA: 0, ATRAS: 0, CIMA: 0}
+var entradas: Dictionary = {DIREITA: 0, ATRAS: 0, CIMA: 0, TOCA: 0}
 
 var _acumulado: float = 0.0
 var _timer_pesados: float = 0.0
@@ -275,6 +277,11 @@ func _processar_pico(delta: float) -> void:
 		elif r < atras + float(geral.get("fracao_cima_pico", 0.1)):
 			origem = CIMA
 		var tipo: String = _sortear_tipo() if origem != CIMA else "zangao"
+		# Parte das entradas "de cima" vira Roedor saindo de uma toca no chão.
+		if origem == CIMA and config.get("mistura", {}).has("roedor") \
+				and rng.randf() < float(_g("fracao_toca_no_cima", 0.5)):
+			origem = TOCA
+			tipo = "roedor"
 		if origem == DIREITA:
 			_entrar(tipo, DIREITA, sala.arena)
 		else:
@@ -330,9 +337,12 @@ func posicao_de_entrada(tipo: String, origem: StringName, area: Rect2, indice: i
 	match origem:
 		ATRAS:
 			x = clampf(cam_x - meia - fora - indice * 10.0, minimo, maximo)
-		CIMA:
+		CIMA, TOCA:
 			var lado: float = 1.0 if rng.randf() < 0.5 else -1.0
 			x = clampf(sala.jogador.global_position.x + lado * Unidades.px(rng.randf_range(6.5, 12.0)), minimo, maximo)
+			if origem == TOCA:
+				# A toca fica dentro da tela (o jogador vê o buraco brilhar).
+				x = clampf(x, cam_x - meia + 16.0, cam_x + meia - 16.0)
 		_:
 			x = clampf(cam_x + meia + fora + indice * 10.0, minimo, maximo)
 	var y: float
@@ -341,7 +351,7 @@ func posicao_de_entrada(tipo: String, origem: StringName, area: Rect2, indice: i
 		if is_inf(y):
 			y = 120.0
 	else:
-		y = _chao(x)
+		y = _chao(x, origem == TOCA)
 		if is_inf(y):
 			return Vector2.INF
 		y -= 1.0
@@ -351,10 +361,11 @@ func posicao_de_entrada(tipo: String, origem: StringName, area: Rect2, indice: i
 	return pos
 
 
-func _chao(x: float) -> float:
+## Altura do chão em x. so_solido = só chão de verdade (uma toca não abre numa plataforma fina).
+func _chao(x: float, so_solido: bool = false) -> float:
 	var espaco := sala.get_world_2d().direct_space_state
 	var consulta := PhysicsRayQueryParameters2D.create(Vector2(x, 8.0), Vector2(x, sala.limites().end.y),
-			Camadas.MUNDO | Camadas.PLATAFORMAS)
+			Camadas.MUNDO if so_solido else Camadas.MUNDO | Camadas.PLATAFORMAS)
 	var r: Dictionary = espaco.intersect_ray(consulta)
 	return r["position"].y if not r.is_empty() else INF
 
@@ -371,12 +382,18 @@ func _entrar(tipo: String, origem: StringName, area: Rect2, indice: int = 0, pos
 	i.container_projeteis = sala.projeteis
 	i.olhando = -1 if origem == DIREITA else 1
 	sala.inimigos.add_child(i)
+	if origem == TOCA:
+		i.velocity = Vector2(0.0, -SALTO_DA_TOCA)  # pula para fora do buraco
 	entradas[origem] = int(entradas.get(origem, 0)) + 1
 	entrou.emit(i, origem)
 	return i
 
 
-## Entrada por trás ou de cima: o aviso aparece 1,0 s antes (GD-08 §3.1).
+## Velocidade (px/s) com que o Roedor pula para fora da toca.
+const SALTO_DA_TOCA: float = 160.0
+
+
+## Entrada por trás, de cima ou por uma toca: o aviso aparece 1,0 s antes (GD-08 §3.1).
 func _agendar_excecao(tipo: String, origem: StringName) -> void:
 	var pos: Vector2 = posicao_de_entrada(tipo, origem, sala.arena)
 	if is_inf(pos.x):
@@ -398,7 +415,7 @@ func _processar_avisos(delta: float) -> void:
 		if a["tempo"] <= 0.0:
 			_avisos.remove_at(k)
 			if is_instance_valid(a["no"]):
-				a["no"].queue_free()
+				(a["no"] as AvisoEntrada).encerrar()
 			var pos: Vector2 = a["posicao"]
 			if pos.distance_to(sala.jogador.global_position) < Unidades.px(float(geral.get("distancia_minima_tiles", 6))):
 				_entrar(a["tipo"], DIREITA, sala.arena)  # o jogador chegou perto: entra pela frente
