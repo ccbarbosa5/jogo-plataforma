@@ -299,3 +299,22 @@ func test_zona_de_guerra_kharn_e_vesh_brigam() -> void:
 	afirmar(not g.pode_ferir(g), "não fere a si mesmo")
 	var morteiro_hit := ExplosaoInimiga.causar(self, z.centro(), 24.0, 2, g)
 	afirmar(z in morteiro_hit or not z.esta_vivo(), "explosão Kharn fere Vesh")
+
+
+func test_zangao_com_desvio_maximo_ainda_encosta() -> void:
+	# Teste instável (item 29): com o desvio do bando sorteado perto de ±14 px, o Zangão rondava
+	# ao lado do jogador sem encostar. De perto ele agora vai direto.
+	for desvio in [-14.0, 14.0]:
+		var j := _antes()
+		var z: Zangao = _criar("zangao", Vector2(80, -60))
+		await esperar_frames(1)
+		z.desvio_x = desvio
+		var vida: int = j.vida.atual
+		for i in ENTRADA + 150:
+			await esperar_frames(1)
+			if j.vida.atual < vida:
+				break
+		afirmar(j.vida.atual < vida, "desvio %+.0f: encostou e machucou" % desvio)
+		for f in get_children():
+			f.queue_free()
+		await esperar_frames(1)
