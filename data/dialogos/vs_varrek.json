@@ -2869,6 +2869,47 @@
      }
     ]
    ]
+  },
+  "abertura_historia": {
+   "modo": "narracao",
+   "falas": [
+    {
+     "id": "AB_01",
+     "falante": "RYKER",
+     "texto": "Me chamavam de Krat'zu. O rato que morde.",
+     "expressao": "neutro"
+    },
+    {
+     "id": "AB_02",
+     "falante": "RYKER",
+     "texto": "Ganhei a final. O prêmio era continuar sendo deles. Recusei o prêmio.",
+     "expressao": "deboche"
+    },
+    {
+     "id": "AB_03",
+     "falante": "RYKER",
+     "texto": "Plano B: entrar na única porta que nenhum Kharn quer atravessar.",
+     "expressao": "deboche"
+    },
+    {
+     "id": "AB_04",
+     "falante": "RYKER",
+     "texto": "Ah. É por isso que ninguém quer.",
+     "expressao": "abalado"
+    },
+    {
+     "id": "AB_05",
+     "falante": "RYKER",
+     "texto": "...Péssimo pouso.",
+     "expressao": "abalado"
+    },
+    {
+     "id": "AB_06",
+     "falante": "RYKER",
+     "texto": "Varrek. Um cemitério de naves. E eu tinha acabado de virar parte dele.",
+     "expressao": "neutro"
+    }
+   ]
   }
  }
 }

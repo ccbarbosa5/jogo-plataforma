@@ -53,6 +53,9 @@ var modo_mira: int = Assistencias.ModoMira.DESLIGADA
 var tiro_automatico: bool = false
 ## Números de dano na tela (D-067).
 var numeros_dano: bool = true
+## D-073B: a abertura da história já foi vista (toca só no primeiro Novo jogo). Fica aqui, e não
+## no progresso, porque "Novo jogo" apaga o progresso e a abertura não deve repetir.
+var abertura_vista: bool = false
 
 ## ação -> teclas e botões de mouse de fábrica (para "Restaurar padrão").
 var _padrao: Dictionary = {}
@@ -294,6 +297,7 @@ func salvar() -> void:
 	cfg.set_value("opcoes", "modo_mira", modo_mira)
 	cfg.set_value("opcoes", "tiro_automatico", tiro_automatico)
 	cfg.set_value("opcoes", "numeros_dano", numeros_dano)
+	cfg.set_value("historico", "abertura_vista", abertura_vista)
 	cfg.save(caminho)
 
 
@@ -323,9 +327,15 @@ func carregar() -> void:
 		modo_mira = cfg.get_value("opcoes", "modo_mira", modo_mira)
 		tiro_automatico = cfg.get_value("opcoes", "tiro_automatico", tiro_automatico)
 		numeros_dano = cfg.get_value("opcoes", "numeros_dano", numeros_dano)
+		abertura_vista = cfg.get_value("historico", "abertura_vista", abertura_vista)
 	_aplicar_volume()
 	if tela_cheia:
 		_aplicar_tela_cheia()
+
+
+func marcar_abertura_vista() -> void:
+	abertura_vista = true
+	salvar()
 
 
 ## Volta tudo ao padrão de fábrica (teclas e opções), sem tocar no arquivo. Usado pelos testes.

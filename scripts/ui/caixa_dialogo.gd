@@ -6,6 +6,8 @@ extends CanvasLayer
 ##   da facção de quem fala e seta de continuar. Jogáveis à esquerda; interlocutor à direita.
 ##   Pausa o jogo; avança com Interagir, Pular ou Atirar.
 ## - modo "rapida" (durante o combate): faixa pequena no topo, sem pausar (pilar 1).
+## - modo "narracao" (abertura, D-073B): igual à conversa, mas sem escurecer, sem pausar e sem
+##   esperar comando; cada fala some sozinha depois de "duracao" segundos (ou do tempo do texto).
 ## Os nós visuais são montados por código; o visual final de ART entra por cima.
 
 signal terminou(id_cena: String)
@@ -129,6 +131,8 @@ func _exibir() -> void:
 	var cor: Color = _banco.cor_do_falante(falante)
 	_trava = trava_avanco
 	_timer = maxf(minimo_rapida, String(fala.get("texto", "")).length() * segundos_por_caractere)
+	if fala.has("duracao"):
+		_timer = float(fala["duracao"])
 	if _modo == "rapida":
 		_esconder_conversa()
 		rapida.visible = true
@@ -138,7 +142,7 @@ func _exibir() -> void:
 		rapida_texto.text = fala.get("texto", "")
 		return
 	rapida.visible = false
-	escurecer.visible = true
+	escurecer.visible = _modo != "narracao"
 	caixa.visible = true
 	var moldura: String = _banco.moldura_do_falante(falante) if not falante.is_empty() else "humano"
 	caixa.moldura = moldura
@@ -188,7 +192,7 @@ func _process(delta: float) -> void:
 	if not _ativa:
 		return
 	_trava = maxf(_trava - delta, 0.0)
-	if _modo == "rapida":
+	if _modo == "rapida" or _modo == "narracao":
 		_timer -= delta
 		if _timer <= 0.0:
 			avancar()

@@ -26,6 +26,7 @@ func _titulo(progresso: DadosProgresso) -> TelaTitulo:
 
 func _limpar() -> void:
 	Ciclo.ultima_cena_pedida = ""
+	Config.abertura_vista = false
 	if FileAccess.file_exists(ARQUIVO_PROGRESSO):
 		DirAccess.remove_absolute(ProjectSettings.globalize_path(ARQUIVO_PROGRESSO))
 
@@ -69,6 +70,7 @@ func test_continuar_vai_para_a_nave_sem_apagar() -> void:
 
 
 func test_novo_jogo_com_progresso_pede_confirmacao_e_apaga() -> void:
+	Config.abertura_vista = true  # D-073B: com a abertura já vista, vai direto à nave
 	var p := _progresso(true)
 	var t := _titulo(p)
 	await esperar_frames(1)
@@ -87,6 +89,7 @@ func test_novo_jogo_com_progresso_pede_confirmacao_e_apaga() -> void:
 
 
 func test_novo_jogo_sem_progresso_comeca_direto() -> void:
+	Config.abertura_vista = true  # D-073B: com a abertura já vista, vai direto à nave
 	var t := _titulo(_progresso(false))
 	await esperar_frames(1)
 	t.ativar("Novo jogo")
