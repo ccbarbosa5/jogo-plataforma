@@ -179,3 +179,73 @@ func test_6_desempenho_40_inimigos_e_tiros_a_60_fps() -> void:
 	j.entrada.atirar_segurado = false
 	print("    desempenho: física %.2f ms por quadro com %d inimigos e tiros" % [ms, sala.diretor.vivos()])
 	afirmar(ms < 10.0, "lógica cabe em 60 fps com folga (%.2f ms)" % ms)
+
+
+func test_roedores_saem_de_tocas_so_no_pico_com_aviso_e_longe_do_jogador() -> void:
+	# Item 30 (GD-08 §3.1): buraco no chão brilha 1,0 s antes; nunca a menos de 6 tiles; exceção
+	# dentro dos 10% "de cima" (nunca a entrada principal).
+	var sala := _arena({"duracao": 6.0, "taxa": 2.0, "pico": 14, "fracao_atras_pico": 0.0, "fracao_cima_pico": 0.6,
+			"fracao_toca_no_cima": 1.0, "mistura": {"roedor": 1.0}, "teto": 60, "teto_pico": 60},
+			[], ["entrada_varrek", "carcaca_a1", "saida_varrek"], 240.0 + 240.0)
+	var avisos: Dictionary = {}  # posição -> [tempos]
+	var relogio: Array[float] = [0.0]
+	var erros: Array[String] = []
+	var pelas_tocas: Array[int] = [0]
+	sala.diretor.aviso_entrada.connect(func(pos: Vector2, o: StringName) -> void:
+		if o != DiretorHorda.TOCA:
+			erros.append("aviso de %s (esperava só tocas)" % o)
+			return
+		if not avisos.has(pos):
+			avisos[pos] = []
+		avisos[pos].append(relogio[0])
+		if not sala.diretor.em_pico:
+			erros.append("toca fora do pico")
+		if pos.distance_to(sala.jogador.global_position) < Unidades.px(6.0) - 0.5:
+			erros.append("toca a menos de 6 tiles")
+		if absf(pos.x - sala.camera.global_position.x) > 240.0:
+			erros.append("toca fora da tela"))
+	sala.diretor.entrou.connect(func(i: Inimigo, o: StringName) -> void:
+		if o != DiretorHorda.TOCA:
+			return
+		pelas_tocas[0] += 1
+		if not i is Roedor:
+			erros.append("saiu da toca algo que não é Roedor")
+		if i.velocity.y >= 0.0:
+			erros.append("não pulou para fora do buraco")
+		if not avisos.has(i.position) or avisos[i.position].is_empty():
+			erros.append("saiu da toca sem aviso")
+			return
+		var t: float = avisos[i.position].pop_front()
+		if relogio[0] - t < 0.95:
+			erros.append("aviso curto (%.2f s)" % (relogio[0] - t)))
+	await esperar_frames(1)
+	var viu_buraco: bool = false
+	for k in 7 * 60:
+		await esperar_frames(1)
+		relogio[0] += 1.0 / 60.0
+		for no in sala.get_children():
+			if no is AvisoEntrada and (no as AvisoEntrada).origem == DiretorHorda.TOCA:
+				viu_buraco = true
+		if k % 10 == 0:
+			_limpar_perto(sala, 40.0)
+	afirmar(pelas_tocas[0] >= 3, "Roedores saíram de tocas (%d)" % pelas_tocas[0])
+	afirmar(viu_buraco, "o buraco aparece no chão")
+	afirmar_igual(erros, [] as Array[String], "só no pico, com aviso de 1,0 s, longe do jogador e na tela")
+	afirmar_igual(sala.diretor.entradas[DiretorHorda.TOCA], pelas_tocas[0], "contadas como entrada por toca")
+	afirmar(sala.diretor.entradas[DiretorHorda.DIREITA] > pelas_tocas[0], "a direita continua sendo a entrada principal")
+	# Com os valores do jogo, as tocas ficam dentro dos 10% "de cima" do pico.
+	var geral: Dictionary = DiretorHorda.carregar_dados()["geral"]
+	afirmar(float(geral["fracao_cima_pico"]) <= 0.1 and float(geral["fracao_toca_no_cima"]) <= 1.0, "tocas dentro dos 10% de cima")
+
+
+func test_sem_roedor_na_mistura_nao_ha_tocas() -> void:
+	var sala := _arena({"duracao": 6.0, "taxa": 2.0, "pico": 14, "fracao_atras_pico": 0.0, "fracao_cima_pico": 0.6,
+			"fracao_toca_no_cima": 1.0, "mistura": {"chacal": 1.0}, "teto": 60, "teto_pico": 60},
+			[], ["entrada_varrek", "carcaca_a1", "saida_varrek"], 240.0 + 240.0)
+	await esperar_frames(1)
+	for k in 7 * 60:
+		await esperar_frames(1)
+		if k % 10 == 0:
+			_limpar_perto(sala, 40.0)
+	afirmar_igual(sala.diretor.entradas[DiretorHorda.TOCA], 0, "sala sem Roedor: sem tocas")
+	afirmar(sala.diretor.entradas[DiretorHorda.CIMA] > 0, "os Zangões de cima continuam")

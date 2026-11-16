@@ -11,6 +11,7 @@
   "teto_pico": 40,
   "fracao_atras_pico": 0.1,
   "fracao_cima_pico": 0.1,
+  "fracao_toca_no_cima": 0.5,
   "intervalo_pesados": [8.0, 10.0],
   "primeiro_pesado": 2.0,
   "fuga_depois": 8.0,
