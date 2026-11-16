@@ -30,8 +30,10 @@ func _limpar() -> void:
 		DirAccess.remove_absolute(ProjectSettings.globalize_path(ARQUIVO_PROGRESSO))
 
 
-func test_o_jogo_abre_no_menu_inicial() -> void:
-	afirmar_igual(ProjectSettings.get_setting("application/run/main_scene"), CENA_TITULO, "cena principal")
+func test_o_jogo_abre_no_logo_e_depois_no_menu() -> void:
+	# D-073A: o logo animado vem antes do menu e termina nele.
+	afirmar_igual(ProjectSettings.get_setting("application/run/main_scene"), "res://scenes/ui/logo_animado.tscn", "cena principal")
+	afirmar_igual(Ciclo.CENA_TITULO, CENA_TITULO, "o logo leva ao menu")
 
 
 func test_tem_logo_fundo_e_brasas() -> void:
