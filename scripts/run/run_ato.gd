@@ -42,6 +42,8 @@ func _ready() -> void:
 	jogador.container_projeteis = projeteis
 	# Arma do Arsenal e melhorias da Vossa Margem (GD-01 §9).
 	jogador.equipar(Ciclo.dados_da_arma())
+	# Códice (NAR-05 §5.1): o parágrafo extra da arma destrava depois de 10 runs com ela.
+	Progresso.incrementar("runs_" + String(Ciclo.arma_escolhida))
 	MelhoriasPermanentes.aplicar(jogador, Progresso)
 	progressao = ProgressaoPersonagem.new("ryker")
 	progressao.aplicar(jogador, Progresso)

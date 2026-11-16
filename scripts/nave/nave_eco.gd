@@ -33,6 +33,7 @@ var _lancando: bool = false
 ## Árvore de Combate do Ryker (GD-07 §4), no Arsenal.
 var progressao: ProgressaoPersonagem
 var tela_arvore: TelaArvoreCombate
+var tela_codice: TelaCodice
 ## Garrak já comentou as Gambiarras da run que acabou (NAR-06 §2.6, 1 por volta).
 var _comentou_gambiarras: bool = false
 var _lista_do_vossa: bool = false
@@ -60,6 +61,9 @@ func _ready() -> void:
 	progressao = ProgressaoPersonagem.new("ryker")
 	tela_arvore = TelaArvoreCombate.new()
 	add_child(tela_arvore)
+	tela_codice = TelaCodice.new()
+	add_child(tela_codice)
+	tela_codice.entrada = jogador.entrada
 	tela.fechou.connect(_ao_fechar_lista)
 	PontoNave.criar(self, Vector2(120, CHAO), PontoNave.Figura.RECONSTRUTOR, "")
 	eco = _ponto(Vector2(440, CHAO), PontoNave.Figura.ECO, "falar com a ECO", _usar_eco)
@@ -75,7 +79,7 @@ func _ready() -> void:
 func _ponto(pos: Vector2, figura: PontoNave.Figura, acao: String, ao_usar: Callable) -> PontoNave:
 	var p := PontoNave.criar(self, pos, figura, acao)
 	p.usado.connect(func(_p: PontoNave) -> void:
-		if not caixa.esta_ativa() and not tela.esta_aberta() and not tela_arvore.esta_aberta():
+		if not caixa.esta_ativa() and not tela.esta_aberta() and not tela_arvore.esta_aberta() and not tela_codice.esta_aberta():
 			ao_usar.call())
 	return p
 
@@ -147,7 +151,27 @@ func _usar_sete() -> void:
 
 func _usar_terminal() -> void:
 	tela.cor_titulo = Color("4fb0a6")
-	tela.abrir("Arquivo da Ponte", "eco", func() -> Array[Dictionary]: return opcoes_melhorias("ponte"), _saldos)
+	tela.abrir("Arquivo da Ponte", "eco", opcoes_arquivo, _saldos)
+
+
+## Arquivo da Ponte: o Códice (D-060) e os desbloqueios com Dados.
+func opcoes_arquivo() -> Array[Dictionary]:
+	var lista: Array[Dictionary] = [{
+		"nome": "Códice",
+		"descricao": "Registros do que o Ryker já encontrou.",
+		"direita": "%d/%d · ABRIR" % [Codice.liberadas(Progresso), Codice.carregar().size()],
+		"ativo": false, "pode": true, "motivo": "", "feito": "",
+		"acao": func() -> bool:
+			tela.fechar()
+			abrir_codice.call_deferred()
+			return true,
+	}]
+	lista.append_array(opcoes_melhorias("ponte"))
+	return lista
+
+
+func abrir_codice() -> void:
+	tela_codice.abrir(Progresso)
 
 
 func _usar_vossa() -> void:

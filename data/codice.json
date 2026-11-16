@@ -1,0 +1,103 @@
+{
+ "fonte": "NAR-05 §5 (Códice). Só as entradas do VS; as armas da Fase 3 entram depois. 'condicao' usa as flags e contadores do Progresso (vazio = sempre liberada).",
+ "entradas": [
+  {
+   "id": "ryker",
+   "grupo": "Personagens",
+   "nome": "Ryker",
+   "titulo": "Krat'zu, o Gladiador Fugitivo",
+   "condicao": "",
+   "texto": "Ex-mineiro, vendido às arenas Kharn. O único humano a vencer a Grande Arena. Fugiu na noite da vitória por um Portão quebrado."
+  },
+  {
+   "id": "eco",
+   "grupo": "Personagens",
+   "nome": "ECO",
+   "titulo": "Anfitriã da Eco",
+   "condicao": "",
+   "texto": "A consciência da nave dos Antigos. Reconstrói Ryker a cada morte. Gosta de companhia, de silêncio e de que ele descanse."
+  },
+  {
+   "id": "garrak",
+   "grupo": "Personagens",
+   "nome": "Garrak",
+   "titulo": "O Exilado, Mestre de Armas",
+   "condicao": "garrak_conhecido",
+   "texto": "Kharn do Clã Kesh, mestre de armas da arena. Recusou a ordem de executar o próprio aluno e seguiu Ryker pelo Portão."
+  },
+  {
+   "id": "sete",
+   "grupo": "Personagens",
+   "nome": "Sete",
+   "titulo": "Um Vesh sozinho",
+   "condicao": "sete_chegou",
+   "texto": "Um Vesh separado da colmeia, impresso por acidente como amostra. Está aprendendo a dizer \"eu\"."
+  },
+  {
+   "id": "vossa",
+   "grupo": "Personagens",
+   "nome": "Vossa Margem",
+   "titulo": "Sindicato Ilo — Melhorias e Contratos",
+   "condicao": "vossa_conhecido",
+   "texto": "Comerciante Ilo que aluga um compartimento da Eco. Composição: 40% gás nobre, 60% confidencial."
+  },
+  {
+   "id": "mercador",
+   "grupo": "Personagens",
+   "nome": "Mercador",
+   "titulo": "Vendedor de campo do Sindicato",
+   "condicao": "1a_loja",
+   "texto": "Vende para todos os lados da guerra. Por isso continua vivo."
+  },
+  {
+   "id": "tor_ama",
+   "grupo": "Personagens",
+   "nome": "Tor-Ama",
+   "titulo": "Matriarca do Clã Ossoferro",
+   "condicao": "1a_oferta_kharn",
+   "texto": "Matriarca do maior clã Kharn. Não acorrenta campeões."
+  },
+  {
+   "id": "colmeia",
+   "grupo": "Personagens",
+   "nome": "A Colmeia",
+   "titulo": "Os Vesh",
+   "condicao": "1a_oferta_vesh",
+   "texto": "Bilhões de corpos e uma só voz. Servem. Não lembram a quem."
+  },
+  {
+   "id": "urkesh",
+   "grupo": "Personagens",
+   "nome": "Ur-Kesh",
+   "titulo": "Campeão Caído do Clã Kesh",
+   "condicao": "urkesh_encontros>=1",
+   "texto": "Campeão da Grande Arena por nove temporadas, até perder para um humano. Quer o título de volta."
+  },
+  {
+   "id": "mordida",
+   "grupo": "Armas",
+   "nome": "Mordida",
+   "titulo": "A arma de Ryker",
+   "condicao": "",
+   "texto": "Rebitadeira de mineração humana, feita para prender chapas de casco com rebites incandescentes. Os Kharn a deram a um escravo da arena como piada. Ele venceu a Grande Arena com ela.",
+   "extra": {
+    "condicao": "runs_mordida>=10",
+    "aviso": "Mais depois de 10 runs com ela.",
+    "texto": "Os Kharn a chamavam de \"o prego do rato\". Os riscos no cabo contam as vitórias na arena: são quarenta e uma. Alguém, de mãos grandes demais para ela, trocou o gatilho três vezes."
+   }
+  },
+  {
+   "id": "bramido",
+   "grupo": "Armas",
+   "nome": "Bramido",
+   "titulo": "Canhão dos campeões de Kesh",
+   "condicao": "bramido_liberado",
+   "texto": "Canhão de mão do Clã Kesh, carregado só por quem vence na arena. O disparo soa como o rugido de um Kharn. Arrancado do andador de Ur-Kesh e reformado para mão humana.",
+   "extra": {
+    "condicao": "runs_bramido>=10",
+    "aviso": "Mais depois de 10 runs com ele.",
+    "texto": "Ur-Kesh o carregou por nove temporadas sem perder uma luta. Na décima, perdeu para um rato. O Bramido não percebeu a diferença: continua rugindo do mesmo jeito."
+   }
+  }
+ ]
+}
