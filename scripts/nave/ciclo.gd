@@ -5,6 +5,7 @@ extends Node
 const CENA_TITULO: String = "res://scenes/ui/tela_titulo.tscn"
 const CENA_NAVE: String = "res://scenes/nave/nave_eco.tscn"
 const CENA_RUN: String = "res://scenes/run/run_ato1.tscn"
+const CENA_ABERTURA: String = "res://scenes/ui/abertura_historia.tscn"
 const ARMAS: Dictionary = {
 	&"mordida": "res://scenes/armas/mordida.tres",
 	&"bramido": "res://scenes/armas/bramido.tres",
@@ -18,6 +19,8 @@ var resultado: String = ""
 var ultima_run: Dictionary = {}
 ## Os testes desligam a troca de cena.
 var trocar_cena: bool = true
+## D-073B: true = a abertura foi pedida pelo menu ("Ver abertura") e volta ao menu.
+var abertura_rever: bool = false
 ## Última cena pedida (os testes conferem sem trocar de verdade).
 var ultima_cena_pedida: String = ""
 
@@ -46,6 +49,13 @@ func ir_para_run() -> void:
 func ir_para_nave_do_titulo() -> void:
 	resultado = ""
 	_trocar(CENA_NAVE)
+
+
+## D-073B: abertura da história. rever = pelo menu ("Ver abertura"), volta ao menu no fim.
+func ir_para_abertura(rever: bool = false) -> void:
+	resultado = ""
+	abertura_rever = rever
+	_trocar(CENA_ABERTURA)
 
 
 ## Pausa da nave → menu inicial.

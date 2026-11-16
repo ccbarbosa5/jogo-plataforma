@@ -327,7 +327,7 @@ func _montar_controles() -> void:
 
 func _montar_opcoes() -> void:
 	var largura: float = 240.0
-	var linhas: int = 7 if _no_titulo else 6
+	var linhas: int = 8 if _no_titulo else 6
 	_posicionar_painel(Vector2(largura, 34.0 + linhas * 20.0))
 	_titulo("OPÇÕES", largura, 8.0)
 	var itens: Array = [[_texto_volume(), _ajustar_volume], [_texto_tela_cheia(), _ajustar_tela_cheia],
@@ -339,6 +339,8 @@ func _montar_opcoes() -> void:
 		y += 20.0
 	if _no_titulo:  # no menu inicial não existe a tela principal da pausa
 		_botao("Controles", Rect2(20.0, y, largura - 40.0, 15.0), _mostrar.bind(Tela.CONTROLES))
+		y += 20.0
+		_botao("Ver abertura", Rect2(20.0, y, largura - 40.0, 15.0), _ver_abertura)  # D-073B
 		y += 20.0
 	_botao("Voltar", Rect2(20.0, y, largura - 40.0, 15.0), voltar)
 
@@ -354,6 +356,12 @@ func _montar_confirmacao() -> void:
 
 
 # --- Ações ---
+
+## D-073B: "Ver abertura" nas Opções do menu inicial: toca de novo e volta ao menu.
+func _ver_abertura() -> void:
+	fechar()
+	Ciclo.ir_para_abertura(true)
+
 
 ## O botão pode ter saído da tela até o foco ser aplicado (ex.: troca de tela no mesmo frame).
 func _focar(botao: Variant) -> void:

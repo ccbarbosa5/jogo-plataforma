@@ -101,7 +101,11 @@ func _novo_jogo() -> void:
 func _comecar_novo_jogo() -> void:
 	if progresso != null:
 		progresso.apagar()
-	Ciclo.ir_para_nave_do_titulo()
+	# D-073B: a abertura da história toca só no primeiro Novo jogo; depois vai direto à nave.
+	if Config.abertura_vista:
+		Ciclo.ir_para_nave_do_titulo()
+	else:
+		Ciclo.ir_para_abertura()
 
 
 func _opcoes() -> void:

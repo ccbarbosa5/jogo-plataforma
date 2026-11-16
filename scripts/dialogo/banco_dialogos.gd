@@ -8,7 +8,7 @@ extends RefCounted
 ##   "falantes": { "RYKER": { "nome": "Ryker", "cor": "#c8b273" } },
 ##   "cenas": {
 ##     "<cena>": {
-##       "modo": "conversa" | "rapida",   conversa pausa o jogo; rápida aparece por cima
+##       "modo": "conversa" | "rapida" | "narracao",   conversa pausa o jogo; rápida aparece por cima; narração (abertura) não pausa e some sozinha
 ##       "uma_vez": "<flag>",             toca só se a flag estiver desligada, e liga ao tocar
 ##       "condicao": "<condição>",        ver DadosProgresso.avaliar()
 ##       "duvida": 1,                     soma no contador "duvida" ao tocar (pistas, D-034)
@@ -103,7 +103,7 @@ func validar() -> Array[String]:
 	var ids: Dictionary = {}
 	for id_cena: String in cenas:
 		var c: Dictionary = cenas[id_cena]
-		if not c.get("modo", "conversa") in ["conversa", "rapida"]:
+		if not c.get("modo", "conversa") in ["conversa", "rapida", "narracao"]:
 			problemas.append("%s: modo inválido" % id_cena)
 		var tem_falas: bool = not c.get("falas", []).is_empty()
 		var tem_variantes: bool = not c.get("variantes", []).is_empty()
