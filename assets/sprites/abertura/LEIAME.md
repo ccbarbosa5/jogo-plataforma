@@ -28,3 +28,27 @@ Os arquivos por código continuam na pasta como reserva.
 
 **Sem spoiler (D-045, D-073):** a silhueta do quadro 9 é genérica (só luz âmbar, sem detalhe); nada de inseto, colmeia ou figura no Portão. Não acrescentar detalhes a ela.
 **Falas:** AB_01 a AB_06 (NAR-07), em modo narração, com o retrato do Ryker. As legendas de lugar usam a fonte do jogo, no canto de baixo à esquerda, por 2 s.
+
+---
+
+# v0.3 — Abertura v2 (D-075, roteiro NAR-07 v2, 12 quadros) · ART-8
+Gerado por `ferramentas/arte/abertura_v2.py` (roda depois de `abertura_v01.py` e `abertura_ia_v01.py`). Conferência: `conceito/mockup_v14_abertura_v2.png` (os 12 quadros) e `conceito/mockup_v15_legenda_1080p.png` (legenda).
+**Ryker sempre em destaque (D-075):** use `v2_ryker_poses_destaque.png` (as poses-chave com contorno claro de 1 px; quadros de **50×50**, mesma ordem: 0 parado, 1 correndo, 2 pulando, 6 lançando a corrente) em vez de `ryker_poses_chave.png`.
+
+| Quadro v2 | Peças (de trás para a frente) | Câmera / animação |
+|---|---|---|
+| 1 Galáxia em guerra (NOVO) | `v2_q1_galaxia_fundo` (640×360) · `v2_q1_frotas` (linhas pontilhadas entre as raças) · `v2_q1_simbolos` (3 quadros 60×60: **Kharn, Vesh, Ilo**, centros em (150,110), (470,120), (320,265)) · `v2_q1_clarao` (4 quadros 9×9, 12 qps, batalhas surgindo em pontos aleatórios entre os símbolos) · `v2_q1_humano` (2 quadros 7×7, pisca a 2 qps; centro em (540, 290)) | janela 480×270 aproxima devagar (zoom 1,0 → 1,6) e termina centrada no pontinho humano. Os símbolos pulsam (`modulate`) quando a fala cita as raças. |
+| 2 Arena | como a v0.2 (`q1_fundo_ia`, Ur-Kesh, Ryker destacado) | descida mais lenta (todo o quadro) |
+| 3 O prêmio | como a v0.2 | zoom lento |
+| 4 A fuga | como a v0.2 (Ryker destacado) | travelling mais lento |
+| 5 O Portão / 6 Dentro | como a v0.2 | — |
+| 7 Varrek | como a v0.2 | para na poeira |
+| 8 A luz e a nave (JUNTA 7+8) | `v2_q8_subida` (480×810: Varrek embaixo → céu → espaço) com `q7_feixe_ambar` repetido na vertical, x = 208 · depois `q8_fundo_ia` | a câmera sobe de y = 540 a y = 0 acompanhando o feixe (~3,5 s) e emenda (fade curto de 0,3 s) no pan da nave |
+| 9 Reconstrutor | `q9_fundo_ia` · `v2_q9_ryker_formando` (8 quadros 64×64, 1,6 qps; canto em (210, 100); linhas de luz montando o corpo de dentro para fora; o último é o Ryker com brilho âmbar) · `q9_silhueta` quadro 5 com 70% de opacidade em (300, 60), **só observando** | aproxima devagar |
+| 10 O trato (NOVO) | `v2_q10_rota` (960×270: Varrek aceso + 3 planetas desconhecidos com "?", ligados por pontilhado) · `v2_q10_nave_eco_mini` no alto · `v2_capsula` quadros 1–2 (8 qps) descendo em cada planeta, em sequência | pan de x = 0 a 480 |
+| 11 Morrer = voltar (NOVO) | parallax de Varrek · Roedores e Chacal (sprites do ART-4, `flip_h`) cercando · Ryker destacado lutando → `v2_q11_ryker_vira_luz` (8 quadros 48×80, 10 qps: cai, vira luz âmbar e sobe) → corte para `q9_fundo_ia` com `v2_q9_ryker_formando` (quadros 4–7) e o Ryker de pé (pose 0) | fixa → sobe com a luz → fixa no reconstrutor |
+| 12 A cápsula (NOVO) | parallax de Varrek · `v2_capsula` quadros 1–2 caindo em chamas (×2), quadro 3 no chão · `q6_poeira` no impacto | acompanha a queda e treme no impacto |
+
+**Legendas (D-056, D-075):** faixa `v2_legenda_faixa.png` (nine-patch 16×16, margem 4: fundo `#16111c` a 75% e filete laranja à esquerda), ×4 na tela, **64 px de altura em 1080p**, canto de baixo à esquerda com margem de 48 px. Texto em **Open Sans Bold 34 px**, maiúsculas, `#fff6ea`, sombra de 2 px `#16111c`; **o nome novo do quadro sai em laranja `#eba35c`** (KHARN, PORTÃO, VARREK, ECO). Largura = texto + 28 px de cada lado. Entra e sai com fade de 0,3 s; fica 3 s.
+
+**Sem spoiler (D-045):** o símbolo dos Vesh no mapa é **roxo e verde-ácido, nunca âmbar** (o âmbar é da ECO; os dois não podem se ligar). A silhueta do reconstrutor só observa, sem rosto.
