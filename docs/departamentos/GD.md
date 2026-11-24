@@ -19,5 +19,5 @@
 - [PARA: NAR] NAR-6: nome "Sucata", fala da Eco entre planetas, texto da escolha de Oferta depois do chefe.
 
 ## Perguntas
-- [PARA: DONO] As 5 perguntas do GD-09, seção 12 (estrutura, Sucata, dash, vida 10, Gambiarras e Ofertas). **Proposta padrão: sim em todas.**
+- ✔ As 5 perguntas do GD-09 §12: aprovadas (D-079).
 - Antigas (Zangão só de contato; −20% nos pesados): perderam o sentido com a D-077.

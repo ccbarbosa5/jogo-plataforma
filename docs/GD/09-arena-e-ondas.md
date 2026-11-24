@@ -226,7 +226,7 @@ Substitui as árvores Passiva e de Combate da D-058.
 | Loja do Ilo (vira a loja entre ondas), Créditos → Sucata | Chamado e barra de Chamado |
 | Nave, diálogos, Códice, menus, save, opções, logo, abertura, testes | Sprites de jogo vistos de lado (ART-9 refaz) |
 
-## 12. Perguntas ao dono (propostas padrão)
+## 12. Perguntas ao dono — ✔ todas aprovadas (D-079)
 1. **Estrutura:** 4 planetas × 5 ondas (20 ondas, ~18 min); no VS, só Varrek + modo Sem Descanso. **Proposta: sim.**
 2. **Nome do recurso:** "**Sucata**" (dinheiro + experiência), no lugar de Créditos. **Proposta: Sucata.**
 3. **Dash fica** como única ação do jogador (o gênero não tem); Granada e Grilhão viram armas automáticas. **Proposta: sim.**

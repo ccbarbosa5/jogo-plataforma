@@ -23,6 +23,7 @@
 - 2026-11-16 19:00 — **DEV 30 ✔** (PR #54): no pico da horda, parte dos Roedores sai de tocas no chão (buraco brilha 1,0 s antes, nunca a menos de 6 tiles, ~5% do pico). 351 testes. — DEV, GD, ART
 
 ## 3. Decisões novas (também copiadas no fim de DECISOES.md)
+- **D-079 — GD-09 aprovado como está.** *(dono, 2026-11-24)* Sim para as 5 perguntas do GD-09 §12: 4 planetas × 5 ondas (VS: Varrek + modo Sem Descanso); recurso único **Sucata**; **dash** é a única ação, Granada e Grilhão viram armas; **vida 10**; Gambiarras viram itens de arma e Ofertas viram a escolha grátis depois de cada chefe.
 - **D-078 — Código do jogo novo separado.** *(dono, 2026-11-24)* O jogo de arena nasce em pastas próprias: `scenes/arena/`, `scripts/arena/`, `data/arena/`, `tests/arena/`. O código novo **nunca usa** código de plataforma (jogador, salas, run, portas, gravidade). Peças boas (menus, diálogo, nave, Códice, save, fontes, números de dano, testes) são **reaproveitadas** como estão; armas, itens, ondas e inimigos são **reescritos** mais simples na arena. Quando a arena estiver pronta, **um PR apaga todo o código antigo** de uma vez (nada comentado ou abandonado).
 - **D-077 — Mudança total: arena com visão de cima (formato do Brotato).** *(dono, 2026-11-24)* Escolhida a opção **A** (total), não o híbrido.
   - **Jogo:** visão de cima, arena fechada; **ondas curtas** com chefe no fim; **até 6 armas** que atiram sozinhas (mira manual como opção); inimigos soltam material (dinheiro + experiência); **loja entre as ondas**; ao subir de nível, escolher 1 entre alguns atributos. Números: GD-09.
@@ -76,6 +77,6 @@
 
 **Pausados pela D-077:** DEV 32 (abertura v2) até o NAR-6 · GD-4 (pulo e enxame, perde o sentido).
 
-**Perguntas abertas nos docs dos departamentos** (responder com o dono quando ele quiser): **GD — as 5 perguntas do GD-09 §12 (proposta: sim)**; DEV — Códice como ponto próprio na nave; ART — símbolo Vesh roxo/verde no mapa, Mordida laranja e preta, apagar a fonte Atkinson.
+**Perguntas abertas nos docs dos departamentos** (responder com o dono quando ele quiser): DEV — Códice como ponto próprio na nave; ART — símbolo Vesh roxo/verde no mapa, Mordida laranja e preta, apagar a fonte Atkinson.
 
 **Pausados:** AUD (som do logo e música da abertura), QA e MKT ainda não abertos.
