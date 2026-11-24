@@ -1,22 +1,23 @@
 # GD — Game Design · Status (curto)
 
-Última atualização: 2026-11-14 23:30 (GD-3)
+Última atualização: 2026-11-24 (GD-9)
 
 ## Status
-- ✔ GD-1 e GD-2: GD-07 (progressão e mira 360°).
-- ✔ **GD-3: GD-08** (`GD/08-horda-e-ritmo.md`), seguindo a D-061 e a D-062:
-  - **Armas:** Mordida em 3,5 tiros/s × 14; Bramido em 1,0 disparo/s × 6 balins de 10. As Gambiarras e o nó de cadência sobem.
-  - **Enxame:** dois inimigos novos, o Roedor (Vesh) e o Chacal de Clã (Kharn), e o Zangão passa a ser enxame. Dano só por contato, com recuo depois do toque.
-  - **Pesados:** −20% de vida, incluindo Ur-Kesh.
-  - **Ondas:** ~80% dos inimigos entram pela direita; entradas por trás ou de cima só em picos e com aviso. Tabela de taxa, duração, pico e teto por sala (40 no máximo).
-  - **Contas:** nova curva de XP (`150 + 50n`); Créditos do enxame com 10% de chance; Núcleos sem mudança.
-  - **Para o DEV:** 7 testes, base do item 18.
+- ✔ GD-1 a GD-3: GD-07 (progressão) e GD-08 (horda). **Valem só como referência desde a D-077.**
+- ✔ **GD-9: GD-09** (`GD/09-arena-e-ondas.md`), o novo jogo (D-077):
+  - Run de 4 planetas × 5 ondas (30/40/50/60 s + chefe); no VS, só Varrek + modo Sem Descanso.
+  - Ryker com 10 de vida, dash e até 6 armas automáticas; 8 armas em 5 famílias, com fusão I→IV e bônus de família.
+  - Sucata = dinheiro + XP; nível (n+3)² com 4 atributos; loja do Ilo com 4 ofertas, reroll e cadeado.
+  - Upgrades Kharn/Vesh viram itens; Gambiarras viram itens de arma; Ofertas depois de cada chefe.
+  - 8 inimigos de Varrek vistos de cima, Brutamontes e Ur-Kesh; ondas de Varrek prontas.
+  - Progressão permanente pequena: 6 melhorias, 320 Núcleos.
+  - 13 testes para o DEV.
 
 ## Pedidos
-- [PARA: DEV] Item 18: GD-08, seções 1 a 5.
-- [PARA: ART] ART-4: sprites do Roedor (10×8), do Chacal de Clã (14×10, com pose de salto) e do Zangão revisado. Seta de aviso na borda esquerda e brilho de buraco para as entradas surpresa.
-- [PARA: NAR] Nome e uma linha do Códice para o Roedor e o Chacal de Clã.
+- [PARA: DEV] DEV 33 (protótipo): GD-09, seções 2 a 4, Mordida e Grilhão (5.2), Roedor e Zangão (9.2), ondas 1 a 3 (9.3), loja simples (7).
+- [PARA: ART] ART-9: Ryker de cima, os 8 inimigos de Varrek, arena 640×384, Sucata, ícones das 8 armas e das 5 famílias.
+- [PARA: NAR] NAR-6: nome "Sucata", fala da Eco entre planetas, texto da escolha de Oferta depois do chefe.
 
 ## Perguntas
-- [PARA: DIR] PERGUNTA: o Zangão perde o mergulho anunciado e vira enxame só de contato? **Proposta padrão:** sim.
-- [PARA: DIR] PERGUNTA: −20% de vida nos pesados e no Ur-Kesh, para acompanhar a arma mais lenta? **Proposta padrão:** sim, revisar no playtest.
+- ✔ As 5 perguntas do GD-09 §12: aprovadas (D-079).
+- Antigas (Zangão só de contato; −20% nos pesados): perderam o sentido com a D-077.
