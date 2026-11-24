@@ -16,11 +16,11 @@
 10. **Repositório (D-051):** `<REPO>` = `ccbarbosa5/no-rest` (o nome antigo `ccbarbosa5/jogo-plataforma` redireciona). itch.io: `ccbarbosa/no-rest`, Secret `BUTLER_API_KEY`. **Nunca** colar chaves em conversa, doc ou commit.
 
 ## 2. Últimas mudanças (as 5 mais novas)
+- 2026-11-24 — **GD-9 ✔**: `docs/GD/09-arena-e-ondas.md` (run de 4 planetas × 5 ondas, 8 armas em 5 famílias, Sucata, loja do Ilo, itens, inimigos de cima, progressão pequena). 5 perguntas ao dono na seção 12, com proposta "sim". — GD, DEV, ART, NAR
 - 2026-11-24 — **D-077 (dono): o jogo muda para arena com visão de cima, no formato do Brotato** (ondas curtas, loja entre ondas, até 6 armas automáticas). História fica; progressão permanente pequena. Nova lista na seção 5; DEV 32 pausado. — TODOS
 - 2026-11-24 — **D-076 (dono): migração para o Claude Code.** Todos os docs do Projeto copiados para `docs/`; regras adaptadas; agentes por departamento em `.claude/agents/`. — TODOS
 - 2026-11-16 20:40 — **DEV 31 ✔** (PR #55): Códice na nave, dentro do terminal "Arquivo da Ponte": 9 personagens e 2 armas do VS (NAR-05 §5), destravando por encontros; parágrafo extra das armas com 10 runs. 356 testes. — DEV, NAR
 - 2026-11-16 19:00 — **DEV 30 ✔** (PR #54): no pico da horda, parte dos Roedores sai de tocas no chão (buraco brilha 1,0 s antes, nunca a menos de 6 tiles, ~5% do pico). 351 testes. — DEV, GD, ART
-- 2026-11-16 03:15 — **NAR-5 ✔** (`NAR/07-abertura.md` v2: 12 quadros, 18 falas, ~95 s). **O DEV 32 usa o NAR-07 v2 como está.** Legenda de Varrek segue a D-035 (cemitério de naves), aprovado. — DEV, NAR
 
 ## 3. Decisões novas (também copiadas no fim de DECISOES.md)
 - **D-077 — Mudança total: arena com visão de cima (formato do Brotato).** *(dono, 2026-11-24)* Escolhida a opção **A** (total), não o híbrido.
@@ -67,7 +67,7 @@
 **Concluídos:** Fase 2 itens 1–7 ✔ · DEV 8–31 ✔ (PRs #19–#55; itch `dev-f2af5da`, 356 testes) · GD-1 a GD-3 ✔ · ART-1 a ART-8 ✔ · NAR-1 a NAR-5 ✔ (NAR-06, NAR-07 v2).
 
 **Nova direção (D-077), nesta ordem:**
-- GD-9. **Documento do novo jogo** (`docs/GD/09-arena-e-ondas.md`): partida (quantas ondas, duração, chefes, planetas), armas (até 6, tipos, juntar iguais), materiais e loja (preços, rolar de novo, travar), atributos e níveis, itens (o que vira das Gambiarras/Ofertas), inimigos de cima, personagens jogáveis (só o Ryker ou vários?), progressão permanente pequena. Lista do que do jogo atual se aproveita.
+- ✔ GD-9. **Documento do novo jogo** (`docs/GD/09-arena-e-ondas.md`): partida (quantas ondas, duração, chefes, planetas), armas (até 6, tipos, juntar iguais), materiais e loja (preços, rolar de novo, travar), atributos e níveis, itens (o que vira das Gambiarras/Ofertas), inimigos de cima, personagens jogáveis (só o Ryker ou vários?), progressão permanente pequena. Lista do que do jogo atual se aproveita.
 - ART-9. **Guia de estilo visão de cima** (`docs/ART/`): tamanho dos sprites, perspectiva, arena de Varrek, Ryker e 3 inimigos de teste; pacote de prompt para o ChatGPT.
 - NAR-6. **Ajustar a história ao formato** (pouco texto): onde entram falas (nave, entre ondas, chefes); abertura v2 vale ou encurta?
 - DEV 33. **Protótipo jogável da arena** (cena nova, ao lado do modo atual): Ryker de cima, 1 arma automática, 2 inimigos, 3 ondas, loja simples. Com testes.
@@ -75,6 +75,6 @@
 
 **Pausados pela D-077:** DEV 32 (abertura v2) até o NAR-6 · GD-4 (pulo e enxame, perde o sentido).
 
-**Perguntas abertas nos docs dos departamentos** (responder com o dono quando ele quiser): DEV — Códice como ponto próprio na nave; GD — Zangão só de contato e −20% de vida nos pesados (já em uso); ART — símbolo Vesh roxo/verde no mapa, Mordida laranja e preta, apagar a fonte Atkinson.
+**Perguntas abertas nos docs dos departamentos** (responder com o dono quando ele quiser): **GD — as 5 perguntas do GD-09 §12 (proposta: sim)**; DEV — Códice como ponto próprio na nave; ART — símbolo Vesh roxo/verde no mapa, Mordida laranja e preta, apagar a fonte Atkinson.
 
 **Pausados:** AUD (som do logo e música da abertura), QA e MKT ainda não abertos.
