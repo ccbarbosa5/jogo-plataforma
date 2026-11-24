@@ -23,6 +23,7 @@
 - 2026-11-16 19:00 — **DEV 30 ✔** (PR #54): no pico da horda, parte dos Roedores sai de tocas no chão (buraco brilha 1,0 s antes, nunca a menos de 6 tiles, ~5% do pico). 351 testes. — DEV, GD, ART
 
 ## 3. Decisões novas (também copiadas no fim de DECISOES.md)
+- **D-078 — Código do jogo novo separado.** *(dono, 2026-11-24)* O jogo de arena nasce em pastas próprias: `scenes/arena/`, `scripts/arena/`, `data/arena/`, `tests/arena/`. O código novo **nunca usa** código de plataforma (jogador, salas, run, portas, gravidade). Peças boas (menus, diálogo, nave, Códice, save, fontes, números de dano, testes) são **reaproveitadas** como estão; armas, itens, ondas e inimigos são **reescritos** mais simples na arena. Quando a arena estiver pronta, **um PR apaga todo o código antigo** de uma vez (nada comentado ou abandonado).
 - **D-077 — Mudança total: arena com visão de cima (formato do Brotato).** *(dono, 2026-11-24)* Escolhida a opção **A** (total), não o híbrido.
   - **Jogo:** visão de cima, arena fechada; **ondas curtas** com chefe no fim; **até 6 armas** que atiram sozinhas (mira manual como opção); inimigos soltam material (dinheiro + experiência); **loja entre as ondas**; ao subir de nível, escolher 1 entre alguns atributos. Números: GD-09.
   - **Fica:** história, mundo e personagens (Ryker, Eco/ECO, Vasha, Kharn, Vesh, Ilo, Vigílios, planetas). Cada planeta vira uma arena. Segredos da D-045 continuam.
@@ -70,8 +71,8 @@
 - ✔ GD-9. **Documento do novo jogo** (`docs/GD/09-arena-e-ondas.md`): partida (quantas ondas, duração, chefes, planetas), armas (até 6, tipos, juntar iguais), materiais e loja (preços, rolar de novo, travar), atributos e níveis, itens (o que vira das Gambiarras/Ofertas), inimigos de cima, personagens jogáveis (só o Ryker ou vários?), progressão permanente pequena. Lista do que do jogo atual se aproveita.
 - ART-9. **Guia de estilo visão de cima** (`docs/ART/`): tamanho dos sprites, perspectiva, arena de Varrek, Ryker e 3 inimigos de teste; pacote de prompt para o ChatGPT.
 - NAR-6. **Ajustar a história ao formato** (pouco texto): onde entram falas (nave, entre ondas, chefes); abertura v2 vale ou encurta?
-- DEV 33. **Protótipo jogável da arena** (cena nova, ao lado do modo atual): Ryker de cima, 1 arma automática, 2 inimigos, 3 ondas, loja simples. Com testes.
-- DEV 34+. Conforme o GD-9 (armas múltiplas, loja completa, níveis, chefes, troca do modo antigo).
+- DEV 33. **Protótipo jogável da arena** (em `scenes/arena/` e `scripts/arena/`, D-078; GD-09 §2–4, 5.2, 7, 9): Ryker de cima, 1 arma automática, 2 inimigos, 3 ondas, loja simples. Com testes.
+- DEV 34+. Conforme o GD-9 (armas múltiplas, loja completa, níveis, chefes). Último: trocar o modo e **apagar o código antigo** (D-078).
 
 **Pausados pela D-077:** DEV 32 (abertura v2) até o NAR-6 · GD-4 (pulo e enxame, perde o sentido).
 
