@@ -1,8 +1,12 @@
 # ART — Departamento de Arte · Status
 
-Última atualização: 2026-11-16 01:10 (sessão 9: ART-8)
+Última atualização: 2026-11-24 (ART-9)
 
 ## Status
+- **ART-9 ✔: guia da arena vista de cima** (`docs/ART/02-guia-visao-de-cima.md`, D-077).
+  - **Proposta em uso:** chão visto de cima, personagens de lado (como hoje) com sombra e `flip_h`. Todos os sprites atuais servem na arena; só o chão e os destroços são novos.
+  - **Pacote 11** (`prompts/11-arena-varrek.md`): 11A chão de Varrek (IA, vira o fundo) e 11B destroços (referência; a ART redesenha por código). Aguardando o dono gerar.
+  - Escala, Sucata 8×8, ícones de arma 24×24, cores de nível I–IV, HUD e loja definidos.
 - **ART-8 ✔ (PR #52): abertura v2** (D-075, NAR-07 v2, 12 quadros). Script: `ferramentas/arte/abertura_v2.py`. Arquivos em `assets/sprites/abertura/v2_*`; tabela quadro a quadro no LEIAME da pasta (seção v0.3).
   - **Novos:**
     - Q1, galáxia em guerra: fundo 640×360, frotas, 3 símbolos (Kharn, Vesh, Ilo), clarões e o pontinho humano;
@@ -19,6 +23,7 @@
 - Sem Godot nesta máquina: o teste local do Godot não rodou; o teste automático passou.
 
 ## Propostas (aguardando a DIR)
+- ⚑ **Arena: personagens de lado sobre chão visto de cima** (ART-02 §1). Padrão em uso.
 - ⚑ **Símbolo dos Vesh no mapa em roxo e verde-ácido, não em âmbar** (o NAR-07 v2 pedia "colmeia âmbar"). Motivo: o âmbar é a cor da ECO, e as duas coisas juntas ligariam a ECO aos insetos (D-045). Padrão em uso: roxo e verde.
 - ⚑ **Mordida em laranja e preto** (pedido aberto para a NAR trocar o NAR-03).
 - ⚑ Apagar a Atkinson Hyperlegible (`assets/fonts/atkinson_hyperlegible/`), sem uso desde a D-060. Padrão: apagar junto com a próxima entrega.

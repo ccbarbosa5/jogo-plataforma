@@ -26,6 +26,7 @@ Pacotes de prompt para gerar as peças principais no ChatGPT. **Todos em portugu
 | 06 | Garrak: referência + retrato | pronto para gerar |
 | 07 | Sete: referência + retrato | pronto para gerar |
 | 08 | Vossa Margem: referência + retrato | pronto para gerar |
+| 11 | **Arena de Varrek vista de cima** (chão + destroços, D-077) | pronto para gerar |
 | — | Guerreiro de Clã, Ur-Kesh (andador e a pé), Tor-Ama, Colmeia | próximas sessões |
 
 ## Regras que todo prompt segue (já vêm escritas nos blocos)
