@@ -75,6 +75,7 @@ func _montar_botoes() -> void:
 	if progresso != null and progresso.tem_jogo_salvo():
 		itens.append(["Continuar", _continuar])
 	itens.append(["Novo jogo", _novo_jogo])
+	itens.append(["Arena (teste)", Ciclo.ir_para_arena])  # D-078: protótipo do jogo novo
 	itens.append(["Opções", _opcoes])
 	itens.append(["Créditos", _mostrar_creditos])
 	if pode_sair():
