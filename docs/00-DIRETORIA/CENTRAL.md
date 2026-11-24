@@ -16,13 +16,19 @@
 10. **Repositório (D-051):** `<REPO>` = `ccbarbosa5/no-rest` (o nome antigo `ccbarbosa5/jogo-plataforma` redireciona). itch.io: `ccbarbosa/no-rest`, Secret `BUTLER_API_KEY`. **Nunca** colar chaves em conversa, doc ou commit.
 
 ## 2. Últimas mudanças (as 5 mais novas)
+- 2026-11-24 — **D-077 (dono): o jogo muda para arena com visão de cima, no formato do Brotato** (ondas curtas, loja entre ondas, até 6 armas automáticas). História fica; progressão permanente pequena. Nova lista na seção 5; DEV 32 pausado. — TODOS
 - 2026-11-24 — **D-076 (dono): migração para o Claude Code.** Todos os docs do Projeto copiados para `docs/`; regras adaptadas; agentes por departamento em `.claude/agents/`. — TODOS
 - 2026-11-16 20:40 — **DEV 31 ✔** (PR #55): Códice na nave, dentro do terminal "Arquivo da Ponte": 9 personagens e 2 armas do VS (NAR-05 §5), destravando por encontros; parágrafo extra das armas com 10 runs. 356 testes. — DEV, NAR
 - 2026-11-16 19:00 — **DEV 30 ✔** (PR #54): no pico da horda, parte dos Roedores sai de tocas no chão (buraco brilha 1,0 s antes, nunca a menos de 6 tiles, ~5% do pico). 351 testes. — DEV, GD, ART
 - 2026-11-16 03:15 — **NAR-5 ✔** (`NAR/07-abertura.md` v2: 12 quadros, 18 falas, ~95 s). **O DEV 32 usa o NAR-07 v2 como está.** Legenda de Varrek segue a D-035 (cemitério de naves), aprovado. — DEV, NAR
-- 2026-11-16 00:15 — **D-075 (dono): abertura mais lenta, falas legíveis e história fácil para quem nunca viu o mundo.** NAR-5 → ART-8 → DEV 32. — NAR, ART, DEV
 
 ## 3. Decisões novas (também copiadas no fim de DECISOES.md)
+- **D-077 — Mudança total: arena com visão de cima (formato do Brotato).** *(dono, 2026-11-24)* Escolhida a opção **A** (total), não o híbrido.
+  - **Jogo:** visão de cima, arena fechada; **ondas curtas** com chefe no fim; **até 6 armas** que atiram sozinhas (mira manual como opção); inimigos soltam material (dinheiro + experiência); **loja entre as ondas**; ao subir de nível, escolher 1 entre alguns atributos. Números: GD-09.
+  - **Fica:** história, mundo e personagens (Ryker, Eco/ECO, Vasha, Kharn, Vesh, Ilo, Vigílios, planetas). Cada planeta vira uma arena. Segredos da D-045 continuam.
+  - **Progressão permanente: versão pequena** (substitui as árvores da D-058; GD-09 define).
+  - **Perdem o efeito:** D-062 (horda da esquerda para a direita), D-069, D-070, D-071, D-074 e as partes de pulo/plataforma da D-052. Revisar com o dono: D-058 (Gambiarras/Ofertas podem virar itens da loja), D-061, D-075 (abertura).
+  - **Regras:** seguimos o **gênero**, sem copiar nome, personagens, arte ou visual do Brotato. A `main` continua jogável: o modo novo nasce ao lado do atual e só o substitui quando estiver pronto.
 - **D-076 — Claude Code.** *(dono, 2026-11-24)* O estúdio passa a trabalhar no Claude Code. Docs em `docs/` (versão oficial), regras no `CLAUDE.md` da raiz, agentes por departamento em `.claude/agents/`. O Projeto "No Rest" do claude.ai vira arquivo; não editar mais lá.
 - **D-075 — Abertura v2: ritmo calmo e história clara.** *(dono, 2026-11-16)* Revisa a D-073B. Roteiro final: **`docs/NAR/07-abertura.md` v2**.
   - **Ritmo:** ~75–100 s (o v2 tem ~95 s). Cada quadro fica o tempo das suas falas + ~1,5 s. Câmera mais lenta.
@@ -48,7 +54,7 @@
 - **D-059** avisar antes de fazer · **D-052** controles com mouse · **D-053** menu inicial · **D-054** sem barra de teclas · **D-056** texto nítido · **D-057** placa legível · **D-058** progressão (GD-07).
 
 ## 4. O jogo em 10 linhas
-- **No Rest:** shooter de plataforma 2D (Metal Slug) + roguelike (Hades), pixel art 480×270, Godot 4. **Horda de inimigos vindo da frente (D-062), que pula e persegue (D-071).**
+- **No Rest:** ⚠ **mudando (D-077)** para arena com visão de cima no formato do Brotato (ondas, loja, até 6 armas automáticas). Era: shooter de plataforma 2D + roguelike. Pixel art 480×270, Godot 4.
 - **Ryker Vale**, gladiador fugitivo; habilidades **Granada** e **Grilhão**; arma **Mordida**; universal do VS: **Bramido**.
 - Atos: **Varrek** (Ur-Kesh) → Tarvo → Zhinn → **Vigília**. Run atravessa vários planetas.
 - Nave **Eco**; a **ECO** é a máscara secreta da Rainha **Vasha** (final verdadeiro). ⚠ Segredo.
@@ -60,11 +66,14 @@
 ## 5. Listas de trabalho (uma tarefa por vez, em ordem; marque ✔ ao integrar)
 **Concluídos:** Fase 2 itens 1–7 ✔ · DEV 8–31 ✔ (PRs #19–#55; itch `dev-f2af5da`, 356 testes) · GD-1 a GD-3 ✔ · ART-1 a ART-8 ✔ · NAR-1 a NAR-5 ✔ (NAR-06, NAR-07 v2).
 
-**DEV:**
-32. **D-075 — abertura v2** (**pronto para começar:** roteiro `docs/NAR/07-abertura.md` v2 como está + peças do ART-8 em `assets/sprites/abertura/LEIAME.md`, seção v0.3): trocar `DURACOES`, `AGENDA_FALAS` e `LEGENDAS` pelos valores do NAR-07 v2; tempo mínimo de leitura por fala; quadro não troca com fala na tela; clique/E/Espaço avança fala; legendas de 3 s; logo final de 2 s também no 1º Novo jogo; teste que confere o tempo mínimo de cada fala. Publicar no itch ao terminar 29–32.
+**Nova direção (D-077), nesta ordem:**
+- GD-9. **Documento do novo jogo** (`docs/GD/09-arena-e-ondas.md`): partida (quantas ondas, duração, chefes, planetas), armas (até 6, tipos, juntar iguais), materiais e loja (preços, rolar de novo, travar), atributos e níveis, itens (o que vira das Gambiarras/Ofertas), inimigos de cima, personagens jogáveis (só o Ryker ou vários?), progressão permanente pequena. Lista do que do jogo atual se aproveita.
+- ART-9. **Guia de estilo visão de cima** (`docs/ART/`): tamanho dos sprites, perspectiva, arena de Varrek, Ryker e 3 inimigos de teste; pacote de prompt para o ChatGPT.
+- NAR-6. **Ajustar a história ao formato** (pouco texto): onde entram falas (nave, entre ondas, chefes); abertura v2 vale ou encurta?
+- DEV 33. **Protótipo jogável da arena** (cena nova, ao lado do modo atual): Ryker de cima, 1 arma automática, 2 inimigos, 3 ondas, loja simples. Com testes.
+- DEV 34+. Conforme o GD-9 (armas múltiplas, loja completa, níveis, chefes, troca do modo antigo).
 
-**GD (pequeno, quando o dono mandar):**
-- GD-4. Conferir os valores de pulo e a mistura do enxame que o DEV usou (ver `docs/departamentos/DEV.md`, Pedidos) e acrescentar ao GD-08; decidir se as arenas passam de 1 para 1,5 tela.
+**Pausados pela D-077:** DEV 32 (abertura v2) até o NAR-6 · GD-4 (pulo e enxame, perde o sentido).
 
 **Perguntas abertas nos docs dos departamentos** (responder com o dono quando ele quiser): DEV — Códice como ponto próprio na nave; GD — Zangão só de contato e −20% de vida nos pesados (já em uso); ART — símbolo Vesh roxo/verde no mapa, Mordida laranja e preta, apagar a fonte Atkinson.
 
