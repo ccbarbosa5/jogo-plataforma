@@ -216,3 +216,25 @@ func test_menu_inicial_abre_a_arena() -> void:
 	Ciclo.ir_para_arena()
 	afirmar_igual(Ciclo.ultima_cena_pedida, Ciclo.CENA_ARENA, "pede a cena da arena")
 	Ciclo.ultima_cena_pedida = ""
+
+
+## O Ryker anda para baixo com S e seta para baixo, e para cima com W (ações próprias da arena,
+## que não dependem do "Agachar" trocável do jogo antigo).
+func test_wasd_e_setas_movem_nas_4_direcoes() -> void:
+	var a := _arena()
+	a.jogador.ler_entrada = true
+	await esperar_frames(1)
+	var casos: Dictionary = {KEY_S: Vector2.DOWN, KEY_DOWN: Vector2.DOWN, KEY_W: Vector2.UP, KEY_D: Vector2.RIGHT, KEY_A: Vector2.LEFT}
+	for tecla: Key in casos:
+		var antes: Vector2 = a.jogador.position
+		var e := InputEventKey.new()
+		e.physical_keycode = tecla
+		e.pressed = true
+		Input.parse_input_event(e)
+		await esperar_frames(10)
+		e.pressed = false
+		Input.parse_input_event(e)
+		await esperar_frames(2)
+		var passo: Vector2 = (a.jogador.position - antes).normalized()
+		afirmar(passo.dot(casos[tecla]) > 0.9, "%s move para %s" % [OS.get_keycode_string(tecla), casos[tecla]])
+	await _limpar(a)

@@ -58,7 +58,7 @@ func _physics_process(delta: float) -> void:
 	_invencivel = maxf(_invencivel - delta, 0.0)
 	_dash_espera = maxf(_dash_espera - delta, 0.0)
 	if ler_entrada:
-		direcao = Input.get_vector("mover_esquerda", "mover_direita", "mirar_cima", "mirar_baixo")
+		direcao = Input.get_vector("mover_esquerda", "mover_direita", "mover_cima", "mover_baixo")
 		if Input.is_action_just_pressed("dash"):
 			dar_dash()
 	if direcao != Vector2.ZERO:
