@@ -1,0 +1,83 @@
+# DECISÕES OFICIAIS — No Rest (arquivo completo)
+
+Só a DIR escreve aqui. **Não leia inteiro:** procure (busca do projeto) pelo número ou pelo assunto quando a sua tarefa precisar. As decisões novas também aparecem resumidas na CENTRAL.
+
+- D-001 Gênero: shooter de plataforma 2D (Metal Slug) + estrutura roguelike (Hades).
+- D-002 Tema: guerra espacial entre raças; protagonista humano.
+- D-003 PC primeiro; builds no itch.io; código no GitHub do dono.
+- D-004 Primeiro marco: Vertical Slice (VS) — escopo na CENTRAL.
+- D-005 Godot 4 (4.5.1), GDScript tipado, renderizador Compatibility, 480×270 com escala inteira, tile 16 px.
+- D-006 Atos = planetas com várias fases.
+- D-007 Refúgio = nave-base Eco; início em cápsula de pouso; na morte volta à nave.
+- D-008 Raças = "deuses do Hades": dão upgrades durante a run.
+- D-009 Repositório ccbarbosa5/jogo-plataforma; branch por departamento; PR revisado pela DIR.
+- D-010 Tom misto: comédia/ação por cima, drama por baixo. *(dono)*
+- D-011 3 personagens jogáveis humanos com kits próprios; VS tem 1. *(dono)*
+- D-012 Testes automáticos obrigatórios (GitHub Actions + Godot headless).
+- D-013 Uma run atravessa vários planetas (Ato 1→4).
+- D-014 Facções do VS: Kharn (explosão, empurrão, atordoamento) e Vesh (divisão de projéteis, drones, ácido). Ilo = mercador; facção no Ato 2.
+- D-015 Recurso permanente: Núcleos. Créditos são da run.
+- D-016 Protagonista: Ryker Vale, gladiador fugitivo ("Krat'zu"); Ferramenta: Grilhão. Visual oficial: "campeão" (D-046). *(dono)*
+- D-017 4 blocos de vida; mira fixa em 8 direções; mira e tiro automáticos como acessibilidade; dash com invulnerabilidade. *(dono)*
+- D-018 Co-op fora do VS, código preparado. *(dono)*
+- D-019 ~~armas pesadas~~ — substituída pela D-038.
+- D-020 Loja da run: mercador Ilo genérico; Vossa Margem (nave) vende melhorias permanentes.
+- D-021 Mundo **inspirado** em "Beyond the Aquila Rift": só ideias (rede de portais antiga quebrada, viagens desviadas, tempo profundo, criatura que prende em ilusões). Proibido: nomes, personagens, cenas, aranha e teia do episódio. *(dono)*
+- D-022 A Rainha: rainha-cupim colossal no fundo da rede; prende viajantes em ilusões "por piedade"; substitui os Silentes. *(dono)*
+- D-023 A ECO (mulher de luz âmbar em holograma) é a máscara da Rainha. Atração e carisma, sem conteúdo sexual explícito; limite visual = imagens aprovadas (D-047). *(dono)*
+- D-024 A Rainha é a mãe esquecida dos Vesh; o loop pode ser ilusão; revelado aos poucos, nada confirmado no VS.
+- D-025 NAR v0.3 aprovada: peças voltam ao altar; Sete chega como amostra; Ryker = Molde 4; Tor-Ama; A Colmeia.
+- D-026 GD: 1 upgrade por slot (Passivos acumulam); upgrades modificam a Ferramenta; teto de 3 ataques anunciados; Kharn × Vesh brigam na sala 5; corpo a corpo automático; economia ~870 Núcleos.
+- D-027 Ferramenta no O / LB; recarga do dash conta do fim do dash; Grilhão dá dano em leves; números do Grilhão = GD-02 §1.1.
+- D-028 Primeira build no itch.io só no VS.
+- D-029 Molde 2 = Caçadora de Titãs; Molde 3 = Último Lanceiro; Molde 1 = mistério.
+- D-030 Tecnologia e magia convivem; cada raça viaja a seu modo; upgrades mágicos = feitiços/bênçãos/maldições. *(dono)*
+- D-031 Título: **No Rest** (ECO diz "Descanse"; Ryker não para). Cuidado: existe *No Rest for the Wicked*. *(dono)*
+- D-032 Diálogo estilo Hades: retrato grande (~144×208, pixel art detalhada) de quem fala, placa **só com o nome** (D-046), caixa larga com moldura por facção e seta; jogáveis à esquerda; só fora de combate (em combate, falas rápidas no topo). Nada copiado do Hades. *(dono)*
+- D-033 ART v0.1 aprovada: paleta oficial; Ryker 32×32 com origem nos pés; cor AVISO #fff3a0 só para ataques; nave teal × ECO âmbar (pista; dono manteve o âmbar); vida = 4 elos de corrente; Ryker em pernas + tronco.
+- D-034 A Rainha é chefe do **final verdadeiro** (Ruptura → o Fundo), após 3 vitórias; Ato 4 tem chefe próprio; contador `duvida` desde o VS.
+- D-035 NAR-02 aprovada: Rainha **Vasha** ("Vesh" = "os de Vasha"); o Caminho; Varrek é um ralo; peças = Chaves de Salto (Selos dos Antigos); fuga do Ryker foi desvio, com Garrak; sinal = sonhos dos presos; Clã Kesh; Molde 1 arrancou a âncora; verdade do loop ambígua, só na Ruptura.
+- D-036 GD-03 aprovado: sala 0 sem texto; salas por blocos + orçamento de ameaça; entrada justa (6 tiles, 0,5 s, 1 s de invulnerabilidade); buraco tira 1 bloco e devolve ao chão; "amostras" = Dados de Inteligência.
+- D-037 Números provisórios do DEV valem até GD confirmar.
+- D-038 Armas: 3 próprias (exclusivas) + 3 universais (pela história, sem custo, uma por raça); escolha no Arsenal antes da run; munição infinita; **sem armas pesadas**; mini árvore por arma que zera na run (árvore = comportamento; facção = efeito). *(dono)*
+- D-039 Arte com IA: ART escreve prompts → dono gera no ChatGPT e anexa na conversa de Arte → ART trata (`ferramentas/arte/tratar_ia.py`) e integra. Registrar IA em `assets/CREDITS.md`; declarar IA na Steam. *(dono)*
+- D-040 GD-05 aprovado: árvore 3×3, custo 1/2/3, 1 Ápice por run, pontos guardáveis; pontos por porta "Aprimoramento de Arma" (máx. 3/ato), chefe, loja (90 Créditos) e Treino com Garrak; `peso_disparo` e `fator_efeito`; Mordida (Embalo; Ovação/Rajada/Corrente) e Bramido (Coice; Cerco/Brecha/Fornalha).
+- D-041 NAR-03 aprovada: Mordida, Bramido (= Canhão do Campeão), Liquidação (Leiloeiro, Ato 2), Lanterna da Vigília (Último Vigia, Ato 4), Arpão de Titã, Lança do Vazio; Arsenal imprime moldes; falas ARSE_*/CAMP_*.
+- D-042 Vigílios: raça mágica que nunca dorme; Ato 4 "Vigília, o Último Portão"; chefe o Último Vigia; "o Fundo" = Ruptura.
+- D-043 ↓ mira só no ar; sprites provisórios ficam até os finais; ferramenta de IA fora do CI; ART entrega arquivos, DEV liga nas cenas; laranja = coisas do Ryker; Embalo em barrinha laranja; aviso = brasa + flash AVISO nos últimos 0,2 s.
+- D-044 ~~títulos das placas~~ — substituída pela D-046 (as expressões continuam).
+- D-045 Prompts **sempre em português**; pacote 00 "Briefing visual" sem segredos da história nem citação de outras obras. *(dono)*
+- D-046 Placa **só com o nome**; **acentos e ç obrigatórios** em todo texto na tela (fonte com caracteres do português + teste automático); visual do Ryker "campeão" e da ECO v2 **aprovado** como referência. *(dono)*
+- D-047 IA faz o que é grande; sprites pequenos por código copiando as referências; tela da árvore sempre com moldura humana; limite visual da ECO = imagens aprovadas (vestido elegante, sem nudez nem pose sexual).
+- D-048 **Modo econômico** (créditos): CENTRAL curta; decisões neste arquivo; um departamento por vez; tarefas enviadas pelo dono com mensagem específica; ler só o necessário. *(dono)*
+- D-049 **Fase 1 fechada** (PRs #9, #10, #11; 107 testes). **Fonte do jogo:** Micro5 e Jersey10 (OFL), escolhidas pelo DEV, com teste de acentos; a fonte própria da ART (`no_rest_5`) fica para ferramentas e mockups. PRs não devem ser empilhados sobre outros ainda abertos.
+- Segurança: chaves de API nunca em conversas ou docs; só nos Secrets do GitHub.
+
+## Decisões D-050 a D-076 (copiadas da CENTRAL na migração para o Claude Code, 2026-11-24)
+- D-050 **Auto-merge:** o departamento integra o próprio PR com `Testes` verde, sem conflito e sem mudar decisão oficial; problema que não resolve vai para a Diretoria.
+- D-051 Repositório renomeado para `ccbarbosa5/no-rest` (o nome antigo redireciona); página do itch `ccbarbosa/no-rest`; Secret `BUTLER_API_KEY`.
+- D-052 **Controles com mouse** (substitui a mira fixa da D-017): WASD move (W não pula), Espaço pula, mira 360° pelo mouse, botão esquerdo atira, direito = Grilhão, Shift = dash, Q = granada, E = interagir, Esc = pausa; gamepad mira no analógico direito. *(dono)*
+- D-053 **Menu inicial:** logo + fundo; Continuar, Novo jogo, Opções, Créditos, Sair. *(dono)*
+- D-054 **Sem barra de teclas** na tela; controles remapeáveis no menu de pausa. *(dono)*
+- D-055 ~~Árvore de arma só na nave e permanente~~ — substituída pela D-058.
+- D-056 **Texto nítido** em resolução nativa, fonte limpa (Open Sans, D-060); teste de acentos continua. *(dono)*
+- D-057 **Placa de nome legível**, alto contraste. *(dono)*
+- D-058 **Progressão:** armas só atiram no nível 1 (sem assinaturas); kit = dash + Granada + Grilhão + Chamado; árvore Passiva (permanente, de todos, Núcleos, Vossa Margem); árvore de Combate por personagem (nível permanente, só na nave, redistribuível); Gambiarras (1 entre 3 por sala, somem na morte); Grilhão não interrompe o tiro. Números: GD-07. *(dono)*
+- D-059 **Avisar antes de fazer:** toda resposta começa dizendo o que vai ser feito, sem esperar confirmação. *(dono)*
+- D-060 Propostas padrão aprovadas: GD (Marca do Grilhão, máx. 2 Ápices, cobertura do Artilheiro/carapaça do Ninho); ART (logo variação 3, Ilo latão/cobre + gás azul-pálido, Vossa de frente, quem não fala ~55%, fonte Open Sans); DEV (abandonar run ≠ morte, loja Cura 40/Oferta 80, Esquiva de Arena, Recarga de Campo, saves antigos, sem Soldado Kharn); NAR (Códice na nave, piada fica).
+- D-061 **Arma mais lenta;** mira e tiro automáticos continuam como opção completa; o desafio é a movimentação. *(dono)*
+- D-062 **HORDA:** sensação de Vampire Survivors; fase da esquerda para a direita, inimigos principalmente da frente; ondas contínuas; enxame (Roedor, Chacal de Clã, Zangão); 15–25 na tela, picos de 30–40. Números: GD-08. *(dono)*
+- D-063 **Falas:** 32 px; limite de 160 caracteres por página; NAR mira em 120; divisão automática. *(dono)*
+- D-064 **Caixa de diálogo:** mais margem em cima; texto entre colchetes não aparece (fica como nota para AUD). *(dono)*
+- D-065 **Menus:** mouse sempre, Esc sempre volta; exceção: Gambiarra. *(dono)*
+- D-066 **Recompensa de escolha só com E ou clique** (Créditos e vida soltos continuam ao encostar). *(dono)*
+- D-067 **Números de dano na tela** (cores, soma por inimigo, limite ~30, opção para desligar). *(dono)*
+- D-068 **Recompensa com várias opções tem volta;** só confirmar gasta; só a Gambiarra é obrigatória. *(dono)*
+- D-069 **Rastro de chão sempre no chão;** sobre buraco, sem poça. *(dono)*
+- D-070 **Toda plataforma alcançável** com o pulo base; só com dash/melhoria = exceção marcada; teste automático. *(dono)*
+- D-071 **Inimigos pulam, perseguem e nunca ficam presos** (valores em `@export`). *(dono)*
+- D-072 **"Dádiva" vira "Oferta"** em todo texto na tela. *(dono)*
+- D-073 **Animação de entrada:** logo animado ao abrir o jogo + abertura da história no 1º Novo jogo, em pixel art no Godot. *(dono)*
+- D-074 A queda `queda_tutorial_grilhao` fica como exceção marcada à D-070.
+- D-075 **Abertura v2:** ~75–100 s, tempo mínimo de leitura por fala, clique/E/Espaço avança, legendas de apoio, quadros da galáxia e de "morrer = voltar"; roteiro `NAR/07` v2. *(dono)*
+- D-076 **Claude Code:** o estúdio passa a trabalhar no Claude Code; docs oficiais em `docs/`, regras no `CLAUDE.md`, agentes em `.claude/agents/`; o Projeto do claude.ai vira arquivo. *(dono)*
