@@ -16,11 +16,11 @@
 10. **Repositório (D-051):** `<REPO>` = `ccbarbosa5/no-rest` (o nome antigo `ccbarbosa5/jogo-plataforma` redireciona). itch.io: `ccbarbosa/no-rest`, Secret `BUTLER_API_KEY`. **Nunca** colar chaves em conversa, doc ou commit.
 
 ## 2. Últimas mudanças (as 5 mais novas)
+- 2026-11-24 — **ART-9 ✔**: `docs/ART/02-guia-visao-de-cima.md` + pacote 11 (chão de Varrek e destroços para gerar no ChatGPT). Proposta em uso: personagens de lado sobre chão visto de cima, reaproveitando todos os sprites atuais. — ART, DEV
 - 2026-11-24 — **DEV 33 ✔**: protótipo da arena jogável pelo botão "Arena (teste)" do menu inicial: Ryker de cima com dash, Mordida e Grilhão automáticos, Roedor e Zangão, 3 ondas, Sucata e loja do Ilo. Arte provisória. 369 testes. — DEV, GD, ART
 - 2026-11-24 — **GD-9 ✔**: `docs/GD/09-arena-e-ondas.md` (run de 4 planetas × 5 ondas, 8 armas em 5 famílias, Sucata, loja do Ilo, itens, inimigos de cima, progressão pequena). 5 perguntas ao dono na seção 12, com proposta "sim". — GD, DEV, ART, NAR
 - 2026-11-24 — **D-077 (dono): o jogo muda para arena com visão de cima, no formato do Brotato** (ondas curtas, loja entre ondas, até 6 armas automáticas). História fica; progressão permanente pequena. Nova lista na seção 5; DEV 32 pausado. — TODOS
 - 2026-11-24 — **D-076 (dono): migração para o Claude Code.** Todos os docs do Projeto copiados para `docs/`; regras adaptadas; agentes por departamento em `.claude/agents/`. — TODOS
-- 2026-11-16 20:40 — **DEV 31 ✔** (PR #55): Códice na nave, dentro do terminal "Arquivo da Ponte": 9 personagens e 2 armas do VS (NAR-05 §5), destravando por encontros; parágrafo extra das armas com 10 runs. 356 testes. — DEV, NAR
 
 ## 3. Decisões novas (também copiadas no fim de DECISOES.md)
 - **D-079 — GD-09 aprovado como está.** *(dono, 2026-11-24)* Sim para as 5 perguntas do GD-09 §12: 4 planetas × 5 ondas (VS: Varrek + modo Sem Descanso); recurso único **Sucata**; **dash** é a única ação, Granada e Grilhão viram armas; **vida 10**; Gambiarras viram itens de arma e Ofertas viram a escolha grátis depois de cada chefe.
@@ -70,13 +70,14 @@
 
 **Nova direção (D-077), nesta ordem:**
 - ✔ GD-9. **Documento do novo jogo** (`docs/GD/09-arena-e-ondas.md`): partida (quantas ondas, duração, chefes, planetas), armas (até 6, tipos, juntar iguais), materiais e loja (preços, rolar de novo, travar), atributos e níveis, itens (o que vira das Gambiarras/Ofertas), inimigos de cima, personagens jogáveis (só o Ryker ou vários?), progressão permanente pequena. Lista do que do jogo atual se aproveita.
-- ART-9. **Guia de estilo visão de cima** (`docs/ART/`): tamanho dos sprites, perspectiva, arena de Varrek, Ryker e 3 inimigos de teste; pacote de prompt para o ChatGPT.
+- ✔ ART-9. **Guia de estilo visão de cima** (`docs/ART/`): tamanho dos sprites, perspectiva, arena de Varrek, Ryker e 3 inimigos de teste; pacote de prompt para o ChatGPT.
 - NAR-6. **Ajustar a história ao formato** (pouco texto): onde entram falas (nave, entre ondas, chefes); abertura v2 vale ou encurta?
 - ✔ DEV 33. **Protótipo jogável da arena** (em `scenes/arena/` e `scripts/arena/`, D-078; GD-09 §2–4, 5.2, 7, 9): Ryker de cima, 1 arma automática, 2 inimigos, 3 ondas, loja simples. Com testes.
-- DEV 34+. Conforme o GD-9 (armas múltiplas, loja completa, níveis, chefes). Último: trocar o modo e **apagar o código antigo** (D-078).
+- DEV 34. **Arena com os sprites atuais** (ART-02 §1 e §6): Ryker e inimigos de lado com sombra, `flip_h` e `y_sort`; marca de nascimento na cor AVISO; Sucata 8×8.
+- DEV 35+. Conforme o GD-9 (armas múltiplas, loja completa, níveis, chefes). Último: trocar o modo e **apagar o código antigo** (D-078).
 
 **Pausados pela D-077:** DEV 32 (abertura v2) até o NAR-6 · GD-4 (pulo e enxame, perde o sentido).
 
-**Perguntas abertas nos docs dos departamentos** (responder com o dono quando ele quiser): DEV — Códice como ponto próprio na nave; ART — símbolo Vesh roxo/verde no mapa, Mordida laranja e preta, apagar a fonte Atkinson.
+**Perguntas abertas nos docs dos departamentos** (responder com o dono quando ele quiser): DEV — Códice como ponto próprio na nave; ART — **arena com personagens de lado sobre chão visto de cima (padrão em uso)**, símbolo Vesh roxo/verde no mapa, Mordida laranja e preta, apagar a fonte Atkinson.
 
 **Pausados:** AUD (som do logo e música da abertura), QA e MKT ainda não abertos.
