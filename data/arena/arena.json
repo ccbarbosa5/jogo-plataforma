@@ -1,0 +1,60 @@
+{
+ "_fonte": "GD-09 (D-077, D-079). Protótipo DEV 33: só Mordida, Grilhão, Roedor e Zangão, ondas 1 a 3.",
+ "ryker": {
+  "vida_max": 10,
+  "velocidade": 110.0,
+  "raio": 6.0,
+  "ima": 48.0,
+  "invencivel": 0.5,
+  "dash_distancia": 64.0,
+  "dash_duracao": 0.15,
+  "dash_recarga": 1.5,
+  "slots": 6,
+  "arma_inicial": "mordida"
+ },
+ "arena": {
+  "largura": 640,
+  "altura": 384,
+  "margem_parede": 16,
+  "distancia_minima_nascer": 96.0,
+  "aviso_nascer": 1.0,
+  "teto_inimigos": 40,
+  "pico_segundos_finais": 10.0,
+  "pico_multiplicador": 2.0,
+  "atracao_fim_onda": 400.0
+ },
+ "armas": {
+  "mordida": {
+   "nome": "Mordida", "familia": "arena", "tipo": "distancia",
+   "dano": 6, "recarga": 0.4, "alcance": 200.0, "velocidade_projetil": 600.0
+  },
+  "grilhao": {
+   "nome": "Grilhão", "familia": "arena", "tipo": "corpo",
+   "dano": 12, "recarga": 1.0, "alcance": 64.0, "arco_graus": 90.0, "puxao": 24.0
+  }
+ },
+ "niveis_arma": {
+  "maximo": 4,
+  "multiplicador_dano": [1.0, 1.5, 2.2, 3.2],
+  "reducao_recarga_por_nivel": 0.10,
+  "preco_base": [15, 35, 70, 120]
+ },
+ "inimigos": {
+  "roedor": { "nome": "Roedor", "vida": 6, "velocidade": 70.0, "dano": 1, "sucata": 1, "raio": 5.0 },
+  "zangao": { "nome": "Zangão", "vida": 5, "velocidade": 85.0, "dano": 1, "sucata": 1, "raio": 4.0,
+   "zigue_amplitude": 30.0, "zigue_frequencia": 1.5 }
+ },
+ "forca_por_onda": { "vida": 0.15, "dano": 0.06 },
+ "ondas": [
+  { "duracao": 30.0, "taxa": [0.8, 1.2], "mistura": { "roedor": 0.85, "zangao": 0.15 }, "pico": false },
+  { "duracao": 40.0, "taxa": [1.0, 1.5], "mistura": { "roedor": 0.75, "zangao": 0.25 }, "pico": false },
+  { "duracao": 50.0, "taxa": [1.2, 1.8], "mistura": { "roedor": 0.65, "zangao": 0.35 }, "pico": true }
+ ],
+ "loja": {
+  "ofertas": 4,
+  "aumento_preco_por_onda": 0.10,
+  "raridade_onda_1": [90, 9, 1, 0],
+  "raridade_onda_20": [40, 35, 20, 5],
+  "lendaria_a_partir_da_onda": 8
+ }
+}

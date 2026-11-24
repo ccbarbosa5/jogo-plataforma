@@ -54,7 +54,7 @@ func test_sem_jogo_salvo_nao_tem_continuar() -> void:
 	await esperar_frames(1)
 	var textos: Array[String] = t.textos_dos_botoes()
 	afirmar(not textos.has("Continuar"), "sem Continuar")
-	afirmar_igual(textos.slice(0, 4), ["Novo jogo", "Opções", "Créditos", "Sair"] as Array[String], "botões na ordem")
+	afirmar_igual(textos.slice(0, 5), ["Novo jogo", "Arena (teste)", "Opções", "Créditos", "Sair"] as Array[String], "botões na ordem")
 	_limpar()
 
 

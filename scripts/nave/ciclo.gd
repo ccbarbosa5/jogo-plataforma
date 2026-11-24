@@ -6,6 +6,8 @@ const CENA_TITULO: String = "res://scenes/ui/tela_titulo.tscn"
 const CENA_NAVE: String = "res://scenes/nave/nave_eco.tscn"
 const CENA_RUN: String = "res://scenes/run/run_ato1.tscn"
 const CENA_ABERTURA: String = "res://scenes/ui/abertura_historia.tscn"
+## D-077/D-078: protótipo da arena (jogo novo), aberto pelo menu inicial.
+const CENA_ARENA: String = "res://scenes/arena/arena.tscn"
 const ARMAS: Dictionary = {
 	&"mordida": "res://scenes/armas/mordida.tres",
 	&"bramido": "res://scenes/armas/bramido.tres",
@@ -56,6 +58,11 @@ func ir_para_abertura(rever: bool = false) -> void:
 	resultado = ""
 	abertura_rever = rever
 	_trocar(CENA_ABERTURA)
+
+
+## Menu inicial → protótipo da arena (DEV 33).
+func ir_para_arena() -> void:
+	_trocar(CENA_ARENA)
 
 
 ## Pausa da nave → menu inicial.
