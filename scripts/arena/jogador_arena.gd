@@ -6,6 +6,7 @@ extends Node2D
 
 signal vida_mudou(vida: int, vida_max: int)
 signal morreu
+signal subiu_de_nivel(nivel: int)
 
 const PASTA: String = "res://assets/sprites/personagens/ryker/"
 const QPS_CORRER: float = 12.0
@@ -27,6 +28,14 @@ var limites: Rect2 = Rect2(0, 0, 640, 384)
 ## Destroços sólidos (a arena define; null = sem obstáculos).
 var obstaculos: ObstaculosArena
 var inventario: InventarioArmas
+## Atributos da run (níveis + itens, GD-09 §6.3).
+var atributos := AtributosArena.new()
+## Nível da run e experiência dentro do nível (a Sucata pega vira XP, GD-09 §6.2).
+var nivel: int = 1
+var xp: int = 0
+## Níveis ganhos que ainda esperam a escolha de atributo (no fim da onda).
+var niveis_pendentes: int = 0
+var rng := RandomNumberGenerator.new()
 ## Os testes desligam a entrada do teclado.
 var ler_entrada: bool = true
 ## Direção pedida neste frame (a entrada ou os testes escrevem aqui).
@@ -42,6 +51,7 @@ var _pernas: Sprite2D
 var _tronco: Sprite2D
 var _corpo_dash: Sprite2D
 var _anim: float = 0.0
+var _regenerar: float = 0.0
 
 
 func _ready() -> void:
@@ -71,13 +81,14 @@ func _physics_process(delta: float) -> void:
 		return
 	_invencivel = maxf(_invencivel - delta, 0.0)
 	_dash_espera = maxf(_dash_espera - delta, 0.0)
+	_passo_regeneracao(delta)
 	if ler_entrada:
 		direcao = Input.get_vector("mover_esquerda", "mover_direita", "mover_cima", "mover_baixo")
 		if Input.is_action_just_pressed("dash"):
 			dar_dash()
 	if direcao != Vector2.ZERO:
 		_dash_direcao = direcao.normalized()
-	var passo: Vector2 = direcao.limit_length(1.0) * velocidade * delta
+	var passo: Vector2 = direcao.limit_length(1.0) * velocidade_atual() * delta
 	if _dash_tempo > 0.0:
 		_dash_tempo -= delta
 		passo = _dash_direcao * (dash_distancia / dash_duracao) * delta
@@ -131,14 +142,75 @@ func esta_em_dash() -> bool:
 func levar_dano(dano: int) -> bool:
 	if morto or _invencivel > 0.0 or esta_em_dash():
 		return false
-	vida = maxi(vida - dano, 0)
 	_invencivel = invencivel_duracao
+	if rng.randf() * 100.0 < atributos.chance_esquiva():
+		return false  # esquivou: só a invencibilidade curta
+	dano = maxi(roundi(dano * atributos.fator_armadura()), 1)
+	vida = maxi(vida - dano, 0)
 	NumerosDano.mostrar(self, dano, NumerosDano.Tipo.JOGADOR)
 	vida_mudou.emit(vida, vida_max)
 	if vida == 0:
 		morto = true
 		morreu.emit()
 	return true
+
+
+func velocidade_atual() -> float:
+	return velocidade * maxf(1.0 + atributos.valor("velocidade_pct") / 100.0, 0.3)
+
+
+func raio_ima() -> float:
+	return ima + atributos.valor("coleta")
+
+
+## Cada acerto das armas: chance de Roubo de vida (cura 1).
+func ao_acertar() -> void:
+	if rng.randf() * 100.0 < atributos.valor("roubo_vida"):
+		curar(1)
+
+
+func curar(quanto: int) -> void:
+	if morto or vida >= vida_max:
+		return
+	vida = mini(vida + quanto, vida_max)
+	vida_mudou.emit(vida, vida_max)
+
+
+## Experiência para passar do nível atual ao próximo: (n + 3)².
+func xp_para_proximo() -> int:
+	return (nivel + 3) * (nivel + 3)
+
+
+func ganhar_xp(quanto: int) -> void:
+	xp += quanto
+	while xp >= xp_para_proximo():
+		xp -= xp_para_proximo()
+		nivel += 1
+		niveis_pendentes += 1
+		var extra: int = int(ConfigArena.secao("nivel")["vida_por_nivel"])
+		vida_max += extra
+		curar(extra)
+		subiu_de_nivel.emit(nivel)
+
+
+## Soma um atributo (carta de nível ou item). Vida máx. também cura o que ganhou.
+func aplicar_efeitos(efeitos: Dictionary) -> void:
+	atributos.somar_efeitos(efeitos)
+	var vida_extra: int = int(efeitos.get("vida_max", 0))
+	if vida_extra != 0:
+		vida_max = maxi(vida_max + vida_extra, 1)
+		vida = clampi(vida + maxi(vida_extra, 0), 1, vida_max)
+		vida_mudou.emit(vida, vida_max)
+
+
+func _passo_regeneracao(delta: float) -> void:
+	var intervalo: float = atributos.intervalo_regeneracao()
+	if intervalo <= 0.0:
+		return
+	_regenerar += delta
+	if _regenerar >= intervalo:
+		_regenerar -= intervalo
+		curar(1)
 
 
 ## Põe uma arma no inventário (ou funde) e refaz os nós das armas.

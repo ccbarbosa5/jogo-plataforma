@@ -16,11 +16,11 @@
 10. **Repositório (D-051):** `<REPO>` = `ccbarbosa5/no-rest` (o nome antigo `ccbarbosa5/jogo-plataforma` redireciona). itch.io: `ccbarbosa/no-rest`, Secret `BUTLER_API_KEY`. **Nunca** colar chaves em conversa, doc ou commit.
 
 ## 2. Últimas mudanças (as 5 mais novas)
+- 2026-11-25 — **DEV 35 ✔**: nível e experiência (a Sucata conta), tela de nível com 4 atributos, 14 atributos valendo nas armas e no Ryker, loja com itens e cadeado. 377 testes. Próximo: DEV 36 (6 armas + famílias). — DEV, GD
 - 2026-11-25 — **DEV 34 ✔ + pacote 11 integrado**: arena com o chão de Varrek gerado pelo dono, 4 destroços sólidos, Ryker e inimigos com os sprites de sempre (sombra, viram de lado), marca de nascimento na cor AVISO. 372 testes. — DEV, ART
 - 2026-11-24 — **ART-9 ✔**: `docs/ART/02-guia-visao-de-cima.md` + pacote 11 (chão de Varrek e destroços para gerar no ChatGPT). Proposta em uso: personagens de lado sobre chão visto de cima, reaproveitando todos os sprites atuais. — ART, DEV
 - 2026-11-24 — **DEV 33 ✔**: protótipo da arena jogável pelo botão "Arena (teste)" do menu inicial: Ryker de cima com dash, Mordida e Grilhão automáticos, Roedor e Zangão, 3 ondas, Sucata e loja do Ilo. Arte provisória. 369 testes. — DEV, GD, ART
 - 2026-11-24 — **GD-9 ✔**: `docs/GD/09-arena-e-ondas.md` (run de 4 planetas × 5 ondas, 8 armas em 5 famílias, Sucata, loja do Ilo, itens, inimigos de cima, progressão pequena). 5 perguntas ao dono na seção 12, com proposta "sim". — GD, DEV, ART, NAR
-- 2026-11-24 — **D-077 (dono): o jogo muda para arena com visão de cima, no formato do Brotato** (ondas curtas, loja entre ondas, até 6 armas automáticas). História fica; progressão permanente pequena. Nova lista na seção 5; DEV 32 pausado. — TODOS
 
 ## 3. Decisões novas (também copiadas no fim de DECISOES.md)
 - **D-079 — GD-09 aprovado como está.** *(dono, 2026-11-24)* Sim para as 5 perguntas do GD-09 §12: 4 planetas × 5 ondas (VS: Varrek + modo Sem Descanso); recurso único **Sucata**; **dash** é a única ação, Granada e Grilhão viram armas; **vida 10**; Gambiarras viram itens de arma e Ofertas viram a escolha grátis depois de cada chefe.
@@ -74,7 +74,10 @@
 - NAR-6. **Ajustar a história ao formato** (pouco texto): onde entram falas (nave, entre ondas, chefes); abertura v2 vale ou encurta?
 - ✔ DEV 33. **Protótipo jogável da arena** (em `scenes/arena/` e `scripts/arena/`, D-078; GD-09 §2–4, 5.2, 7, 9): Ryker de cima, 1 arma automática, 2 inimigos, 3 ondas, loja simples. Com testes.
 - ✔ DEV 34. **Arena com os sprites atuais** (ART-02 §1 e §6): Ryker e inimigos de lado com sombra, `flip_h` e `y_sort`; marca de nascimento na cor AVISO; Sucata 8×8.
-- DEV 35+. Conforme o GD-9 (armas múltiplas, loja completa, níveis, chefes). Último: trocar o modo e **apagar o código antigo** (D-078).
+- ✔ DEV 35. **Nível, atributos e loja completa** (GD-09 §6–8).
+- DEV 36. **As outras 6 armas** (Bramido, Granada de Clã, Ferrão, Ninhada, Liquidação, Lanterna) e o **bônus de família** (GD-09 §5).
+- DEV 37. **Ondas 4–5 de Varrek**: Chacal, Cuspidor, Guerreiro, Artilheiro, Muralha, Ninho, Brutamontes e o chefe **Ur-Kesh**; Ofertas depois do chefe; modo Sem Descanso (GD-09 §2, §8.3, §9).
+- DEV 38+. Itens especiais, Gambiarras, progressão pequena (Núcleos). Último: trocar o modo e **apagar o código antigo** (D-078).
 
 **Pausados pela D-077:** DEV 32 (abertura v2) até o NAR-6 · GD-4 (pulo e enxame, perde o sentido).
 

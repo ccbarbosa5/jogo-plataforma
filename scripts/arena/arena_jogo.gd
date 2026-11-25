@@ -2,11 +2,12 @@ class_name ArenaJogo
 extends Node2D
 ## Protótipo da arena (DEV 33, GD-09, D-077/D-078): o Ryker visto de cima numa arena fechada,
 ## 3 ondas de Roedores e Zangões, Sucata e a loja do Ilo entre as ondas.
-## Fluxo: ONDA → INTERVALO (a Sucata voa até o Ryker) → LOJA → próxima ONDA ... → FIM.
+## Fluxo: ONDA → INTERVALO (a Sucata voa até o Ryker) → NIVEL (se subiu) → LOJA → próxima ONDA
+## ... → FIM. A Sucata pega é dinheiro e experiência ao mesmo tempo (GD-09 §6).
 ## Não usa nada do código de plataforma (D-078). Visual: ART-02 (chão do pacote 11A, destroços,
 ## sprites de lado com sombra e y_sort).
 
-enum Estado { ONDA, INTERVALO, LOJA, FIM }
+enum Estado { ONDA, INTERVALO, NIVEL, LOJA, FIM }
 
 const GRUPO_MUNDO: StringName = &"mundo_arena"
 const INTERVALO: float = 1.0
@@ -31,6 +32,7 @@ var obstaculos := ObstaculosArena.new()
 var jogador: JogadorArena
 var mundo: Node2D
 var loja: LojaArena
+var tela_nivel: TelaNivelArena
 ## Inimigos anunciados: cada um {"pos": Vector2, "tipo": String, "tempo": float}
 var marcas: Array[Dictionary] = []
 
@@ -76,6 +78,10 @@ func _ready() -> void:
 	loja.arena = self
 	loja.terminou.connect(_loja_fechou)
 	add_child(loja)
+	tela_nivel = TelaNivelArena.new()
+	tela_nivel.arena = self
+	tela_nivel.terminou.connect(_abrir_loja)
+	add_child(tela_nivel)
 	_montar_fim()
 	_montar_pausa()
 	if comecar_sozinha:
@@ -179,6 +185,14 @@ func _depois_do_intervalo() -> void:
 	if numero_da_onda() >= diretor.total_de_ondas():
 		_terminar(true)
 		return
+	if jogador.niveis_pendentes > 0:
+		estado = Estado.NIVEL
+		tela_nivel.abrir()
+		return
+	_abrir_loja()
+
+
+func _abrir_loja() -> void:
 	estado = Estado.LOJA
 	loja.abrir(numero_da_onda())
 
@@ -197,8 +211,15 @@ func _inimigo_morreu(inimigo: InimigoArena) -> void:
 	s.valor = inimigo.sucata
 	s.jogador = jogador
 	s.position = inimigo.position
-	s.coletada.connect(func(v: int) -> void: sucata += v)
+	s.coletada.connect(coletar_sucata)
 	mundo.add_child.call_deferred(s)
+
+
+## Sucata pega: soma na carteira (com a chance extra do Sucata %) e vira experiência.
+func coletar_sucata(valor: int) -> void:
+	var extra: int = 1 if jogador.rng.randf() * 100.0 < jogador.atributos.valor("sucata_pct") else 0
+	sucata += valor + extra
+	jogador.ganhar_xp(valor)
 
 
 func _ryker_morreu() -> void:
@@ -275,8 +296,9 @@ func _atualizar_hud() -> void:
 	if _hud == null or jogador == null:
 		return
 	var resto: int = ceili(maxf(diretor.duracao(indice_onda) - tempo_onda, 0.0)) if estado == Estado.ONDA else 0
-	_hud.text = "Vida %d/%d    Sucata %d    Onda %d/%d    %ds" % [
-		jogador.vida, jogador.vida_max, sucata, numero_da_onda(), diretor.total_de_ondas(), resto]
+	_hud.text = "Vida %d/%d    Nv %d (%d/%d)    Sucata %d    Onda %d/%d    %ds" % [
+		jogador.vida, jogador.vida_max, jogador.nivel, jogador.xp, jogador.xp_para_proximo(), sucata,
+		numero_da_onda(), diretor.total_de_ondas(), resto]
 
 
 func _rotulo(pai: Node, tamanho: int) -> Label:

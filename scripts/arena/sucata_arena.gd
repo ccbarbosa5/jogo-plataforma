@@ -38,7 +38,7 @@ func _physics_process(delta: float) -> void:
 		coletada.emit(valor)
 		queue_free()
 		return
-	if _atraida or distancia <= jogador.ima:
+	if _atraida or distancia <= jogador.raio_ima():
 		_atraida = true
 		global_position = global_position.move_toward(jogador.global_position, _velocidade * delta)
 
