@@ -15,7 +15,7 @@
  "arena": {
   "largura": 640,
   "altura": 384,
-  "margem_parede": 16,
+  "margem_parede": 24,
   "distancia_minima_nascer": 96.0,
   "aviso_nascer": 1.0,
   "teto_inimigos": 40,
@@ -42,8 +42,9 @@
  "inimigos": {
   "roedor": { "nome": "Roedor", "vida": 6, "velocidade": 70.0, "dano": 1, "sucata": 1, "raio": 5.0 },
   "zangao": { "nome": "Zangão", "vida": 5, "velocidade": 85.0, "dano": 1, "sucata": 1, "raio": 4.0,
-   "zigue_amplitude": 30.0, "zigue_frequencia": 1.5 }
+   "zigue_amplitude": 30.0, "zigue_frequencia": 1.5, "voa": true }
  },
+ "obstaculos": { "quantidade": 4, "centro_livre": 128.0, "distancia_entre": 80.0, "caixa": [40.0, 14.0], "tipos": 5 },
  "forca_por_onda": { "vida": 0.15, "dano": 0.06 },
  "ondas": [
   { "duracao": 30.0, "taxa": [0.8, 1.2], "mistura": { "roedor": 0.85, "zangao": 0.15 }, "pico": false },

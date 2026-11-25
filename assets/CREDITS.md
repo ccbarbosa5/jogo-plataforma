@@ -32,6 +32,8 @@ Geradas pelo dono no ChatGPT a partir dos prompts da ART (`ART/prompts/` no proj
 | `assets/sprites/abertura/q8_fundo_ia.png` | `10C_nave_eco_v1.png` | 10C — a nave em órbita | 2026-11-15 |
 | `assets/sprites/abertura/q9_fundo_ia.png` | `10D_reconstrutor_v1.png` | 10D — a câmara do reconstrutor | 2026-11-15 |
 | `assets/sprites/abertura/nave_ryker_ia.png`, `nave_kharn_ia.png` | `10E_naves_v1.png` | 10E — as duas naves | 2026-11-15 |
+| `assets/sprites/arena/varrek_chao.png` | `11A_arena_varrek_chao_v1.png` | 11A — chão da arena de Varrek (tratado por `ferramentas/arte/arena_chao.py`) | 2026-11-25 |
+| `assets/sprites/arena/varrek_destrocos.png` (provisório) | `11B_arena_varrek_destrocos_v1.png` | 11B — destroços da arena | 2026-11-25 |
 
 ## Fontes
 | Asset | Autor | Licença |

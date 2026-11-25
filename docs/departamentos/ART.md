@@ -5,7 +5,7 @@
 ## Status
 - **ART-9 ✔: guia da arena vista de cima** (`docs/ART/02-guia-visao-de-cima.md`, D-077).
   - **Proposta em uso:** chão visto de cima, personagens de lado (como hoje) com sombra e `flip_h`. Todos os sprites atuais servem na arena; só o chão e os destroços são novos.
-  - **Pacote 11** (`prompts/11-arena-varrek.md`): 11A chão de Varrek (IA, vira o fundo) e 11B destroços (referência; a ART redesenha por código). Aguardando o dono gerar.
+  - **Pacote 11 ✔ integrado (2026-11-25):** 11A → `assets/sprites/arena/varrek_chao.png` (só cores escuras de cenário, `ferramentas/arte/arena_chao.py`); 11B → `varrek_destrocos.png` (5 quadros 56×32, **provisório**, tratado direto; redesenhar por código depois). Prévia: `conceito/mockup_v16_arena_varrek.png`.
   - Escala, Sucata 8×8, ícones de arma 24×24, cores de nível I–IV, HUD e loja definidos.
 - **ART-8 ✔ (PR #52): abertura v2** (D-075, NAR-07 v2, 12 quadros). Script: `ferramentas/arte/abertura_v2.py`. Arquivos em `assets/sprites/abertura/v2_*`; tabela quadro a quadro no LEIAME da pasta (seção v0.3).
   - **Novos:**

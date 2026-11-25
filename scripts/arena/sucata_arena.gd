@@ -8,7 +8,10 @@ signal coletada(valor: int)
 const GRUPO: StringName = &"sucata_arena"
 const VELOCIDADE_IMA: float = 220.0
 const RAIO_COLETA: float = 8.0
-const COR: Color = Color("5ec8c0")
+## ART-02 §2: losango 8×8 de metal com um ponto teal e contorno.
+const COR: Color = Color("a4abb6")
+const COR_PONTO: Color = Color("4fb0a6")
+const COR_CONTORNO: Color = Color("16111c")
 
 var valor: int = 1
 var jogador: JogadorArena
@@ -41,4 +44,6 @@ func _physics_process(delta: float) -> void:
 
 
 func _draw() -> void:
+	draw_colored_polygon(PackedVector2Array([Vector2(0, -4), Vector2(4, 0), Vector2(0, 4), Vector2(-4, 0)]), COR_CONTORNO)
 	draw_colored_polygon(PackedVector2Array([Vector2(0, -3), Vector2(3, 0), Vector2(0, 3), Vector2(-3, 0)]), COR)
+	draw_rect(Rect2(-1, -1, 2, 2), COR_PONTO)
