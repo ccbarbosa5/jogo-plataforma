@@ -3,7 +3,8 @@ extends Node2D
 ## Protótipo da arena (DEV 33, GD-09, D-077/D-078): o Ryker visto de cima numa arena fechada,
 ## 3 ondas de Roedores e Zangões, Sucata e a loja do Ilo entre as ondas.
 ## Fluxo: ONDA → INTERVALO (a Sucata voa até o Ryker) → LOJA → próxima ONDA ... → FIM.
-## Não usa nada do código de plataforma (D-078). Arte provisória: formas simples.
+## Não usa nada do código de plataforma (D-078). Visual: ART-02 (chão do pacote 11A, destroços,
+## sprites de lado com sombra e y_sort).
 
 enum Estado { ONDA, INTERVALO, LOJA, FIM }
 
@@ -11,7 +12,10 @@ const GRUPO_MUNDO: StringName = &"mundo_arena"
 const INTERVALO: float = 1.0
 const COR_CHAO: Color = Color("3a2a2e")
 const COR_PAREDE: Color = Color("1e1620")
-const COR_MARCA: Color = Color("ff4a4a")
+## A marca de nascimento é um aviso de ataque: cor AVISO (ART-01 §3).
+const COR_MARCA: Color = Color("fff3a0")
+const CHAO: String = "res://assets/sprites/arena/varrek_chao.png"
+const DESTROCOS: String = "res://assets/sprites/arena/varrek_destrocos.png"
 const TELA: Vector2 = Vector2(480, 270)
 
 ## false = os testes controlam o começo das ondas.
@@ -23,6 +27,7 @@ var tempo_onda: float = 0.0
 var sucata: int = 0
 var venceu: bool = false
 var diretor := DiretorOndas.new()
+var obstaculos := ObstaculosArena.new()
 var jogador: JogadorArena
 var mundo: Node2D
 var loja: LojaArena
@@ -44,7 +49,10 @@ func _ready() -> void:
 	mundo = Node2D.new()
 	mundo.name = "Mundo"
 	mundo.add_to_group(GRUPO_MUNDO)
+	mundo.y_sort_enabled = true  # quem está mais embaixo fica na frente
 	add_child(mundo)
+	obstaculos.gerar(area, diretor.rng)
+	_montar_destrocos()
 	_no_marcas = Node2D.new()
 	_no_marcas.name = "Marcas"
 	_no_marcas.draw.connect(_desenhar_marcas)
@@ -54,6 +62,7 @@ func _ready() -> void:
 	jogador.position = area.get_center()
 	mundo.add_child(jogador)
 	jogador.limites = area
+	jogador.obstaculos = obstaculos
 	jogador.morreu.connect(_ryker_morreu)
 	jogador.vida_mudou.connect(func(_v: int, _m: int) -> void: _atualizar_hud())
 	var camera := Camera2D.new()
@@ -126,7 +135,12 @@ func anunciar_inimigo(tipo: String) -> bool:
 	if inimigos_vivos() + marcas.size() >= diretor.teto():
 		return false
 	var aviso: float = float(diretor.arena["aviso_nascer"])
-	marcas.append({"pos": diretor.ponto_de_nascimento(jogador.position), "tipo": tipo, "tempo": aviso})
+	var pos: Vector2 = diretor.ponto_de_nascimento(jogador.position)
+	for tentativa in 10:
+		if not obstaculos.bloqueia(pos, 8.0):
+			break
+		pos = diretor.ponto_de_nascimento(jogador.position)
+	marcas.append({"pos": pos, "tipo": tipo, "tempo": aviso})
 	return true
 
 
@@ -136,6 +150,7 @@ func criar_inimigo(tipo: String, pos: Vector2) -> InimigoArena:
 	inimigo.position = pos
 	inimigo.alvo = jogador
 	inimigo.limites = diretor.area_util()
+	inimigo.obstaculos = obstaculos
 	inimigo.morreu.connect(_inimigo_morreu)
 	mundo.add_child(inimigo)
 	return inimigo
@@ -227,9 +242,26 @@ func _sair_para_o_menu() -> void:
 # --- Desenho e interface ---
 
 func _draw() -> void:
+	var chao: Texture2D = load(CHAO)
+	if chao != null:
+		draw_texture(chao, Vector2.ZERO)
+		return
 	var area: Rect2 = diretor.area_util()
 	draw_rect(Rect2(Vector2.ZERO, area.end + area.position), COR_PAREDE)
 	draw_rect(area, COR_CHAO)
+
+
+func _montar_destrocos() -> void:
+	for i in obstaculos.pontos.size():
+		var d := Sprite2D.new()
+		d.name = "Destroco%d" % (i + 1)
+		d.texture = load(DESTROCOS)
+		d.hframes = 5
+		d.frame = obstaculos.tipos[i]
+		d.offset = Vector2(0, -16)  # origem embaixo no centro (LEIAME da arena)
+		d.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+		d.position = obstaculos.pontos[i]
+		mundo.add_child(d)
 
 
 func _desenhar_marcas() -> void:

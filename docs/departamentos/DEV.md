@@ -1,8 +1,10 @@
 # DEV — Programação · Status
 
-Última atualização: 2026-11-24 (DEV 33). Formato curto (D-048).
+Última atualização: 2026-11-25 (DEV 34). Formato curto (D-048).
 
 ## Status
+- **Item 34 ✔: arena com arte (ART-02, pacote 11).** Chão de Varrek (11A) no fundo; 4 destroços sólidos sorteados (`ObstaculosArena`, longe do centro e uns dos outros; o Zangão voa por cima); Ryker com pernas + tronco + dash de sempre, Roedor e Zangão com as folhas do ART-4, todos com sombra, `flip_h` e `y_sort`; marca de nascimento na cor AVISO; Sucata 8×8. Parede de 24 px. 372 testes.
+- Correção (PR #60): S e seta para baixo na arena (ações `mover_cima`/`mover_baixo`, sem depender do "Agachar").
 - **Item 33 ✔: protótipo da arena (D-077/D-078, GD-09).**
   - **Onde:** `scenes/arena/arena.tscn`, `scripts/arena/` (10 arquivos), números em `data/arena/arena.json`. Não usa nada do código de plataforma. Menu inicial: botão **"Arena (teste)"**.
   - **Tem:** Ryker de cima (8 direções, dash, vida 10, invencível 0,5 s); Mordida e Grilhão automáticos, 6 slots e fusão I→IV; Roedor e Zangão (zigue-zague) com força por onda; 3 ondas (30/40/50 s, pico na 3ª) com marca de 1,0 s, ≥ 6 tiles do Ryker, teto 40; Sucata com ímã e puxada no fim da onda; loja do Ilo (4 ofertas, preço por onda, reroll 1 + onda); pausa com Esc; tela de vitória ou morte.

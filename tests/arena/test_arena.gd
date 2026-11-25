@@ -238,3 +238,48 @@ func test_wasd_e_setas_movem_nas_4_direcoes() -> void:
 		var passo: Vector2 = (a.jogador.position - antes).normalized()
 		afirmar(passo.dot(casos[tecla]) > 0.9, "%s move para %s" % [OS.get_keycode_string(tecla), casos[tecla]])
 	await _limpar(a)
+
+
+## DEV 34: destroços longe do centro e uns dos outros; o Ryker não entra neles.
+func test_destrocos_sorteados_e_solidos() -> void:
+	var a := _arena()
+	await esperar_frames(1)
+	var o: ObstaculosArena = a.obstaculos
+	afirmar_igual(o.pontos.size(), 4, "4 destroços")
+	var centro: Vector2 = a.diretor.area_util().get_center()
+	for i in o.pontos.size():
+		afirmar(o.pontos[i].distance_to(centro) >= 128.0, "centro livre")
+		for k in range(i + 1, o.pontos.size()):
+			afirmar(o.pontos[i].distance_to(o.pontos[k]) >= 80.0, "separados")
+	afirmar(a.mundo.get_node_or_null("Destroco1") is Sprite2D, "desenhados")
+	var caixa: Rect2 = o.caixas[0]
+	afirmar(o.bloqueia(caixa.get_center(), 6.0), "o meio da caixa bloqueia")
+	var fora: Vector2 = o.resolver(caixa.get_center(), 6.0)
+	afirmar(not caixa.grow(5.9).has_point(fora), "resolver empurra para fora")
+	a.jogador.position = caixa.get_center() + Vector2(0, -30)
+	a.jogador.direcao = Vector2.DOWN
+	await esperar_frames(30)
+	afirmar(not caixa.grow(5.9).has_point(a.jogador.position), "o Ryker para na borda")
+	for i in 40:
+		a.anunciar_inimigo("roedor")
+	for m in a.marcas:
+		afirmar(not o.bloqueia(m["pos"], 7.9), "inimigo não nasce dentro de destroço")
+	await _limpar(a)
+
+
+func test_ryker_e_inimigos_usam_os_sprites_de_lado() -> void:
+	var a := _arena()
+	await esperar_frames(1)
+	afirmar(a.mundo.y_sort_enabled, "y_sort no mundo")
+	var r := a.criar_inimigo("roedor", a.jogador.position + Vector2(-150, 0))
+	await esperar_frames(3)
+	afirmar(r.sprite != null and r.sprite.texture != null, "Roedor com sprite")
+	afirmar(not r.sprite.flip_h, "indo para a direita não espelha")
+	a.jogador.direcao = Vector2.LEFT
+	await esperar_frames(3)
+	var espelhados: int = 0
+	for f in a.jogador.get_children():
+		if f is Sprite2D and (f as Sprite2D).flip_h:
+			espelhados += 1
+	afirmar(espelhados >= 2, "Ryker vira para a esquerda")
+	await _limpar(a)
