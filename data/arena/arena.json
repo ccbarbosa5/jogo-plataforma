@@ -51,8 +51,47 @@
   { "duracao": 40.0, "taxa": [1.0, 1.5], "mistura": { "roedor": 0.75, "zangao": 0.25 }, "pico": false },
   { "duracao": 50.0, "taxa": [1.2, 1.8], "mistura": { "roedor": 0.65, "zangao": 0.35 }, "pico": true }
  ],
+ "nivel": {
+  "_formula": "XP para passar do nível n: (n + 3)^2",
+  "vida_por_nivel": 1,
+  "cartas": 4,
+  "raridade": [70, 22, 7, 1],
+  "melhora_por_nivel": 1.0,
+  "lendaria_maxima": 5.0,
+  "reroll_inicial": 2,
+  "reroll_aumento": 2
+ },
+ "atributos": {
+  "vida_max": { "nome": "Vida máx.", "valores": [3, 6, 9, 12], "formato": "+%d" },
+  "regeneracao": { "nome": "Regeneração", "valores": [2, 3, 4, 5], "formato": "+%d" },
+  "roubo_vida": { "nome": "Roubo de vida", "valores": [1, 2, 3, 4], "formato": "+%d%%" },
+  "dano_pct": { "nome": "Dano", "valores": [5, 8, 12, 16], "formato": "+%d%%" },
+  "dano_corpo": { "nome": "Dano corpo a corpo", "valores": [2, 3, 4, 5], "formato": "+%d" },
+  "dano_distancia": { "nome": "Dano à distância", "valores": [1, 2, 3, 4], "formato": "+%d" },
+  "cadencia_pct": { "nome": "Cadência", "valores": [5, 8, 12, 16], "formato": "+%d%%" },
+  "critico_pct": { "nome": "Crítico", "valores": [3, 5, 7, 9], "formato": "+%d%%" },
+  "alcance": { "nome": "Alcance", "valores": [15, 25, 35, 45], "formato": "+%d" },
+  "armadura": { "nome": "Armadura", "valores": [1, 2, 3, 4], "formato": "+%d" },
+  "esquiva_pct": { "nome": "Esquiva", "valores": [3, 5, 7, 9], "formato": "+%d%%" },
+  "velocidade_pct": { "nome": "Velocidade", "valores": [3, 5, 7, 9], "formato": "+%d%%" },
+  "sorte": { "nome": "Sorte", "valores": [5, 8, 12, 16], "formato": "+%d" },
+  "coleta": { "nome": "Coleta", "valores": [16, 24, 32, 40], "formato": "+%d" }
+ },
+ "limites_atributos": { "armadura_por_ponto": 0.07, "dano_recebido_minimo": 0.40, "esquiva_maxima": 60, "cadencia_maxima": 80, "regeneracao_base": 5.0 },
+ "itens": {
+  "botas_de_mineiro": { "nome": "Botas de Mineiro", "raridade": 1, "efeitos": { "velocidade_pct": 5 } },
+  "cantil_velho": { "nome": "Cantil Velho", "raridade": 1, "efeitos": { "vida_max": 2, "regeneracao": 1 } },
+  "mira_de_sucata": { "nome": "Mira de Sucata", "raridade": 1, "efeitos": { "critico_pct": 2, "alcance": 10 } },
+  "ima_de_carcaca": { "nome": "Ímã de Carcaça", "raridade": 1, "efeitos": { "coleta": 24 } },
+  "bolso_fundo": { "nome": "Bolso Fundo", "raridade": 1, "efeitos": { "sucata_pct": 5, "armadura": -1 } },
+  "placa_de_casco": { "nome": "Placa de Casco", "raridade": 2, "efeitos": { "armadura": 2, "velocidade_pct": -3 } },
+  "honra_do_campeao": { "nome": "Honra do Campeão", "raridade": 2, "efeitos": { "dano_pct": 8, "critico_pct": 3 } },
+  "faixas_de_luta": { "nome": "Faixas de Luta", "raridade": 3, "efeitos": { "dano_corpo": 3, "cadencia_pct": 8 } }
+ },
  "loja": {
   "ofertas": 4,
+  "chance_arma": 35,
+  "preco_item_base": [12, 30, 60, 100],
   "aumento_preco_por_onda": 0.10,
   "raridade_onda_1": [90, 9, 1, 0],
   "raridade_onda_20": [40, 35, 20, 5],

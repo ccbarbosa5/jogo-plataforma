@@ -41,7 +41,7 @@ func _physics_process(delta: float) -> void:
 	var alvo: InimigoArena = alvo_mais_perto()
 	if alvo == null:
 		return
-	_espera = recarga
+	_espera = recarga_atual()
 	if tipo == "corpo":
 		_golpear(alvo)
 	else:
@@ -49,11 +49,36 @@ func _physics_process(delta: float) -> void:
 	atirou.emit(alvo)
 
 
+## Dono da arma (o Ryker) ou null nos testes de arma solta.
+func dono() -> JogadorArena:
+	var p: Node = get_parent()
+	return p.get_parent() as JogadorArena if p != null else null
+
+
+## Recarga, alcance e dano com os atributos do dono (GD-09 §6.3).
+func recarga_atual() -> float:
+	var j := dono()
+	return j.atributos.recarga(recarga) if j != null else recarga
+
+
+func alcance_atual() -> float:
+	var j := dono()
+	return j.atributos.alcance(alcance, tipo) if j != null else alcance
+
+
+## Dano de um acerto (sorteia o crítico).
+func dano_do_acerto() -> int:
+	var j := dono()
+	if j == null:
+		return dano
+	return j.atributos.dano(dano, tipo, j.atributos.sorteia_critico(j.rng))
+
+
 ## O inimigo vivo mais perto do Ryker (o dono) dentro do alcance, ou null.
 func alvo_mais_perto() -> InimigoArena:
 	var origem: Vector2 = _origem()
 	var melhor: InimigoArena = null
-	var melhor_d: float = alcance
+	var melhor_d: float = alcance_atual()
 	for no in get_tree().get_nodes_in_group(InimigoArena.GRUPO):
 		var inimigo := no as InimigoArena
 		var d: float = origem.distance_to(inimigo.global_position) - inimigo.raio
@@ -64,14 +89,15 @@ func alvo_mais_perto() -> InimigoArena:
 
 
 func _origem() -> Vector2:
-	var dono: Node2D = get_parent().get_parent() as Node2D
-	return dono.global_position if dono != null else global_position
+	var j := dono()
+	return j.global_position if j != null else global_position
 
 
 func _disparar(alvo: InimigoArena) -> void:
 	var p := ProjetilArena.new()
 	var direcao: Vector2 = (alvo.global_position - global_position).normalized()
-	p.preparar(direcao, float(dados["velocidade_projetil"]), dano, alcance + 16.0)
+	p.preparar(direcao, float(dados["velocidade_projetil"]), dano_do_acerto(), alcance_atual() + 16.0)
+	p.dono = dono()
 	p.position = global_position
 	# O projétil vive no mundo (não acompanha o Ryker depois de sair).
 	var mundo: Node = get_tree().get_first_node_in_group(ArenaJogo.GRUPO_MUNDO)
@@ -86,13 +112,15 @@ func _golpear(alvo: InimigoArena) -> void:
 	for no in get_tree().get_nodes_in_group(InimigoArena.GRUPO):
 		var inimigo := no as InimigoArena
 		var para: Vector2 = inimigo.global_position - origem
-		if para.length() - inimigo.raio > alcance:
+		if para.length() - inimigo.raio > alcance_atual():
 			continue
 		if absf(_golpe_direcao.angle_to(para)) > meio_arco:
 			continue
 		# Puxa para perto antes do dano (o golpe pode matar).
 		inimigo.global_position -= para.normalized() * minf(puxao, maxf(para.length() - 12.0, 0.0))
-		inimigo.levar_dano(dano)
+		inimigo.levar_dano(dano_do_acerto())
+		if dono() != null:
+			dono().ao_acertar()
 	_golpe_visivel = 0.15
 	queue_redraw()
 

@@ -8,6 +8,8 @@ const COR: Color = Color("ffe0b8")
 var direcao: Vector2 = Vector2.RIGHT
 var velocidade: float = 600.0
 var dano: int = 1
+## Quem atirou (para o Roubo de vida); pode ser null.
+var dono: JogadorArena
 var _distancia_restante: float = 200.0
 
 
@@ -26,6 +28,8 @@ func _physics_process(delta: float) -> void:
 		var inimigo := no as InimigoArena
 		if global_position.distance_to(inimigo.global_position) <= inimigo.raio + RAIO:
 			inimigo.levar_dano(dano)
+			if dono != null and is_instance_valid(dono):
+				dono.ao_acertar()
 			queue_free()
 			return
 	if _distancia_restante <= 0.0:

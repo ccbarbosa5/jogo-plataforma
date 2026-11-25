@@ -283,3 +283,112 @@ func test_ryker_e_inimigos_usam_os_sprites_de_lado() -> void:
 			espelhados += 1
 	afirmar(espelhados >= 2, "Ryker vira para a esquerda")
 	await _limpar(a)
+
+
+## DEV 35: a Sucata vira experiência; (n + 3)² por nível; +1 de vida por nível.
+func test_sucata_da_experiencia_e_nivel() -> void:
+	var a := _arena()
+	await esperar_frames(1)
+	var j := a.jogador
+	afirmar_igual(j.xp_para_proximo(), 16, "nível 1 → 2: 16")
+	a.coletar_sucata(15)
+	afirmar_igual(j.nivel, 1, "15 ainda não sobe")
+	a.coletar_sucata(1)
+	afirmar_igual(j.nivel, 2, "16 sobe")
+	afirmar_igual(j.vida_max, 11, "+1 de vida máx.")
+	afirmar_igual(j.niveis_pendentes, 1, "1 escolha pendente")
+	afirmar_igual(a.sucata, 16, "a Sucata também é dinheiro")
+	a.coletar_sucata(25 + 36)
+	afirmar_igual(j.nivel, 4, "subiu mais 2")
+	afirmar_igual(j.niveis_pendentes, 3, "3 escolhas")
+	await _limpar(a)
+
+
+func test_tela_de_nivel_no_fim_da_onda_e_depois_a_loja() -> void:
+	var a := _arena()
+	await esperar_frames(1)
+	a.comecar_onda(0)
+	a.coletar_sucata(16 + 25)
+	afirmar_igual(a.jogador.niveis_pendentes, 2, "2 níveis")
+	a.terminar_onda()
+	for i in 120:
+		await esperar_frames(1)
+		if a.estado != ArenaJogo.Estado.INTERVALO:
+			break
+	afirmar_igual(a.estado, ArenaJogo.Estado.NIVEL, "abre a tela de nível")
+	afirmar_igual(a.tela_nivel.cartas.size(), 4, "4 cartas")
+	var ids: Array = a.tela_nivel.cartas.map(func(c: Dictionary) -> String: return c["id"])
+	afirmar_igual(ids.size(), ids.filter(func(x: String) -> bool: return ids.count(x) == 1).size(), "4 atributos diferentes")
+	afirmar_igual(a.tela_nivel.custo_reroll(), 2, "trocar custa 2")
+	afirmar(a.tela_nivel.rerolar(), "trocou")
+	afirmar_igual(a.tela_nivel.custo_reroll(), 4, "+2 a cada vez")
+	var c: Dictionary = a.tela_nivel.cartas[0]
+	var antes: float = a.jogador.atributos.valor(c["id"])
+	a.tela_nivel.escolher(0)
+	afirmar_proximo(a.jogador.atributos.valor(c["id"]), antes + float(c["valor"]), 0.001, "somou o atributo")
+	afirmar_igual(a.estado, ArenaJogo.Estado.NIVEL, "ainda falta 1")
+	a.tela_nivel.escolher(1)
+	afirmar_igual(a.estado, ArenaJogo.Estado.LOJA, "depois, a loja")
+	afirmar_igual(a.jogador.niveis_pendentes, 0, "nada pendente")
+	await _limpar(a)
+
+
+func test_atributos_mudam_dano_recarga_alcance_e_dano_recebido() -> void:
+	var at := AtributosArena.new()
+	afirmar_igual(at.dano(6, "distancia", false), 6, "sem bônus")
+	at.somar("dano_distancia", 2)
+	at.somar("dano_pct", 50)
+	afirmar_igual(at.dano(6, "distancia", false), 12, "(6 + 2) × 1,5")
+	afirmar_igual(at.dano(6, "distancia", true), 24, "crítico dobra")
+	afirmar_igual(at.dano(12, "corpo", false), 18, "o bônus à distância não vale no corpo a corpo")
+	at.somar("cadencia_pct", 20)
+	afirmar_proximo(at.recarga(1.0), 0.8, 0.001, "20% menos recarga")
+	at.somar("alcance", 20)
+	afirmar_proximo(at.alcance(200.0, "distancia"), 220.0, 0.001, "alcance +20")
+	afirmar_proximo(at.alcance(64.0, "corpo"), 74.0, 0.001, "corpo a corpo ganha metade")
+	at.somar("armadura", 3)
+	afirmar_proximo(at.fator_armadura(), 0.79, 0.001, "3 de armadura: ×0,79 (GD-09 teste 12)")
+	at.somar("armadura", 20)
+	afirmar_proximo(at.fator_armadura(), 0.40, 0.001, "nunca abaixo de ×0,40")
+	at.somar("regeneracao", 2)
+	afirmar_proximo(at.intervalo_regeneracao(), 2.5, 0.001, "cura 1 a cada 5/2 s")
+
+
+func test_ryker_usa_armadura_velocidade_e_vida_dos_atributos() -> void:
+	var a := _arena()
+	await esperar_frames(1)
+	var j := a.jogador
+	j.aplicar_efeitos({"vida_max": 6, "armadura": 5, "velocidade_pct": 10})
+	afirmar_igual(j.vida_max, 16, "vida máx. +6")
+	afirmar_igual(j.vida, 16, "e cura o que ganhou")
+	afirmar_proximo(j.velocidade_atual(), 121.0, 0.01, "110 × 1,1")
+	j.levar_dano(4)
+	afirmar_igual(j.vida, 13, "4 × 0,65 = 2,6 → 3")
+	await _limpar(a)
+
+
+func test_loja_tem_itens_cadeado_e_item_soma_atributos() -> void:
+	var a := _arena()
+	await esperar_frames(1)
+	afirmar_igual(LojaArena.preco_item(1, 1), 12, "item comum na onda 1")
+	afirmar_igual(LojaArena.preco_item(2, 3), 36, "item raro na onda 3: 30 × 1,2")
+	a.estado = ArenaJogo.Estado.LOJA
+	a.loja.rng.seed = 3
+	var tipos: Dictionary = {}
+	for i in 30:
+		a.loja.abrir(1)
+		for o in a.loja.ofertas:
+			tipos[o["tipo"]] = true
+	afirmar(tipos.has("arma") and tipos.has("item"), "vende armas e itens")
+	a.loja.abrir(1)
+	var travada: Dictionary = a.loja.ofertas[2]
+	a.loja.travar(2)
+	a.loja.abrir(2)
+	afirmar_igual(a.loja.ofertas[2]["id"], travada["id"], "a oferta travada continua na loja seguinte")
+	afirmar(a.loja.ofertas[2]["travada"], "continua travada")
+	a.loja.ofertas[0] = {"tipo": "item", "id": "botas_de_mineiro", "nivel": 1, "preco": 12, "vendida": false, "travada": false}
+	a.sucata = 12
+	afirmar(a.loja.comprar(0), "comprou o item")
+	afirmar_proximo(a.jogador.atributos.valor("velocidade_pct"), 5.0, 0.001, "Botas: +5% de velocidade")
+	afirmar_igual(a.jogador.inventario.armas.size(), 1, "item não ocupa slot de arma")
+	await _limpar(a)
