@@ -16,11 +16,11 @@
 10. **Repositório (D-051):** `<REPO>` = `ccbarbosa5/no-rest` (o nome antigo `ccbarbosa5/jogo-plataforma` redireciona). itch.io: `ccbarbosa/no-rest`, Secret `BUTLER_API_KEY`. **Nunca** colar chaves em conversa, doc ou commit.
 
 ## 2. Últimas mudanças (as 5 mais novas)
+- 2026-11-25 — **DIR: 5 tarefas novas FER-1 a FER-5** (seção 5), ideias aproveitadas do template Claude-Code-Game-Studios: bloquear comandos perigosos, teste contra números soltos no código, lista de corte do VS, checagem de balanceamento e modelo de relatório de teste de jogo. O resto do template (49 agentes, sprints, ADRs) não serve: pesado demais para o modo econômico. — DIR, DEV, GD
 - 2026-11-25 — **DEV 35 ✔**: nível e experiência (a Sucata conta), tela de nível com 4 atributos, 14 atributos valendo nas armas e no Ryker, loja com itens e cadeado. 377 testes. Próximo: DEV 36 (6 armas + famílias). — DEV, GD
 - 2026-11-25 — **DEV 34 ✔ + pacote 11 integrado**: arena com o chão de Varrek gerado pelo dono, 4 destroços sólidos, Ryker e inimigos com os sprites de sempre (sombra, viram de lado), marca de nascimento na cor AVISO. 372 testes. — DEV, ART
 - 2026-11-24 — **ART-9 ✔**: `docs/ART/02-guia-visao-de-cima.md` + pacote 11 (chão de Varrek e destroços para gerar no ChatGPT). Proposta em uso: personagens de lado sobre chão visto de cima, reaproveitando todos os sprites atuais. — ART, DEV
 - 2026-11-24 — **DEV 33 ✔**: protótipo da arena jogável pelo botão "Arena (teste)" do menu inicial: Ryker de cima com dash, Mordida e Grilhão automáticos, Roedor e Zangão, 3 ondas, Sucata e loja do Ilo. Arte provisória. 369 testes. — DEV, GD, ART
-- 2026-11-24 — **GD-9 ✔**: `docs/GD/09-arena-e-ondas.md` (run de 4 planetas × 5 ondas, 8 armas em 5 famílias, Sucata, loja do Ilo, itens, inimigos de cima, progressão pequena). 5 perguntas ao dono na seção 12, com proposta "sim". — GD, DEV, ART, NAR
 
 ## 3. Decisões novas (também copiadas no fim de DECISOES.md)
 - **D-079 — GD-09 aprovado como está.** *(dono, 2026-11-24)* Sim para as 5 perguntas do GD-09 §12: 4 planetas × 5 ondas (VS: Varrek + modo Sem Descanso); recurso único **Sucata**; **dash** é a única ação, Granada e Grilhão viram armas; **vida 10**; Gambiarras viram itens de arma e Ofertas viram a escolha grátis depois de cada chefe.
@@ -78,6 +78,13 @@
 - DEV 36. **As outras 6 armas** (Bramido, Granada de Clã, Ferrão, Ninhada, Liquidação, Lanterna) e o **bônus de família** (GD-09 §5).
 - DEV 37. **Ondas 4–5 de Varrek**: Chacal, Cuspidor, Guerreiro, Artilheiro, Muralha, Ninho, Brutamontes e o chefe **Ur-Kesh**; Ofertas depois do chefe; modo Sem Descanso (GD-09 §2, §8.3, §9).
 - DEV 38+. Itens especiais, Gambiarras, progressão pequena (Núcleos). Último: trocar o modo e **apagar o código antigo** (D-078).
+
+**Ferramentas do estúdio (ideias do template Claude-Code-Game-Studios, nesta ordem; podem ser feitas entre as tarefas acima):**
+- FER-1 (DEV). **Bloquear comandos perigosos:** `.claude/settings.json` com lista de proibidos (`rm -rf`, `git push --force`, `git reset --hard`, `git clean -f`).
+- FER-2 (DEV). **Teste contra números soltos no código:** teste em `tests/` que falha se `scripts/arena/` tiver dano, vida, velocidade ou preço escrito direto na lógica (fora de `@export` ou `data/arena/arena.json`). Com lista de exceções simples (0, 1, cores, tempos de animação).
+- FER-3 (GD/DIR). **Lista de corte do Vertical Slice:** o que entra e o que fica fora do VS da arena (Varrek + Sem Descanso), com o motivo de cada corte; o dono escolhe cada um.
+- FER-4 (GD). **Checagem de balanceamento:** analisar `data/arena/arena.json` (dano por segundo de cada arma, preços da loja × Sucata por onda, curva de nível) e apontar valores fora da curva e combinações quebradas. Relatório em `docs/GD/`.
+- FER-5 (GD). **Modelo de relatório de teste de jogo:** modelo curto em `docs/GD/` para o dono anotar o que sentiu jogando; cada ponto vira tarefa aqui.
 
 **Pausados pela D-077:** DEV 32 (abertura v2) até o NAR-6 · GD-4 (pulo e enxame, perde o sentido).
 
