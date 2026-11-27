@@ -25,13 +25,46 @@
  },
  "armas": {
   "mordida": {
-   "nome": "Mordida", "familia": "arena", "tipo": "distancia",
+   "nome": "Mordida", "familia": "arena", "tipo": "distancia", "desbloqueio": "inicio",
    "dano": 6, "recarga": 0.4, "alcance": 200.0, "velocidade_projetil": 600.0
   },
   "grilhao": {
-   "nome": "Grilhão", "familia": "arena", "tipo": "corpo",
+   "nome": "Grilhão", "familia": "arena", "tipo": "corpo", "desbloqueio": "inicio",
    "dano": 12, "recarga": 1.0, "alcance": 64.0, "arco_graus": 90.0, "puxao": 24.0
+  },
+  "bramido": {
+   "nome": "Bramido", "familia": "kharn", "tipo": "distancia", "desbloqueio": "vencer_ur_kesh",
+   "dano": 4, "recarga": 1.2, "alcance": 110.0, "velocidade_projetil": 400.0,
+   "balins": 5, "dispersao_graus": 30.0, "empurrao": 16.0
+  },
+  "granada": {
+   "nome": "Granada de Clã", "familia": "kharn", "tipo": "area", "desbloqueio": "inicio",
+   "dano": 15, "recarga": 1.8, "alcance": 220.0, "raio_explosao": 32.0, "tempo_voo": 0.5, "altura_arco": 24.0
+  },
+  "ferrao": {
+   "nome": "Ferrão", "familia": "vesh", "tipo": "distancia", "desbloqueio": "inicio",
+   "dano": 3, "recarga": 0.5, "alcance": 180.0, "velocidade_projetil": 500.0, "chance_acido": 40.0
+  },
+  "ninhada": {
+   "nome": "Ninhada", "familia": "vesh", "tipo": "invocacao", "desbloqueio": "inicio",
+   "dano": 5, "recarga": 2.0, "alcance": 160.0, "larvas": 2, "velocidade_larva": 140.0, "duracao_larva": 4.0
+  },
+  "liquidacao": {
+   "nome": "Liquidação", "familia": "ilo", "tipo": "distancia", "desbloqueio": "encontrar_ilo",
+   "dano": 8, "recarga": 0.8, "alcance": 200.0, "velocidade_projetil": 550.0, "ricochetes": 2, "chance_lucro": 20.0
+  },
+  "lanterna": {
+   "nome": "Lanterna da Vigília", "familia": "vigilia", "tipo": "orbital", "desbloqueio": "vigilia",
+   "dano": 6, "recarga": 0.5, "alcance": 40.0, "esferas": 2, "voltas_por_segundo": 1.0
   }
+ },
+ "acido": { "dano_por_acumulo_por_segundo": 2.0, "duracao": 3.0, "maximo": 5, "intervalo": 0.5 },
+ "familias": {
+  "arena": { "nome": "Arena", "2": { "cadencia_pct": 5 }, "3": { "cadencia_pct": 10, "vida_max": 1 }, "4": { "cadencia_pct": 15, "vida_max": 2 } },
+  "kharn": { "nome": "Kharn", "2": { "empurrao_pct": 10 }, "3": { "armadura": 1 }, "4": { "armadura": 2, "area_dano_pct": 15 } },
+  "vesh": { "nome": "Vesh", "2": { "acido_chance_pct": 10 }, "3": { "acido_duracao": 1 }, "4": { "projeteis_extra": 1 } },
+  "ilo": { "nome": "Ilo", "2": { "sucata_pct": 5 }, "3": { "sucata_pct": 10 }, "4": { "sucata_pct": 15, "reroll_gratis": 1 } },
+  "vigilia": { "nome": "Vigília", "2": { "dano_pct": 5 }, "3": { "dano_pct": 10 }, "4": { "dano_pct": 15, "esferas_extra": 1 } }
  },
  "niveis_arma": {
   "maximo": 4,

@@ -228,7 +228,20 @@ func armas() -> Array[ArmaArena]:
 	return lista
 
 
+## Bônus de família (GD-09 §5.3): recalcula pelas armas atuais; a vida máx. entra pela diferença.
+func _atualizar_familias() -> void:
+	var ids: Array = inventario.armas.map(func(item: Dictionary) -> String: return String(item["id"]))
+	var vida_antes: int = int(atributos.bonus.get("vida_max", 0.0))
+	atributos.bonus = AtributosArena.bonus_de_familias(ids)
+	var diferenca: int = int(atributos.bonus.get("vida_max", 0.0)) - vida_antes
+	if diferenca != 0:
+		vida_max = maxi(vida_max + diferenca, 1)
+		vida = clampi(vida + maxi(diferenca, 0), 1, vida_max)
+		vida_mudou.emit(vida, vida_max)
+
+
 func _refazer_armas() -> void:
+	_atualizar_familias()
 	for a in _armas.get_children():
 		_armas.remove_child(a)
 		a.queue_free()
