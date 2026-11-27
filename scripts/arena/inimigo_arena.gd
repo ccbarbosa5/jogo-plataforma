@@ -25,6 +25,10 @@ var limites: Rect2 = Rect2(0, 0, 640, 384)
 var obstaculos: ObstaculosArena
 var voa: bool = false
 var sprite: Sprite2D
+## Ácido (Ferrão, GD-09 §5.2): acúmulos que ferem com o tempo.
+var acido: int = 0
+var _acido_tempo: float = 0.0
+var _acido_tique: float = 0.0
 
 var _zigue_amplitude: float = 0.0
 var _zigue_frequencia: float = 0.0
@@ -69,6 +73,9 @@ func _physics_process(delta: float) -> void:
 	if alvo == null or not is_instance_valid(alvo):
 		return
 	_tempo += delta
+	_passo_acido(delta)
+	if vida <= 0:
+		return
 	var para_alvo: Vector2 = alvo.position - position
 	var dir: Vector2 = para_alvo.normalized()
 	if _zigue_amplitude > 0.0:
@@ -90,6 +97,40 @@ func _physics_process(delta: float) -> void:
 			j.levar_dano(dano)
 
 
+## Põe 1 acúmulo de Ácido (até o máximo) e renova a duração.
+func aplicar_acido(duracao_extra: float = 0.0) -> void:
+	var a: Dictionary = ConfigArena.secao("acido")
+	acido = mini(acido + 1, int(a["maximo"]))
+	_acido_tempo = float(a["duracao"]) + duracao_extra
+	modulate = Color(0.8, 1.15, 0.7)
+
+
+func _passo_acido(delta: float) -> void:
+	if acido <= 0:
+		return
+	var a: Dictionary = ConfigArena.secao("acido")
+	_acido_tempo -= delta
+	_acido_tique += delta
+	var intervalo: float = float(a["intervalo"])
+	if _acido_tique >= intervalo:
+		_acido_tique -= intervalo
+		var dano_acido: int = maxi(roundi(float(a["dano_por_acumulo_por_segundo"]) * intervalo * acido), 1)
+		vida -= dano_acido
+		NumerosDano.mostrar(self, dano_acido, NumerosDano.Tipo.EFEITO)
+		if vida <= 0:
+			_morrer()
+			return
+	if _acido_tempo <= 0.0:
+		acido = 0
+		modulate = Color.WHITE
+
+
+func _morrer() -> void:
+	remove_from_group(GRUPO)
+	morreu.emit(self)
+	queue_free()
+
+
 ## Devolve true se o golpe matou.
 func levar_dano(valor: int) -> bool:
 	if vida <= 0:
@@ -97,9 +138,7 @@ func levar_dano(valor: int) -> bool:
 	vida -= valor
 	NumerosDano.mostrar(self, valor, NumerosDano.tipo_do_acerto(valor, 1.0))
 	if vida <= 0:
-		remove_from_group(GRUPO)
-		morreu.emit(self)
-		queue_free()
+		_morrer()
 		return true
 	return false
 

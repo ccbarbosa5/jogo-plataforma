@@ -53,8 +53,10 @@ static func preco(nivel: int, onda_: int) -> int:
 	return roundi(float(base[nivel - 1]) * (1.0 + aumento * (onda_ - 1)))
 
 
+## Ilo com 4 armas: as primeiras trocas de cada loja são grátis (GD-09 §5.3).
 func custo_reroll() -> int:
-	return 1 + onda + rerolls
+	var gratis: int = int(arena.jogador.atributos.valor("reroll_gratis")) if arena != null else 0
+	return 0 if rerolls < gratis else 1 + onda + rerolls - gratis
 
 
 static func preco_item(raridade: int, onda_: int) -> int:
@@ -185,8 +187,9 @@ func _montar() -> void:
 func _atualizar() -> void:
 	if arena == null:
 		return
-	_rotulo.text = "Sucata: %d    Onda %d terminada    Armas: %d/%d" % [
-		arena.sucata, onda, arena.jogador.inventario.armas.size(), arena.jogador.inventario.slots]
+	_rotulo.text = "Sucata: %d    Onda %d terminada    Armas: %d/%d    %s" % [
+		arena.sucata, onda, arena.jogador.inventario.armas.size(), arena.jogador.inventario.slots,
+		texto_das_familias(arena.jogador.inventario.armas)]
 	for i in _botoes.size():
 		var b: Button = _botoes[i]
 		if i >= ofertas.size():
@@ -196,7 +199,8 @@ func _atualizar() -> void:
 		var arma: bool = o.get("tipo", "arma") == "arma"
 		var nome: String = String((ConfigArena.arma(o["id"]) if arma else ConfigArena.secao("itens")[o["id"]])["nome"])
 		var detalhe: String = NOMES_NIVEL[int(o["nivel"]) - 1] if arma else _efeitos_em_texto(o["id"])
-		b.text = "Vendida" if o["vendida"] else "%s %s\n%s\n%d Sucata" % [nome, "(arma)" if arma else "", detalhe, o["preco"]]
+		var etiqueta: String = "(%s)" % ConfigArena.secao("familias")[ConfigArena.arma(o["id"])["familia"]]["nome"] if arma else ""
+		b.text = "Vendida" if o["vendida"] else "%s %s\n%s\n%d Sucata" % [nome, etiqueta, detalhe, o["preco"]]
 		b.add_theme_color_override("font_color", TelaNivelArena.CORES_RARIDADE[int(o["nivel"]) - 1])
 		b.disabled = not pode_comprar(i)
 		_cadeados[i].visible = not o["vendida"]
@@ -212,3 +216,19 @@ static func _efeitos_em_texto(id: String) -> String:
 		var nome: String = String(ConfigArena.secao("atributos").get(k, {"nome": "Sucata %"})["nome"])
 		partes.append("%s %+d" % [nome, int(efeitos[k])])
 	return ", ".join(partes)
+
+
+## "Famílias: Arena 2 · Vesh 1" (armas diferentes de cada família; 2+ dá bônus).
+static func texto_das_familias(armas: Array[Dictionary]) -> String:
+	var contagem: Dictionary = {}
+	var vistos: Dictionary = {}
+	for item in armas:
+		if vistos.has(item["id"]):
+			continue
+		vistos[item["id"]] = true
+		var f: String = ConfigArena.arma(item["id"])["familia"]
+		contagem[f] = int(contagem.get(f, 0)) + 1
+	var partes: Array[String] = []
+	for f in contagem:
+		partes.append("%s %d" % [ConfigArena.secao("familias")[f]["nome"], contagem[f]])
+	return "Famílias: " + " · ".join(partes)

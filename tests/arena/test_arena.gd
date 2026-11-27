@@ -392,3 +392,139 @@ func test_loja_tem_itens_cadeado_e_item_soma_atributos() -> void:
 	afirmar_proximo(a.jogador.atributos.valor("velocidade_pct"), 5.0, 0.001, "Botas: +5% de velocidade")
 	afirmar_igual(a.jogador.inventario.armas.size(), 1, "item não ocupa slot de arma")
 	await _limpar(a)
+
+
+# --- DEV 36: as outras 6 armas e o bônus de família (GD-09 §5) ---
+
+func _so_com(a: ArenaJogo, id: String) -> ArmaArena:
+	a.jogador.inventario.armas.clear()
+	a.jogador.adicionar_arma(id, 1)
+	return a.jogador.armas()[0]
+
+
+func _parado(a: ArenaJogo, tipo: String, deslocamento: Vector2, vida: int = 100) -> InimigoArena:
+	var i := a.criar_inimigo(tipo, a.jogador.position + deslocamento)
+	i.velocidade = 0.0
+	i.vida = vida
+	return i
+
+
+func test_as_8_armas_existem_com_familia() -> void:
+	var armas: Dictionary = ConfigArena.secao("armas")
+	afirmar_igual(armas.size(), 8, "8 armas do VS")
+	for id in armas:
+		afirmar(ConfigArena.secao("familias").has(armas[id]["familia"]), "%s com família válida" % id)
+		var arma := ArmaArena.new()
+		arma.configurar(id, 1)
+		afirmar(arma.dano > 0 and arma.recarga > 0.0 and arma.alcance > 0.0, "%s com números" % id)
+		arma.free()
+
+
+func test_bramido_solta_5_balins_e_empurra_uma_vez() -> void:
+	var a := _arena()
+	await esperar_frames(1)
+	_so_com(a, "bramido")
+	var alvo := _parado(a, "roedor", Vector2(40, 0))
+	var p0: Vector2 = alvo.position
+	await esperar_frames(2)
+	var balins: int = a.mundo.get_children().filter(func(n: Node) -> bool: return n is ProjetilArena).size()
+	afirmar_igual(balins, 5, "5 balins")
+	await esperar_frames(10)
+	afirmar(alvo.vida < 100, "acertou")
+	afirmar_proximo((alvo.position - p0).length(), 16.0, 0.5, "empurrou 16 px uma vez só (não 16 por balim)")
+	await _limpar(a)
+
+
+func test_granada_explode_em_area() -> void:
+	var a := _arena()
+	await esperar_frames(1)
+	_so_com(a, "granada")
+	var i1 := _parado(a, "roedor", Vector2(100, 0))
+	var i2 := _parado(a, "roedor", Vector2(110, 15))
+	var longe := _parado(a, "roedor", Vector2(100, 120))
+	for k in 60:
+		await esperar_frames(1)
+		if i1.vida < 100:
+			break
+	afirmar_igual(i1.vida, 85, "15 de dano no alvo")
+	afirmar_igual(i2.vida, 85, "e no vizinho dentro do raio")
+	afirmar_igual(longe.vida, 100, "fora do raio não leva")
+	await _limpar(a)
+
+
+func test_ferrao_aplica_acido_que_fere_com_o_tempo() -> void:
+	var a := _arena()
+	await esperar_frames(1)
+	var arma := _so_com(a, "ferrao")
+	arma.dados = arma.dados.duplicate()
+	arma.dados["chance_acido"] = 100.0
+	var alvo := _parado(a, "roedor", Vector2(60, 0))
+	for k in 30:
+		await esperar_frames(1)
+		if alvo.acido > 0:
+			break
+	afirmar(alvo.acido >= 1, "pegou Ácido")
+	var vida: int = alvo.vida
+	a.jogador.inventario.armas.clear()
+	a.jogador.adicionar_arma("mordida", 1)
+	for arma_m in a.jogador.armas():
+		arma_m.alcance = 1.0  # para de atirar: só o Ácido fere
+	await esperar_frames(40)
+	afirmar(alvo.vida < vida, "o Ácido continua ferindo")
+	await _limpar(a)
+
+
+func test_ninhada_solta_larvas_que_perseguem() -> void:
+	var a := _arena()
+	await esperar_frames(1)
+	_so_com(a, "ninhada")
+	var alvo := _parado(a, "roedor", Vector2(120, 0))
+	await esperar_frames(2)
+	var larvas: int = a.mundo.get_children().filter(func(n: Node) -> bool: return n is LarvaArena).size()
+	afirmar_igual(larvas, 2, "2 larvas")
+	for k in 90:
+		await esperar_frames(1)
+		if alvo.vida <= 90:
+			break
+	afirmar_igual(alvo.vida, 90, "as 2 larvas morderam (5 + 5)")
+	await _limpar(a)
+
+
+func test_liquidacao_ricocheteia() -> void:
+	var a := _arena()
+	await esperar_frames(1)
+	_so_com(a, "liquidacao")
+	var i1 := _parado(a, "roedor", Vector2(80, 0))
+	var i2 := _parado(a, "roedor", Vector2(80, 60))
+	for k in 20:
+		await esperar_frames(1)
+		if i2.vida < 100:
+			break
+	afirmar(i1.vida < 100, "acertou o primeiro")
+	afirmar(i2.vida < 100, "ricocheteou no segundo")
+	await _limpar(a)
+
+
+func test_lanterna_gira_e_fere_quem_toca() -> void:
+	var a := _arena()
+	await esperar_frames(1)
+	var arma := _so_com(a, "lanterna")
+	afirmar_igual(arma.quantidade_de_esferas(), 2, "2 esferas")
+	var alvo := _parado(a, "roedor", Vector2(40, -10))
+	await esperar_frames(60)
+	afirmar(alvo.vida < 100, "a esfera feriu ao passar")
+	afirmar(alvo.vida >= 100 - 6 * 2 * 2 - 6, "no máximo 2 toques por segundo por esfera")
+	await _limpar(a)
+
+
+func test_bonus_de_familia_conta_armas_diferentes() -> void:
+	afirmar(AtributosArena.bonus_de_familias(["mordida"]).is_empty(), "1 arma: sem bônus")
+	afirmar(AtributosArena.bonus_de_familias(["mordida", "mordida"]).is_empty(), "2 Mordidas contam como 1")
+	afirmar_igual(AtributosArena.bonus_de_familias(["mordida", "grilhao"]), {"cadencia_pct": 5.0}, "Arena 2: +5% de cadência")
+	afirmar_igual(AtributosArena.bonus_de_familias(["ferrao", "ninhada", "mordida"]), {"acido_chance_pct": 10.0}, "Vesh 2: +10% de Ácido")
+	var a := _arena()
+	await esperar_frames(1)
+	a.jogador.adicionar_arma("grilhao", 1)
+	afirmar_proximo(a.jogador.atributos.valor("cadencia_pct"), 5.0, 0.001, "o Ryker recebe o bônus ao ter as 2")
+	afirmar_proximo(a.jogador.armas()[0].recarga_atual(), 0.38, 0.001, "Mordida 0,4 s × 0,95")
+	await _limpar(a)

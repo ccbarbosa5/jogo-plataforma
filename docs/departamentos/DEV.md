@@ -1,8 +1,10 @@
 # DEV — Programação · Status
 
-Última atualização: 2026-11-25 (DEV 35). Formato curto (D-048).
+Última atualização: 2026-11-27 (DEV 36). Formato curto (D-048).
 
 ## Status
+- **Item 36 ✔: as 8 armas e o bônus de família (GD-09 §5).** Novas: Bramido (5 balins, empurrão 1× por disparo), Granada de Clã (arco + explosão em área), Ferrão (Ácido: acúmulos que ferem com o tempo), Ninhada (larvas que perseguem), Liquidação (ricocheteia 2×, Lucro +1 Sucata), Lanterna da Vigília (2 esferas em órbita, 2 toques/s). Bônus de família 2/3/4+ por armas diferentes (`AtributosArena.bonus_de_familias`), mostrado na loja. Números em `data/arena/arena.json` (FER-2). 385 testes.
+  - **Fica para depois:** desbloqueio das armas (campo `desbloqueio` já no JSON; hoje todas aparecem na loja), Abalo da Granada, arte própria dos projéteis.
 - **Item 35 ✔: nível, atributos e loja completa (GD-09 §6–8).** Sucata = dinheiro + XP; nível (n+3)², +1 de vida por nível; no fim da onda, tela de nível (4 atributos, raridade C/R/E/L, troca 2/+2). `AtributosArena`: dano (fixo + %), crítico, cadência, alcance, armadura (até ×0,40), esquiva (até 60%), velocidade, regeneração, roubo de vida, coleta, sorte. Loja: armas e 8 itens de atributo (`data/arena/arena.json`), cadeado e preço de item por onda. HUD mostra o nível. 377 testes.
   - **Fica para depois:** itens com efeito especial (Couro de Arena, Grito de Guerra...), Gambiarras como itens, vender arma.
 - **Item 34 ✔: arena com arte (ART-02, pacote 11).** Chão de Varrek (11A) no fundo; 4 destroços sólidos sorteados (`ObstaculosArena`, longe do centro e uns dos outros; o Zangão voa por cima); Ryker com pernas + tronco + dash de sempre, Roedor e Zangão com as folhas do ART-4, todos com sombra, `flip_h` e `y_sort`; marca de nascimento na cor AVISO; Sucata 8×8. Parede de 24 px. 372 testes.
